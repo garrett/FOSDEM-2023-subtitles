@@ -1,4 +1,4 @@
-Okay. So, hello. Let me introduce us. Like you may have heard, we are from Redhead, from
+Okay. So, hello. Let me introduce us. Like you may have heard, we are from Red Hat, from
 Bruno, actually, and we are going to talk about DNF, DNF5, a new generation as we have
 in the title. To introduce us and the talk, we have it split into three sections. The
 first one is covered by me. It will be a technical overview. Then there is a community history
