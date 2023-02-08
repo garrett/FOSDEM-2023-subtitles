@@ -1,0 +1,506 @@
+Yeah, so I'm going to do two small presentation because those are short talks and I didn't
+want to take too much time today.
+So we're going to speak about FFMPEG and mostly FFMPEG6.0, and then I will speak about
+a new project called VLC.js, but it's a lie, it's not really VLC.js.
+So who am I?
+My name is Jean-Retier, some of you know me, some don't, so I'm president of Vidoran,
+I've been working on VLC for, okay, I'm close to 40, so 17 years.
+I've been involved in X264, which is a Vidoran project, David, which is a AV1 decoder and
+lately a bit on FFMPEG, mostly on the community management, which is a funny topic.
+I shouldn't be the one presenting this presentation, but the people who should do this presentation
+are maybe in this room and don't want to present, so that's why I'm presenting.
+Jokes aside, like if you look at the first time, open media room, like there is almost
+no FFMPEG talk, which is completely insane.
+VLCR is better, thanks to Kiran and Tourémy, but it's ridiculous.
+If you look also in the archives, look in the archives, there's almost no FFMPEG, general
+FFMPEG talk.
+One, everything in the multimedia in the open source world and outside of the open source
+world is actually based on FFMPEG.
+And when I mean everything, I mean everything you see online, and most of those, like you
+go to those big trade shows and they are all amazing cloud encoding, so on, and it's just
+like a very nice whopper to FFMPEG.
+And of course when I say FFMPEG, please understand, this is FFMPEG plus Libix264 plus Libix65
+plus LibixBPX plus David plus all the other ex-vibes, all the libraries that I forget,
+so, and even on our voici on Mademoiselle, like you know those French fashion thing
+that we have, which is called Hacker News, even on Hacker News, like when there is a
+release of FFMPEG, it's not even the top Hacker News, right?
+So that means that we are doing something wrong,
+which means we don't communicate enough on FFMPEG.
+So here I am.
+So the community is healthy.
+We've had some fights in the past, to be honest.
+The folks are long gone.
+And most of the people working now on FFMPEG
+also pops lots of new people who are not there
+at the folk time, but also people from both folks
+are still working on FFMPEG.
+That's pretty cool, especially since we've not
+seen that many open source community being
+able to work together after those kind of events.
+So here I'm just going to speak just quickly
+about FFMPEG 5.0, which was around almost exactly
+one year ago.
+It was very important because we
+tried to match the new release schedules that I'm
+going to talk about.
+But it's also that it was probably the biggest API
+breakage ever on FFMPEG.
+I think just a train of commerce removing deprecation
+samples was around 130 commits.
+And the diff was huge.
+So some APIs were there deprecated to 2013
+and were removed in 5.0.
+So this is probably going to impact a lot of you
+because a lot of distribution are still on 4.4.
+But 5.0 is a big change of APIs.
+And mostly one big thing is that it's
+one API to decode both audio and video,
+and not AV codec video, decode four, five, six,
+and so on, all those APIs.
+It's not doing subtitles yet, but I
+was promised that someone will do it this year.
+Where is Anton?
+Yeah.
+So and yeah, we did a lot of new things.
+AV frame based API in SW scale, new bit fields streaming
+filters, a lot of things to clean AV format and AV codec.
+It's disentangling those two libraries,
+working on the decoder context, et cetera.
+You should look at the release notes on that.
+There are some people who are doing amazing work, mostly
+Andreas and James, who are basically removing
+all the craft on FFMPEG.
+So one day the whole FFMPEG will be thread safe.
+We believe that, right?
+And AV codec, any of the format will be completely split.
+Yeah, OK, maybe not.
+But there is a lot of work to be done,
+and that's very important for security reasons.
+Michael, who's still probably the oldest FFMPEG contributor,
+is still like fuzzing FFMPEG every day.
+Slice thread setting is W scale.
+IMF digmixing, which is good because so many professionals
+are using IMEF format, and they usually
+do weird things on FFMPEG, or above FFMPEG,
+and then we have to deal with their shit,
+because it's wrongly marked.
+So now we're actually getting that directly into FFMPEG.
+Dolby vision, I'm not sure exactly which part of the vision,
+because there is, as many of you know, a five or six profile.
+But I think at least profile five were there.
+And of course, a lot of things.
+And one of the cool things was the integration of LiPlaCibo,
+which used to be the MPV video filtering framework, mostly
+GPU accelerated, that is now into FFMPEG.
+And you can use that without GPU, easily with emulation.
+So the old APIs, like you know the old APIs,
+and now what's interesting is that it's more async-based,
+and so you don't need to do those horrible weight.
+5.1, so that was like six months ago in July.
+This one is important for you, because it's an LTS.
+5.0 is not LTS, so we're going to try to make that,
+to fix at least the security bugs for a couple of years.
+And most of the things that were added were a lot of features,
+but one of the major API that was merged was the change
+of the audio channel layout API, which
+was supposed to come in 5.0, but we missed.
+And then we said, well, it's going to take too much time.
+So we did that with 5.1.
+A lot of optimization on ARM in that release,
+mostly on HVC decoding, a lot of things
+on everyone decoding in hardware,
+because there is still 25 different APIs
+to do hardware acceleration.
+But soon there will be a new one that
+is going to replace all of them, which
+is Vulkan video decoding, and we'll have a 14 standards.
+JPEG Excel decoding, and a lot of things on SVTV1.
+So yeah, the channel layout API was developed in 2013,
+I think, by Vittorio.
+I'm not sure he's around.
+Yeah, Vittorio.
+That was done during the fork, and it was quite complex.
+But this is good, because it's ready to do what we called,
+well, well, marketing calls NGA, which
+is next generation audio, what marketing also
+calls Dolby Atmos, those kind of object-based audio.
+And the new channel layout API allows
+to be a lot more flexible to custom layouts and weird things
+without us having to do everything directly inside
+FFMPEG.
+So, and I'm still not starting about my main topic, which
+is FFMPEG 6.0.
+I hope when I was submitting the call that this would have
+been tagged, and that's important.
+I think this is even bigger in terms of a number of commits,
+and mostly in terms of contributors,
+because in the last six months, there
+have been around 191 contributors.
+That's huge, and that's a lot bigger than the previous release.
+What is important?
+There is not that many important API breakage and changes,
+but there is new APIs.
+And also, it's a major bump, so we
+are going to remove more things that were deprecated
+in the last few years, and that was like two new APIs
+so that we didn't remove them in 5.0.
+But we are going to remove that soon?
+Soon.
+One of the major changes is one of the most difficult thing
+that we've seen is multishrouding the FFMPEG CLI.
+So all those big guys are at YouTube and Vimeo and Facebook,
+and all those providers of FFMPEG nice UIs are basically
+one of the things they complained about
+is lack of multishrouding and FFMPEG.
+So they invent a lot of weird frameworks to do that,
+so there is a lot of work to do that directly inside FFMPEG.
+It's going to go on for the whole year, I think,
+for all 2023, but that means that a lot of things
+will be better for you to use.
+And of course, when you do that, you
+need to actually care about threat safety and clean up.
+So that's a lot of cleanups.
+What was done for 5.0 was that the mercs
+are now in their own threads.
+There will be more things.
+There is now a risk 5 optimization, or at least
+the framework to do that, inside FFMPEG.
+One of the things that is important
+is that you've probably seen that all the big guys building
+GPUs have now shipped AV1 encoders.
+So in 6.0, we've got Intel, N, NVIDIA, and AMD.
+So you can actually encode AV1 in hardware.
+And that's actually very fast.
+You can reach 30 FPS in 1080p without any problem
+with those cards.
+And it's actually decent quality.
+It's not as good as the SVT AV1, of course,
+but it's pretty good.
+There was a lot of work on the FFT code by Lynn.
+She's over there.
+She can tell you about that.
+And I think it's like, I don't know how much faster it is,
+but it's a lot faster.
+So all the audio codecs and all the audio filters that
+require the use of FFT and sometimes is better
+than the external FFT libraries that everyone is using.
+New API for record and structure frame
+for encoders, API breakage for deprecation.
+We have, of course, what I hate.
+Lots of new YUV format and pixel format,
+because there is always a good reason to add them.
+And when I'm downstream as VLT, I hate that, but any.
+Lots of things on channel layouts and H.274,
+mostly about external filters.
+One of the big parts on those features
+is everything related to hardware.
+So I said about everyone hardware recording,
+a lot of pixel formats, especially for hardware.
+There is finally the Android media
+codec using directly NDK, and not with a Java crop that
+is directly integrated into FFMPEG.
+I think that requires API Android 23,
+but I'm not exactly sure.
+And we also have the encoding and not just the decoding,
+but also based on media codec.
+We have the Intel folks have done a lot of things
+to have a 10-bit, 12-bit, 42444 VP9 decoding directly
+inside FFMPEG.
+That's one of the reasons why we have new pixel formats.
+In terms of actual features, there
+is, of course, lots of new codecs, lots of new filters.
+The ones I prefer are the FTR, which
+is a annoying company who doesn't want us to reverse engine
+is that.
+Bonk, APAC, there is a SIM SSIM 360 filter,
+and some very cool bitstream filter for the DTS to PTS one.
+Look at that one.
+It's quite useful.
+Yeah.
+So FFMPEG CLI multistrading, as I said.
+This is partly done in 6.0.
+It will be continued on 6.1 and 7.0.
+It is difficult, and it's long, but this
+is going to improve all your lives, or at least especially
+if you want to do a multiple HLS dash, multiple transcode,
+multiple resolution, and do that directly,
+without using third parties.
+FFMPEG releases, this is a slide I took exactly
+from a previous talk, and we never
+talked about that during first time,
+so that's why I'm talking about it.
+The problem that was like FFMPEG releases were kind of,
+well, before there was not.
+So we all took the good show on, and I hope it was great.
+And then we were seeing what Mplay was doing,
+then VLC was copying.
+And well, if Mplay on VLC agreed,
+then everyone was using that.
+Then we started having releases, and done by Michael,
+and sometimes they were not very predictable.
+So one of the idea is to start to come to a more predictable
+fashion, which is one major API break,
+and API break every year around December, January,
+so we're in February, and we fuck this year.
+But that's the idea.
+So one major where we allow API and API breakage.
+We remove APIs.
+When it's deprecated, it must be there for two years
+before we move that, but we will bump the SO numbers.
+And then one or two releases during the year,
+depending on security and what we need, so 5.0, 5.1.
+And every two years, one of the dot one will be LTS,
+and we'll continue that for two or three years.
+So the plan was to do FFMPEG Cs.0 in January.
+I hope it's going to come next week.
+We'll see.
+Yeah, this was not on schedule, so I'm adding a shorter talk
+in the middle of my two talks.
+David1.0 was released last year.
+It is insane.
+200,000 lines of handwritten assembly.
+That's like, I don't think there is any open source project
+that I've had.
+I'm not sure there is even a non-open source project that
+has that much assembly.
+And yes, handwritten assembly is faster
+than using whatever version of whatever compiler
+and activating whatever amazing feature that is going
+to auto vectorize something.
+We still do 5, 8, 16 times faster than C,
+so don't bring that up.
+It is insane, yet it's necessary.
+So when you decode everyone, so everyone
+is now in all your iOS devices, all your Android devices,
+all your applications that decode everyone.
+It's on macOS, it's on Windows, it's of course in Chrome,
+it's of course in VLCMPV and all the other things.
+So it's literally everywhere.
+A lot of work was done in the David 1.0 about frame-threading.
+Like there is lots of, please see the talks from Ronaldo
+for a few years ago.
+Wow, OK, thank you.
+About the different spreading models that are inside David,
+and David 1.0 has everything in a simpler way.
+We are going to, it's extremely fast, very fast.
+David 1.0, 1.1 releases is coming soon, soonish.
+A lot of fixing, especially because there
+were a lot of conformance tests that we were not passing.
+And for some reason, they got out.
+And there is, of course, lots of new assembly, especially
+for AVX 512 and Neon.
+Cool.
+We're going to speak about, well, I'm
+going to do a demo, which is VLC.js, which is actually not
+in JS.
+So what are we talking about?
+Yeah, so this is Chrome.
+And this is why I'm on macOS and not my usual Linux
+for the people who wonder.
+This is VLC and FFMPag and all the dependency
+compiled to WebAssembly.
+And what you cannot see, but this
+is doing hardware decodings through WebCodecs, right?
+So what happens here is that what you're seeing
+is that it's actually decoded on the hardware through WebCodecs.
+And then you take the output frame
+directly into WebGL and, well, OpenGL ES2, which
+is compiled to WebGL, and display that.
+And this is a 4K H264 MP4, blah, blah, blah.
+OK, that's boring, JB.
+I can do 4K H264 everywhere.
+Sure, sure you can.
+So let's do something a bit more complex.
+So this is the same, probably a Divx.
+Except it's MKV.
+The MKV part is done in Wasm, right?
+It's a normal VLC demuxer.
+There is no JavaScript involved, right?
+I'm not demuxing MKV and remixing as MP4, like HLDS.js.
+It has, of course, chapter support,
+because, well, what's the use of that?
+But also, if I found my mouse again, no worries.
+Yeah, you have also chapter subtitles,
+which are not WebVTT, right?
+Normal DVB subtitles.
+OK, so that's not too amazing, right?
+So let's do something more complex.
+OK, 4K VP9 in software decoding directly
+inside the web browser.
+OK, that's pretty much better, right?
+WebM on macOS, right?
+So, well, yeah, but professional.
+They use, like, actual format, like MPEG-TS.
+Let's do.
+So that's something that is ATSC over the air, right?
+So that's HEVC83TS, right?
+All the stack that is not in the web browser.
+It's decoded and displayed directly into your web browser.
+And that's where you realize that the US TV is really dumb.
+OK, but, OK, so that was hardware accelerated or not,
+because that's why it's HEVC.
+As you can guess, right?
+I can either force web codec or AV codec.
+So now I'm going to force software decoding.
+And I'm going to show you something a bit more complex,
+which is this is Korean TV, which is interlaced.
+And the interlacing is happening as a WebGL shader
+directly inside your web browser, right?
+So we're decoding 8264 interlaced.
+Of course, we cannot do that by hardware,
+because, of course, API doesn't support interlaced codec.
+So we decode full in software, and then we display directly
+and do sharpening and the interlacing
+of those very old multicast formats without any change.
+OK, and I guess I got no.
+Yeah, I got one minute more.
+So this is DNECHD.
+Of course, the output is not 420, but it's 420, 422.
+And that's actually interlaced and decoded as MXF directly.
+All those professional formats, you play that directly
+inside the web browser.
+So of course, if we can do 422 and down sampling for 420
+in software, well, on the GPU, I can also do 444.
+So this is YUV444, 10-bit, right?
+Of course, BBB, right?
+But things that are absolutely not
+possible with any type of APIs.
+I probably also can show you that we can do other filters.
+And this is a 360 movie that we have with the support on VLC.
+And of course, all the mapping from Tetidal to Equial Drunk
+Duo is done on the GPU.
+Of course, that means that everything
+that we do with LiPlasibo in theory should get in.
+And I'm out of time.
+Thank you.
+Thank you.
+Do we have any questions from the room?
+So an eight question.
+So you said you have 200,000 lines of specialized code.
+So perhaps there is no slowdown when you flip or rotate
+the image or do such transforms.
+Because you have a specialized version for that.
+Is it so?
+You mean on David?
+Or here?
+Oh, sorry.
+I cannot differentiate.
+So on David, it's really the decoding part, right?
+David is 200,000 lines of assembly
+just to do the decoding.
+It's around 35,000 lines per architecture.
+And we do lots of architectures.
+And then they give you a decoding surface.
+And then we use it in VLC, in PV, in FFMPag, and we do things.
+And here, we would compile it directly
+inside WebAssembly, run that in the web browser.
+And all the transformations are done then on WebGL.
+So that doesn't change anything.
+Just to know whether there is a slowdown of any amount
+just because of those common transforms, you say?
+No, that shouldn't be.
+On the dark question?
+Can you compile assembly to WebAssembly assembly?
+Like, could you compile David in the WebAssembly?
+Are you hungry for WebAssembly?
+So one of the things that we tried with Lynn, again,
+was what we call an assembly transpiler,
+where you take actually the ARM handwritten assembly
+and try to transpire that to webassembly.scmd, right?
+So that you could use neon and do exactly
+the opposite of what the web browser are actually doing,
+where they take the wasm assembly
+and compile that just in time for neon and so on.
+It's a very insane project that I had the idea a few years ago.
+It's really not sure whether we are going
+to be able to do that because you're transpiling assembly.
+Like, what the fuck are you talking about?
+But yes, I think that's the right solution instead
+of rewriting, again, all the assembly from FFMPag
+and David again.
+If you have time, please come and help us.
+I might actually find also some money for that,
+if people care.
+Another question?
+Please ask questions.
+I don't eat people.
+Yes?
+Last time I checked, compiling straight into web assembly,
+everything that was thread, posix, everything
+was pretty not yet finalized.
+Like, what is the process for compiling?
+It works fine.
+But that's also why you see that I'm on macOS, right?
+And I'm on Chrome and not displaying my usual Firefox
+and Linux because in order to have threads,
+you need to have what we call shared array objects, which
+is basically common things.
+And because in the web world, what they call web work,
+it's usually serialization and deserialization
+to move data.
+Now this is almost done, works everywhere, mostly on Chrome.
+Now it works on Safari.
+It works on Firefox, but it's buggy.
+And also one of the things that is annoying
+is the off-screen canvas because you
+want to be able to read directly in the back buffer
+before displaying it.
+That doesn't work anywhere correctly.
+And finally, the hardware decoder only
+works in web in Chrome for now.
+But maybe Firefox will do something, won't it?
+Sorry, what's the concept of the payload
+that the pages to download to get that?
+25 megawatts?
+So the idea is that we're going to, like,
+VLC is a module approach.
+So there is a very small core and 400, 500, 600 now,
+maybe, modules.
+And so what I want is to actually be able to load.
+And that's almost working, in theory,
+so you can load a shadow object.
+So you would only stream the core,
+and then the core will know which one to go and download.
+Yes, Steve?
+You mentioned that there were big patches for FNPEG
+to organize the code.
+It's easier to read emails, so when you flip them.
+I'm not answering that question.
+Thank you.
+So the question was, when is FNPEG community
+moving to a sane thing, which is GitLab?
+Not my short, right?
+Like, you know my opinion, right?
+Videolan, VLC, all the iOS, Android ports, X264, and so on.
+Even David is on GitLab, and we like it.
+The FNPEG community prefers to stay on email.
+So I think it's a mistake because we are
+losing too many patches because it's very difficult to,
+like, but that's a community opinion,
+and the community is a majority.
+Last question.
+So if you're rendering in OpenGL or in the VLCJS,
+you're bypassing the media engine, right?
+So how do you do the audio-video synchronization?
+Well, of course we are.
+So the answer is, like, how are you
+doing audio-video synchronization?
+Well, like VLC, right?
+Like, the core of VLC.
+VLC was done by this guy and other guys
+to actually do, like, live TV, right?
+So the core of VLC is a clock, and the clock
+is basically working on doing, like,
+synchronization, audio and video,
+and resampling the audio when it's too late, and so on.
+So here we are doing exactly that, right?
+So we output audio with Web Audio.
+Well, no.
+A small part of Web Audio called Audio Worklets.
+And so we know how much is actually being played back,
+and then we control the V out, which is basically the core of VLC
+to synchronize audio and video, and we're using that there.
+But I'm not using any type of media source extension
+or any other open media, blah, blah, blah.
+We are really like, it's mostly a video game.
+OK.

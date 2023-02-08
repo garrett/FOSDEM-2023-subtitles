@@ -1,0 +1,976 @@
+1
+00:00:00,000 --> 00:00:11,200
+Hello. Welcome to my talk about building a web UI for the Fedora installer. So my name
+
+2
+00:00:11,200 --> 00:00:18,600
+is Martin Coleman, and I work in the team that's building the Anaconda installer used
+
+3
+00:00:18,600 --> 00:00:27,360
+by Fedora, REL, CentOS, and REL distributions. First, I would like to talk a bit about, like,
+
+4
+00:00:27,360 --> 00:00:34,040
+why we decided to actually build a web UI for our installer. And, yeah, first, like,
+
+5
+00:00:34,040 --> 00:00:39,880
+very, very shortly about, like, the Fedora installer project. Yeah, the name of it is
+
+6
+00:00:39,880 --> 00:00:45,800
+Anaconda, which is very confusing for some people doing Python in the scientific domain,
+
+7
+00:00:45,800 --> 00:00:52,080
+because there is a very similar project in that it's like a Python thing, but it's called
+
+8
+00:00:52,080 --> 00:00:58,440
+the same SV, but I think we are older. So, anyway, right now we have a GTK3 UI for the
+
+9
+00:00:58,440 --> 00:01:06,040
+installer. We have a text-based UI. It's also possible to fully automate the installation.
+
+10
+00:01:06,040 --> 00:01:12,760
+We have things like add-on support, and, yeah, we are used, as I mentioned, by Fedora, REL,
+
+11
+00:01:12,760 --> 00:01:19,400
+CentOS, and others. This talk is basically concerning only the graphical user interface.
+
+12
+00:01:19,400 --> 00:01:25,280
+We don't expect to have any changes for the text-based interface and the kickstart-based
+
+13
+00:01:25,280 --> 00:01:34,160
+automation in the context of the web UI. So, why did we actually choose to do something
+
+14
+00:01:34,160 --> 00:01:39,720
+about the current graphical interface, and why did we choose to start working on a web
+
+15
+00:01:39,720 --> 00:01:49,240
+UI? So, one of the points is that the current GTK interface comes from the year 2013. It
+
+16
+00:01:49,240 --> 00:01:56,960
+kind of looks like early GNOME 3 by coincidence. Maybe it was built at the same time, basically.
+
+17
+00:01:56,960 --> 00:02:02,440
+And over time, we added new features. We fixed bugs. We adapted to various Fedora changes,
+
+18
+00:02:02,440 --> 00:02:09,760
+for example. And the stuff kind of got bolted on. Like, not always it was possible to change
+
+19
+00:02:09,760 --> 00:02:17,760
+the UI. So, in some cases, it's getting a bit clunky already. Another issue is that
+
+20
+00:02:17,760 --> 00:02:26,760
+some of the technology we built it on is getting a bit old right now. GTK 3 is not that old
+
+21
+00:02:26,760 --> 00:02:33,400
+at the moment, but already you have GTK 4. Eventually, we would have to port it. One
+
+22
+00:02:33,400 --> 00:02:39,280
+of the issues is, for example, that the Fedora installation image. The Fedora project tries
+
+23
+00:02:39,280 --> 00:02:46,400
+to have minimal dependencies of applications. So, like, over time, we want to have, like,
+
+24
+00:02:46,400 --> 00:02:52,080
+the minimal amount of libraries. So, we would have to quite possibly migrate to keep the
+
+25
+00:02:52,080 --> 00:02:58,120
+image sizes small. That's one of the reasons. We also still run on top of X. There is even
+
+26
+00:02:58,120 --> 00:03:02,160
+some hard dependency right now on keyboard switching during the installation. So, this
+
+27
+00:03:02,160 --> 00:03:08,360
+is something we would have to address anyway. The remote access to a graphical installation
+
+28
+00:03:08,360 --> 00:03:16,280
+right now is not the best. It's based on VNC. So, it's unsecure. It's not very efficient.
+
+29
+00:03:16,280 --> 00:03:23,280
+It requires you to have a graphical system running on the host that you are installing.
+
+30
+00:03:23,280 --> 00:03:27,600
+And you need a special application that might not be available that users might need to
+
+31
+00:03:27,600 --> 00:03:35,000
+install. So, that's one of the issues. And also, I'm not saying it's not possible to
+
+32
+00:03:35,000 --> 00:03:39,800
+test GTK 3 interfaces, but basically, it's not that simple. And we don't really have
+
+33
+00:03:39,800 --> 00:03:45,720
+any unit test coverage. Like, there are people from, for example, the Fedora QA community
+
+34
+00:03:45,720 --> 00:03:51,760
+that do test Anaconda. But what they are using is basically a screenshot or graphical bitmap
+
+35
+00:03:51,760 --> 00:04:00,280
+based testing right now. So, this is something that could be improved. And also, what we
+
+36
+00:04:00,280 --> 00:04:07,200
+have seen in the past years is that there seems to be a clear trend towards using Web
+
+37
+00:04:07,200 --> 00:04:12,720
+UIs for system management. Some of you might still remember some of the system config tools
+
+38
+00:04:12,720 --> 00:04:20,360
+used on Fedora and CentOS and Trell that used to be available to configure stuff like services,
+
+39
+00:04:20,360 --> 00:04:25,640
+networking, firewalls. All of these, over time, effectively became cockpit plugins for
+
+40
+00:04:25,640 --> 00:04:31,520
+the cockpit web console. So, this seems to be the trend overall for system management
+
+41
+00:04:31,520 --> 00:04:42,520
+as far as we can tell. So, what we kind of found out, there are some benefits of doing
+
+42
+00:04:42,520 --> 00:04:48,360
+something about the current UI situation and doing something about it with a web technology
+
+43
+00:04:48,360 --> 00:04:56,200
+based UI. So, while we are at it, we can address some of the UX issues we have right now because
+
+44
+00:04:56,200 --> 00:05:02,000
+it's effectively a fresh start right now. It's easier to achieve a consistency because,
+
+45
+00:05:02,000 --> 00:05:07,160
+yeah, you are building the whole thing. So, you can make sure that it's, since it feels
+
+46
+00:05:07,160 --> 00:05:13,920
+similar, it's using the same concepts, the same workflows for everything, hopefully.
+
+47
+00:05:13,920 --> 00:05:22,560
+Also another thing is that given the proliferation of Web UIs everywhere, basically, there seems
+
+48
+00:05:22,560 --> 00:05:29,320
+to be much bigger community of users, of developers of these technologies. And there is overall
+
+49
+00:05:29,320 --> 00:05:36,360
+more documentation, there is even more resources for non-developer roles like UX designers
+
+50
+00:05:36,360 --> 00:05:47,480
+or usability testing projects. And this seems to be, unfortunately, quite lacking in many
+
+51
+00:05:47,480 --> 00:05:55,240
+native GUI libraries right now in comparison to the web technologies. And also, like one
+
+52
+00:05:55,240 --> 00:06:03,840
+quite big point for it is that using a Web UI, just to be specific, we are going to use
+
+53
+00:06:03,840 --> 00:06:10,160
+the Web UI both locally and remotely. So, we want to run it for the local graphical
+
+54
+00:06:10,160 --> 00:06:16,000
+session, if any, but also it makes it much, much easier to access the installation remotely.
+
+55
+00:06:16,000 --> 00:06:24,000
+So, for any headless installations, it should be much easier for the users using the installer
+
+56
+00:06:24,000 --> 00:06:30,640
+to connect securely and much more efficiently to the host that is being installed. Also,
+
+57
+00:06:30,640 --> 00:06:36,040
+the host doesn't have to contain any graphical dependencies, effectively, because all the
+
+58
+00:06:36,040 --> 00:06:40,760
+rendering is happening on the client. So, the installation image could be much smaller.
+
+59
+00:06:40,760 --> 00:06:46,200
+And also, the installation time resource requirements could be much, much smaller. That could be
+
+60
+00:06:46,200 --> 00:06:53,440
+an issue for stuff like Raspberry Pis or some IoT SBCs, which are perfectly fine for the
+
+61
+00:06:53,440 --> 00:06:58,640
+tasks you will be using them. But if you try to do a graphical installation on them, varying
+
+62
+00:06:58,640 --> 00:07:04,080
+like possible issues with drivers, it might need much more resources to just install,
+
+63
+00:07:04,080 --> 00:07:09,280
+to bring up the graphical interface, then it will be using for its lifetime of doing
+
+64
+00:07:09,280 --> 00:07:16,120
+some useful work. So, let's talk a bit about the technical
+
+65
+00:07:16,120 --> 00:07:23,160
+details of the tools that we are using to build the UI for the third-line installer
+
+66
+00:07:23,160 --> 00:07:30,400
+right now. So, this is the overall architecture. The install is already modular. In that,
+
+67
+00:07:30,400 --> 00:07:38,400
+it has a Python backend, which has a D-Bus interface. Then we are using Cockpit to provide
+
+68
+00:07:38,400 --> 00:07:46,560
+us a bridge between D-Bus and the web application, which itself is then written with ReactJS
+
+69
+00:07:46,560 --> 00:07:54,200
+for the logic and PatternFly for the web UI widgets. The current Anaconda with the GTK
+
+70
+00:07:54,200 --> 00:08:00,680
+3UI with the text UI, and even with the Kickstart support, is actually using the same Python
+
+71
+00:08:00,680 --> 00:08:08,520
+backend, and even the GTK 3UI already is communicating with the backend via D-Bus. So, this makes
+
+72
+00:08:08,520 --> 00:08:15,680
+it possible for us to right now work in parallel, that we are building the web UI next to these
+
+73
+00:08:15,680 --> 00:08:23,720
+other UI's right now. Just instead of, like, directly calling D-Bus, you have PatternFly
+
+74
+00:08:23,720 --> 00:08:32,080
+widgets React talking via D-Bus, calling D-Bus calls from the backend. This is very similar
+
+75
+00:08:32,080 --> 00:08:38,520
+to Cockpit plugins in general. Usually, you have the networking screen in Cockpit, for
+
+76
+00:08:38,520 --> 00:08:44,680
+example, and what it does, it's talking to network manager via this bridge. It's doing
+
+77
+00:08:44,680 --> 00:08:51,360
+D-Bus calls from D-Bus. That's basically the idea of Cockpit, and we are reusing this for
+
+78
+00:08:51,360 --> 00:09:02,120
+our project. Yeah, so, as I've already mentioned, it's not about another UI that you can remotely
+
+79
+00:09:02,120 --> 00:09:08,880
+access while keeping the current graphical interface next to this. Like, eventually,
+
+80
+00:09:08,880 --> 00:09:14,880
+once we cover all the necessary functionality for the given project or product, it should
+
+81
+00:09:14,880 --> 00:09:18,240
+replace the current graphical interface. But right now, it's being developed next to
+
+82
+00:09:18,240 --> 00:09:24,480
+it, and thanks to the module backend, thanks to the D-Bus interface, it's not that hard
+
+83
+00:09:24,480 --> 00:09:35,800
+to do it. Also, one more thing that we found very, very useful is the Cockpit test framework.
+
+84
+00:09:35,800 --> 00:09:41,080
+This is addressing the issue I've mentioned previously about no unit tests for the graphical
+
+85
+00:09:41,080 --> 00:09:46,400
+interface. This is something that has been developed for the Cockpit project itself,
+
+86
+00:09:46,400 --> 00:09:54,000
+which directly maintains a lot of the screens you will see when you install Fedora or CentOS
+
+87
+00:09:54,000 --> 00:10:00,440
+or some such distribution and enable Cockpit. But there are also many community maintained
+
+88
+00:10:00,440 --> 00:10:07,520
+outside of the main community developing Cockpit, many other Cockpit plugins. So, that is very
+
+89
+00:10:07,520 --> 00:10:13,040
+comprehensive and I would say very nice test suite, which makes it possible to essentially
+
+90
+00:10:13,040 --> 00:10:18,640
+write Python unit tests that then manipulate your web UI or Cockpit plugin, in our case,
+
+91
+00:10:18,640 --> 00:10:29,520
+the Anaconda Fedora installer web interface. And it also supports pixel testing, which
+
+92
+00:10:29,520 --> 00:10:34,760
+we are thinking, yeah, this is nice. But then we actually thought about the other issue
+
+93
+00:10:34,760 --> 00:10:40,960
+that most web applications have and that's dependencies. There are dependencies being
+
+94
+00:10:40,960 --> 00:10:48,400
+pulled from NPM for pattern fly, for React.js, and the other libraries you might need to
+
+95
+00:10:48,400 --> 00:10:55,400
+use. And the problem with this is that the release cadence is pretty fast. There are
+
+96
+00:10:55,400 --> 00:11:01,320
+new versions of pattern fly all the time. And it would be very easy to get left behind
+
+97
+00:11:01,320 --> 00:11:07,680
+basically to have very big difference in using some old version and being much harder to
+
+98
+00:11:07,680 --> 00:11:14,080
+upgrade later on. And pixel tests make it much, much more easy to update this automatically
+
+99
+00:11:14,080 --> 00:11:20,560
+or almost automatically because you can effectively compare if you see any graphical changes from
+
+100
+00:11:20,560 --> 00:11:25,840
+the old to the new version. Same thing for any changes for the web UI. You can easily
+
+101
+00:11:25,840 --> 00:11:31,880
+see what the new state looks like if you see some changes that are expected, if you change
+
+102
+00:11:31,880 --> 00:11:38,000
+some label or add a button, or if the layout is totally wrong. So, yeah, this is something
+
+103
+00:11:38,000 --> 00:11:42,320
+I can recommend for web applications. It seems to be very, not something we expected
+
+104
+00:11:42,320 --> 00:11:51,480
+to be using, but it helps a lot. And it's a part of the cockpit test tooling. So, okay,
+
+105
+00:11:51,480 --> 00:12:00,640
+so how far we got? This all started about a year ago in earnest. And right now we have
+
+106
+00:12:00,640 --> 00:12:09,200
+a very simple but end-to-end installer images that can be used to demonstrate the web UI.
+
+107
+00:12:09,200 --> 00:12:17,040
+And actually, you will end up with a functional, minimal but functional system. It's possible
+
+108
+00:12:17,040 --> 00:12:22,680
+to select an installation language. We already support geolocation like with the current
+
+109
+00:12:22,680 --> 00:12:29,720
+GTK3 interface. It's possible to select disks. It's possible to dynamically add disks. Again,
+
+110
+00:12:29,720 --> 00:12:35,880
+this is kind of a demonstration of some dynamic behavior we wanted to have there. That's it
+
+111
+00:12:35,880 --> 00:12:42,080
+right now for storage. Storage, I'll talk a bit more about it later on. But that's one
+
+112
+00:12:42,080 --> 00:12:50,480
+of our main focus points because that's like 90% of everything in store. We have a review
+
+113
+00:12:50,480 --> 00:12:57,200
+screen where you can see the settings. And where you are also told that, yeah, you shouldn't
+
+114
+00:12:57,200 --> 00:13:02,400
+really run it right now on any production system that has any useful data because you
+
+115
+00:13:02,400 --> 00:13:06,920
+select the disks and we will use them. We will wipe them and use them. So that's the
+
+116
+00:13:06,920 --> 00:13:13,600
+minimal storage we have been able to come up with for now until we have some more comprehensive
+
+117
+00:13:13,600 --> 00:13:20,320
+screen where you can actually keep partitions and stuff like that. And the last one is just
+
+118
+00:13:20,320 --> 00:13:25,520
+a progress screen where you can see the installation happening, where you can see some errors if
+
+119
+00:13:25,520 --> 00:13:30,720
+there are any, where you can kind of guess how long it will take because that's not always
+
+120
+00:13:30,720 --> 00:13:40,840
+easy to tell the user correctly. So to have at least some pictures in the presentation,
+
+121
+00:13:40,840 --> 00:13:48,800
+so this is in general how it looks like. If you've seen the current Anaconda, this is
+
+122
+00:13:48,800 --> 00:13:59,680
+quite a departure from it. We decided to have flexible result layout. And if you've seen
+
+123
+00:13:59,680 --> 00:14:05,000
+some pattern fly applications, this should look pretty familiar. And that's one of the
+
+124
+00:14:05,000 --> 00:14:11,040
+aims as well, like people who use cockpit or some other applications using this tool
+
+125
+00:14:11,040 --> 00:14:18,040
+kit could be quite more familiar than seeing some a bit outdated GTK3 interface in some
+
+126
+00:14:18,040 --> 00:14:27,600
+unfamiliar theming. So as you can see, it's pretty similar. This is the installation destination
+
+127
+00:14:27,600 --> 00:14:35,080
+screen. We already have some built-in help support. You can click on some of the information
+
+128
+00:14:35,080 --> 00:14:42,080
+links. You will get a doc with help content. This is demonstrating just some simple disk
+
+129
+00:14:42,080 --> 00:14:49,520
+selection. You can plug in an USB drive already to add more disks. We expect this to grow
+
+130
+00:14:49,520 --> 00:14:55,040
+in functionality quite a lot for stuff like network attached storage and more complex
+
+131
+00:14:55,040 --> 00:15:02,600
+disk layouts. And this is the review screen. Right now it looks very similar, but again
+
+132
+00:15:02,600 --> 00:15:08,760
+we expect this to grow quite a bit because as we add more screens, this should directly
+
+133
+00:15:08,760 --> 00:15:15,120
+proliferate here. And we are looking into ways how to, for example, visualize more complex
+
+134
+00:15:15,120 --> 00:15:21,880
+storage layouts because that will be challenging, but it was one of the pain points we got from
+
+135
+00:15:21,880 --> 00:15:27,120
+users so far. Yeah, this is the progress screen. This is basically the last thing you will
+
+136
+00:15:27,120 --> 00:15:31,920
+see. Then it will just tell you, yeah, you are done. So that's it, like four screens
+
+137
+00:15:31,920 --> 00:15:40,640
+right now. But it's already producing functional systems. One other outcome of this project
+
+138
+00:15:40,640 --> 00:15:49,200
+so far is preview image. Sorry for the long links, but essentially the main information
+
+139
+00:15:49,200 --> 00:15:53,160
+here, if you go to Fedora Magazine and type in Anaconda, you will get a bunch of articles
+
+140
+00:15:53,160 --> 00:15:58,840
+about the WebUI because that's what we are writing about Anaconda right now. So there
+
+141
+00:15:58,840 --> 00:16:05,240
+is a preview image. The idea is that we will refresh it once every time we add something
+
+142
+00:16:05,240 --> 00:16:11,120
+visible. Right now it's about like a month old, but I would expect some new features
+
+143
+00:16:11,120 --> 00:16:17,320
+landing in the next few weeks. So this will be updated regularly. And that's the best
+
+144
+00:16:17,320 --> 00:16:23,920
+you can use right now to have a feel of how the WebUI looks like. It's a self-contained
+
+145
+00:16:23,920 --> 00:16:32,240
+image that effectively dumps F37 user space into the machine that you run it on, and please
+
+146
+00:16:32,240 --> 00:16:41,080
+don't run it on anything production resembling. So we found some challenges like working on
+
+147
+00:16:41,080 --> 00:16:48,840
+this. We have a huge amount of functionality. The project is all the current UI has been
+
+148
+00:16:48,840 --> 00:16:55,080
+used for like nine years. So we are really trying to kind of check what is being used
+
+149
+00:16:55,080 --> 00:17:03,200
+and what not. So we don't go insane implementing it all. So that's ongoing. We try to identify
+
+150
+00:17:03,200 --> 00:17:11,840
+and avoid some of the UX problems we have right now. Also, and keeping things consistent.
+
+151
+00:17:11,840 --> 00:17:19,280
+Like that's one nice thing about Pattenfly. There are pretty nice UX guidelines that
+
+152
+00:17:19,280 --> 00:17:31,400
+you can apply on many, many things. And that helps to keep the UI consistent. Yeah, another
+
+153
+00:17:31,400 --> 00:17:37,280
+issue is how to run this locally. That's not that easy, actually, because the web engines
+
+154
+00:17:37,280 --> 00:17:45,480
+are pretty monolithic, pretty big. And they come with some mainly RAM requirements, not
+
+155
+00:17:45,480 --> 00:17:50,320
+to mention the image size requirements. And there are actually not that many usable web
+
+156
+00:17:50,320 --> 00:17:56,280
+engines on federal. It's effectively a GDK WebKit or Firefox. And each one of them has
+
+157
+00:17:56,280 --> 00:18:02,920
+some pluses, some minuses. So right now we are still comparing these two and deciding
+
+158
+00:18:02,920 --> 00:18:09,440
+which one to use. For remote running, that's kind of not our problem that much. Even that's
+
+159
+00:18:09,440 --> 00:18:16,480
+another issue with Pattenfly. Like if we see some corruption, some layout issues, it quite
+
+160
+00:18:16,480 --> 00:18:23,000
+possibly would affect other Pattenfly users. And you might not need to do something about
+
+161
+00:18:23,000 --> 00:18:32,520
+it unless, unlike if we used some very, very custom web UI stuff. For the remote running,
+
+162
+00:18:32,520 --> 00:18:40,840
+another issue is how you actually authenticate the thing, how you encrypt in a useful manner.
+
+163
+00:18:40,840 --> 00:18:47,520
+So this is still ongoing, how we solve that. It might not be pretty, but one way is to
+
+164
+00:18:47,520 --> 00:18:54,040
+show some certificate fingerprints to the user to show some generated passwords or stuff
+
+165
+00:18:54,040 --> 00:19:01,000
+like that. Another option is to use custom images. That might be perfect for some cases
+
+166
+00:19:01,000 --> 00:19:06,840
+to bother some for others. So we will see right now. The web UI image you can use right
+
+167
+00:19:06,840 --> 00:19:13,520
+now is, this is disabled right now. But if you use the inst.wepoi.remote option, you
+
+168
+00:19:13,520 --> 00:19:18,080
+can actually access the web UI remotely. But you need to pass it because it's like totally
+
+169
+00:19:18,080 --> 00:19:29,800
+unsecured right now. These mechanisms are not yet in place. So okay, this is really
+
+170
+00:19:29,800 --> 00:19:34,680
+in planning stages and we don't have much time to talk about it. But the main focus
+
+171
+00:19:34,680 --> 00:19:40,800
+is definitely storage. This will be big. We plan to have something that you can manually
+
+172
+00:19:40,800 --> 00:19:48,120
+do, something that guides you. And so, yeah, it should start landing in the next few preview
+
+173
+00:19:48,120 --> 00:19:55,160
+image releases, definitely. And yeah, more screens, definitely. The priority is driven
+
+174
+00:19:55,160 --> 00:20:02,320
+by the next, the first image we could reply to, basically. So right now there is like
+
+175
+00:20:02,320 --> 00:20:07,400
+some date and time work already running. We have some backups for user and through password
+
+176
+00:20:07,400 --> 00:20:13,200
+configuration, we need to add the error reporting, definitely, and other stuff. It definitely
+
+177
+00:20:13,200 --> 00:20:21,280
+add-ons. Already the UI supports them. We need to keep it. And yeah, I think this is
+
+178
+00:20:21,280 --> 00:20:29,160
+actually, yeah. So this is, uh-huh. So this is the, this is the effect of the last slide.
+
+179
+00:20:29,160 --> 00:20:35,880
+And it's, I think we can start with the questions just quickly. Like, storage is a big focus.
+
+180
+00:20:35,880 --> 00:20:42,880
+This is a way you can provide feedback to us about it. And let's start with the questions.
+
+181
+00:20:42,880 --> 00:20:44,880
+Thanks.
+
+182
+00:20:44,880 --> 00:20:53,840
+Hey, Martin. I don't have a question per se. Oh, yeah. Right. Say, I really appreciate
+
+183
+00:20:53,840 --> 00:20:58,680
+the stuff that you folks are doing. I tried doing this myself by wrapping kick-start with
+
+184
+00:20:58,680 --> 00:21:04,880
+ViewJS, Flask. And I thought that it would be really feasible, really easy thing to do.
+
+185
+00:21:04,880 --> 00:21:09,040
+But when I started implementing it, I came to know the kind of entry cases that I was
+
+186
+00:21:09,040 --> 00:21:14,520
+to take care of. So I'm totally looking forward to what you folks end up doing. All the best.
+
+187
+00:21:14,520 --> 00:21:15,520
+Thanks.
+
+188
+00:21:15,520 --> 00:21:27,080
+Okay. Oh, Anaconda has now just nice features as escaping to a terminal, for instance, to
+
+189
+00:21:27,080 --> 00:21:33,560
+bypass things Anaconda can't do at the moment. Do you retain that too? What plan do you do?
+
+190
+00:21:33,560 --> 00:21:40,720
+So the current text interface, as well as, like, if you can access the machine locally,
+
+191
+00:21:40,720 --> 00:21:45,400
+it should still be possible to do, like, anything in the terminal that you can do today. And
+
+192
+00:21:45,400 --> 00:21:50,040
+you should be also able to use the existing text interface. We won't be changing that.
+
+193
+00:21:50,040 --> 00:21:56,320
+Yes. But you can escape the web interface and get a terminal? Or what is the way to do
+
+194
+00:21:56,320 --> 00:21:57,320
+that?
+
+195
+00:21:57,320 --> 00:22:00,480
+This is not, like, yet settled, like, if you will include it. But the cockpit project
+
+196
+00:22:00,480 --> 00:22:05,800
+has built in terminal emulated. I could imagine this to be included in the web UI. So we might
+
+197
+00:22:05,800 --> 00:22:08,920
+be able to include it in our web UI, as well.
+
+198
+00:22:08,920 --> 00:22:10,920
+Would be nice if you did.
+
+199
+00:22:10,920 --> 00:22:22,720
+Yes. Thanks for the feedback.
+
+200
+00:22:22,720 --> 00:22:26,320
+Thank you for the talk. I think this is very interesting. And I think it's a good idea.
+
+201
+00:22:26,320 --> 00:22:30,560
+And, you know, certainly convenient to set up headless machines this way. But at the
+
+202
+00:22:30,560 --> 00:22:36,880
+same time, I was wondering, I think it was Alex Larson who wrote this Broadway back end
+
+203
+00:22:36,880 --> 00:22:43,520
+for GTK. So basically you could use GTK and it would output to what goes into a web browser.
+
+204
+00:22:43,520 --> 00:22:48,320
+And I, you know, it just comes to my mind, why not use something like that instead? Because
+
+205
+00:22:48,320 --> 00:22:54,520
+I think that if you, we want to continue to invest in GTK and technical technologies
+
+206
+00:22:54,520 --> 00:22:59,920
+using GTK, because we need GTK for Fedora, we don't really need web for sure. And so
+
+207
+00:22:59,920 --> 00:23:04,640
+if we can end up using GTK and investing more resources there, maybe this makes it just
+
+208
+00:23:04,640 --> 00:23:10,120
+overall better for the whole health of the ecosystem. And we get our web UI, too.
+
+209
+00:23:10,120 --> 00:23:11,120
+So thank you.
+
+210
+00:23:11,120 --> 00:23:15,840
+Yeah. I must say I don't have, like, really, like, very recent information about it. But
+
+211
+00:23:15,840 --> 00:23:21,600
+we looked at it a while ago, basically, to the, at the Broadway technology. It definitely
+
+212
+00:23:21,600 --> 00:23:26,200
+looked interesting, but it didn't, it looked more like a Tehdemo back then. It could have
+
+213
+00:23:26,200 --> 00:23:31,040
+progressed since then. But I think there have been some issues, like with authentication
+
+214
+00:23:31,040 --> 00:23:37,600
+or possibly performance. So, yeah. That's a good point, but I don't have, like, latest
+
+215
+00:23:37,600 --> 00:23:39,000
+information right now for it.
+
+216
+00:23:39,000 --> 00:23:40,000
+I would check.
+
+217
+00:23:40,000 --> 00:23:41,000
+Okay.
+
+218
+00:23:41,000 --> 00:23:46,000
+I mean, then you can have all your, you can have the GTK and you have your web, everyone
+
+219
+00:23:46,000 --> 00:23:53,000
+with one code base.
+
+220
+00:23:53,000 --> 00:23:58,000
+Thank you.
+
+221
+00:23:58,000 --> 00:24:12,480
+Well, that's another question. Before Fedora's 37, we had a discussion about soft rate installation
+
+222
+00:24:12,480 --> 00:24:19,440
+using the BIOS boot machines and we found a good solution. But Anna Kodna is currently
+
+223
+00:24:19,440 --> 00:24:26,360
+a bit strange installing software rate on e-fi systems because we don't use an e-fi system
+
+224
+00:24:26,360 --> 00:24:31,120
+partition but a rate partition. Do we have a chance to get that fixed, too?
+
+225
+00:24:31,120 --> 00:24:37,800
+I'm not sure. Like, I, like, I, it's not that many people actually in the installer team
+
+226
+00:24:37,800 --> 00:24:43,760
+and have been very much concerned and concentrated on the, on the web UI right now for the couple,
+
+227
+00:24:43,760 --> 00:24:47,800
+last couple months. But definitely if you reach out to us, like, we have a mailing list
+
+228
+00:24:47,800 --> 00:24:53,320
+or we have a metrics channel, I think, right now already for Fedora. So please reach out
+
+229
+00:24:53,320 --> 00:24:55,480
+using some of these channels and we can look at it.
+
+230
+00:24:55,480 --> 00:24:58,480
+Yes. Oh, we can do that.
+
+231
+00:24:58,480 --> 00:25:20,880
+Absolutely. Is it, is it possible to provision the machine from the cockpit because you can
+
+232
+00:25:20,880 --> 00:25:26,520
+already create in cockpit virtual machines? So it would be nice to be integrated in one
+
+233
+00:25:26,520 --> 00:25:29,800
+place in one console. Is it possible or do you have such plan?
+
+234
+00:25:29,800 --> 00:25:35,120
+I think it's a, I don't think we have, like, integration for it right now. But that's an
+
+235
+00:25:35,120 --> 00:25:39,880
+interesting idea and, like, we have been thinking for stuff like satellite and some other provisioning
+
+236
+00:25:39,880 --> 00:25:44,960
+mechanisms that it would make sense to more closely integrate with the installer, with
+
+237
+00:25:44,960 --> 00:25:51,160
+the web UI because you could avoid the certificate and authentication issues if you could, for
+
+238
+00:25:51,160 --> 00:25:55,040
+example, inject something into the image. So that could, that could work. Like, you could
+
+239
+00:25:55,040 --> 00:26:01,440
+have, like, create machine or provision, bare metal, whatever. And it could, like, include
+
+240
+00:26:01,440 --> 00:26:07,960
+some, like, trust chain anchors, whatever, into the installation run. And then you could
+
+241
+00:26:07,960 --> 00:26:12,840
+then directly connect to the machine. Yeah, we have been thinking about it. But we haven't
+
+242
+00:26:12,840 --> 00:26:18,520
+yet implemented something like this. But it seems like obvious choice for some mechanisms.
+
+243
+00:26:18,520 --> 00:26:22,640
+And yeah, with integrating it like this with cockpit machines, that could be a nice idea.
+
+244
+00:26:22,640 --> 00:26:34,040
+So thanks for the suggestion. Okay, thanks. Okay. Thanks a lot.
+

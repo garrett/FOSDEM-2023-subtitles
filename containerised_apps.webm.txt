@@ -1,0 +1,604 @@
+Good morning, wow.
+I was not expecting this much of an audience at 9am on Sunday at a FOSSTEM, so thank you
+all for coming.
+Yeah, I'm here to talk about how I was at FOSSTEM five years ago.
+I told you all a whole bunch of things, and I was utterly wrong.
+So many ways, it's actually kind of amusing.
+But who am I?
+My name's Richard.
+I've been working on OpenSUSA since it began.
+I've been a customer of SUSAs, I've been a contributor, a bit of everything, Q&A engineer.
+I've been working there for 10 years now, or almost 10 years.
+These days I am a ridiculous advocate of rolling releases.
+It's what everybody should be using.
+I created the micro-S desktop.
+My day job is being one of the release engineers for Tumbleweed and micro-OS.
+I also do a bit of consulting, and I also do a bit of photography.
+But a long time ago, in a room actually just on the other side of this campus, I was here
+at FOSSTEM telling everybody that containerized applications, so things like flat-back, snap
+app images, the idea that graphical apps in some portable format are absolutely utterly
+terrible and nobody should be ever using them ever, and they were going to eat all
+of our users, and yeah, it's just going to be horribly, horribly wrong.
+I even started the presentation with quickie comments, like those who don't remember the
+past that condemned to repeat it, and I even made really unflattering comparisons.
+Doing diagrams from Windows architecture and pointing out Windows has all these wonderful
+run times where you can have different environments and run your application on top, and it was
+absolutely terrible in Windows.
+It's going to be absolutely terrible when we do the same thing in Linux, giving the
+examples of all of the security issues that you see in Windows in this kind of approach.
+Things like security-relevant DLLs lurking in some folder in your Windows machine, being
+an absolute nightmare to patch, an absolute nightmare to fix when it goes wrong.
+All these horrible update issues, how do you end up getting an update on your Windows or
+your Mac machine?
+Well, you download some EXE or some bundle and then there's some updater in it, does
+whatever the heck it wants on its machine.
+Licensing issues, especially with open source, how do you mix and match all these different
+licenses together in one cohesive thing?
+It's just going to eat up all of your disk space.
+Then I went back to this slide again and then started talking about the various technologies
+at the time, 2017, were out there doing this containerized runtime stuff, and I would compare
+this lovely Windows diagram to this lovely canonical diagram, which looks very, very
+similar because, actually, it is.
+The idea is similar, the concept is similar, but as you'll see, just because the concept
+is similar doesn't necessarily mean the whole idea is bad, execution doesn't matter.
+And it wasn't just Snap, I wasn't just shifting on Ubuntu because I don't like Ubuntu, I was
+doing the same with Flatback.
+And I was basically pointing out that this whole containerized application idea was repeating
+the same issue.
+We were going to be going down this road of security relevant libraries, lurking in all
+of these snaps in Flatbacks.
+Back then, we didn't necessarily have a good story about how are we going to update these
+things, how are we going to keep them maintained, who was going to look after all of these base
+snaps and run times in Flatback and the like, who was going to look at all of the legal
+issues and review the possible licensing issues of bundling these things together, and who
+was going to buy everybody bigger hard disks.
+And the kind of main conclusion that I left with, which despite the fact you'll see I
+was wrong about a lot of what I said, I still actually hold true, is at the heart of it,
+when distributing software, doesn't matter if you're doing it as a container or as a
+full-blown fat OS distributor or anything in between with any kind of fancy technology,
+the responsibilities are the same.
+App image, Flatback, Snap might make it easier to be the upstream than giving out your application
+to the users, that's great, but the responsibilities are still the same that distributors have
+been doing in distributions for years.
+You have to worry about maintainability, you have to worry about the security, you have
+to worry about licensing and all this wonderful stuff, so they're going to have to borrow all
+of the same stuff.
+So five years ago I gave this presentation, there was lots of people in the audience from
+App Image, Snap and Flatback, some of them said very nice things to me, some of them
+said very un-nice things to me.
+Starting with App Image, they took a lot of what I said surprisingly on board and really
+ran with it.
+I said all this stuff in February 2017 and by June 2017 I was saying stuff like this
+on stage, this was taken at the OpenSUSA conference, this was on the App Image website
+for longer than I wish it was.
+But the reason it was because in that short window, App Image is thought they could address
+most of my concerns by actually obviously running to the OpenSUSA build service and
+working with the OpenSUSA build service guys and integrating App Image really quite nicely
+with it at the time.
+So the idea being the App Image wasn't the problem, maybe the way you build App Image
+is the problem.
+If you build them in a nice auditing build system and have the whole thing tracked with
+dependencies in a build system and you build it reproducibly and you do all the licensing
+reviews there, then OBS could be the solution to all of the App Image's problem.
+And they worked really nicely with it and they gave all these promises, they'd be encouraging
+people to be using OBS as the main App Image building tool and we'd all move on happy in
+a nice unified way forward.
+And I even said things to Snappy and Flatback like you're falling behind App Image at this
+point, saying App Image had a better build story and they were working with other people
+and telling people to be more like App Image.
+And I still was badgering on, by the way you can tell all my old slides because they have
+this thing at the bottom so you can see old me compared to new me.
+I was still worrying a little bit about dependencies because as you'll see App Image makes some
+really interesting assumptions.
+But I was in June 2017 kind of hopeful that we'd get to a point where everybody would
+be working together and we'd have sort of maybe a new consistent run time and things
+could move forward.
+I was also hopeful that we might have sandboxing finally because Snapp kind of had some with
+App Armor, Flatback has Bubblewrap, maybe App Armor would be the way forward.
+How wrong I was.
+So now five years later, where are we?
+And I don't want to go deep down in technical issues too much because a lot of this isn't
+just technical, we're an open source project, any technical issue can be fixed, right?
+It is a lot about what are people actually doing, what do they actually care about, where
+are they actually taking things, what are we actually doing?
+So let's judge people by their own standards.
+This is a screenshot from the current App Image website and it says use this to make
+Linux apps that run everywhere.
+But they don't run everywhere.
+And they say as a user it should be as easy to install as it is on a Mac or Windows machine.
+But they're not.
+And they say you don't have to learn all these distributions with all these different distros
+doing things different ways.
+Technically that's true.
+You just need to learn all these different distributions and doing all the different things
+and you have to build your own to put in your App Image.
+And I'm not just saying this to core shade on them.
+I have users on microOS who are trying to run App Images.
+And they can't because App Images require Fuse 2.
+I'm a rolling release.
+I haven't shipped Fuse 2 for like a year.
+I've been using Fuse 3 and you can't get an App Image to work with Fuse 3.
+It has to be Fuse 2.
+The portable image format that isn't portable because it makes assumptions about stuff that's
+on the base OS.
+And not just weird stuff like Fuse but even down and dirty in the kernel.
+If you're running Debian and you're trying on an electron app it's not going to work
+properly because the kernel in Debian isn't built the way that App Image is expecting
+the kernel to be running.
+So this is great promise and it's going to work in some places but only if you're lucky
+enough that your distro has the same assumptions baked into it that App Image has.
+And this is a recurring issue even reading the app image documentation for building App
+Images.
+It tells you as a developer think about all of the distros where you want your app image
+to run on.
+So the whole promise of not worrying about distros goes away.
+You have to worry about more of them than you normally would and put every single dependency
+which might not be fulfilled by that distro in your App Image.
+So yeah, avoid distros by building a huge one and putting it in a big table.
+It's a lot of work.
+It's way too much work.
+I utterly respect anybody using it because they're probably doing more work than I am
+doing a rolling release.
+Really when the recommendations for what you put in that giant App Image is the oldest
+crustiest stuff you can find.
+They recommend avoiding using anything new because anything new is more likely to have
+compatibility issues with older distros.
+So literally find the oldest distro that's still supported and use that as your base
+for building App Image.
+Which also seems a bit of a problem to me because if you're always picking the oldest,
+the oldest is always the first one to not get maintenance updates.
+So you're always going to be rebasing on some crusty old almost out of day LTS to do what
+you want to do with App Image.
+It doesn't make any sense by their own standards.
+And they tell everybody that it's installing just like on a Mac.
+Just download the binary, put it on your desktop, right click it, make it executable and it'll
+run, which 15 years ago, that's true, that's how you run something on a Mac.
+I own a Mac now.
+That's not how you run stuff on a Mac.
+There's not a single Mac application I've ever installed that works that way.
+Even the Apple documentation makes it very, very clear that if you're downloading something
+from the Internet and you're double clicking it on a Mac, it's going to run an installer,
+which is a terrible thing anyway.
+But it needs to run an installer.
+When you're downloading random stuff from the Internet, it needs to be checks for dependencies.
+There needs to be some modification to what's on the host.
+So every random downloaded Mac application has an installer, just like Windows, or it's
+done in an App Store where Apple are controlling all that kind of things and helping that along.
+So yes, I was wrong about App Image, first thing it was terrible because they did try
+and make an effort.
+But then I was wrong again because it's actually even worse than I said five years ago.
+They failed to do everything that they set out to do.
+They don't do anything to address the actual problems with software releasing.
+Dependency problems are just hand-waved worse than anyone else could possibly do.
+Licensing issues, security, maintenance, good luck.
+Just build a new distro and ship it again.
+This is worse than we do in distros with all of the faults I will admit distros have on
+this.
+So please do not use App Images.
+And also they're not nice people because they kept publishing this for four years after
+I told them to take it down and I had to threaten to sue them.
+So they're just not nice.
+Now Snap, despite my reservations back in 2017, actually Snap was at the time the one
+I was most optimistic about, you know, at the time Canonical were actively collaborating
+with other distributions.
+They even invited me to a Snap workshop trying to get Snap supported in as many Linux distributions
+as possible.
+They had an approach of upstream first.
+They were promising that all of their app armor patches and all of the enablement they
+had to do was going to end up in the kernel and going to end up being upstream.
+At the time in 2017 you could run your own Snap store so you could have your own repository
+for downloading Snaps.
+And unlike Flatpak where it's much more just graphical, they also had a story for non-graphical
+apps.
+It's only five years ago but back then everybody wasn't necessarily using containers for server
+stuff the way we are now.
+So it was interesting on all those levels.
+But it's five years later.
+And all of the promises of Snap confinement working everywhere so you can have your nice
+sandboxed Snap application hasn't come true.
+Snap D does not support confinement on most non-Obuntu distributions and even some Ubuntu
+distributions.
+And this was posted on their forums three years ago now.
+That was the case three years ago.
+I was still waiting to get any kind of proper sandboxing insecurity with Snaps.
+Still not there.
+And then this was posted this month.
+Still promising.
+It might happen.
+But it's been five years.
+None of the app armor stuff is in the kernel yet.
+None of the enablement we need is in the kernel yet.
+Distros can't easily or really at all keep with an upstream kernel and get Snap running
+in the way Snap should be running.
+So if you run a Snap on a non-Obuntu distribution, you're probably running it in an incredibly
+insecure way.
+Do you trust that random software delivery with access to everything on your machine?
+Probably not.
+At least that random software developer using Snap isn't using their own Snap store because
+they can't anymore.
+In 2017 you could, then they released a new version of SnapD.
+So now the only version of the Snap store that works with SnapD is Canonicals.
+So it's an open source package format, but it's a closed source delivery format.
+You're only going to get that software from Canonical.
+And if you read up on it, there's lots of examples where Canonical have done the right
+thing and handled Snaps that were malicious and got them off quickly.
+But it's like, how do you know?
+You're just trusting Canonical that they're always doing the right thing because you can't
+see.
+You can't see what they're putting on there.
+You can't see how they get there.
+You can't do it yourself.
+If you trust Canonical, that's fine, but I'm much more open source orientated myself.
+Even if I am trusting somebody else, I'd rather be able to have a look and see what's going
+on in there.
+Maybe run my own, maybe compare something alongside.
+And yes, for most developers, or at least most small developers, this is free.
+So you can build your Snap and publish it to the Canonical Snap store with no effort.
+But as soon as you start getting bigger, as soon as you start becoming a bit of an ISV
+or doing stuff with IoT with lots of devices, then Canonical want you to have a brand store.
+And this isn't a documentation for Snapcraft where it comes to building.
+When you actually have a look at the price list for having a Snap store, the price list
+is kind of dear.
+Do you really want to be spending at least 5,000 euros just to be able to publish your
+application on somebody else's server under your name?
+But I can understand if people are buying into this.
+I can definitely understand why Canonical aren't in a rush to change it.
+It's probably making them a good bit of money.
+Canon OpenSuser, like I said, at the time in 2017, they were working with us.
+Now, not going so well.
+Snap is the only bit of software in all of my years doing anything, police, managerial,
+OpenSuser, where it's felt more than one security order.
+It's the only bit of software where I've had to project it multiple times.
+And there was good collaboration going on to get those issues fixed.
+But since 2019, that's kind of fizzled out.
+Haven't seen anything since.
+So when it comes to Snap, I was wrong.
+I was really kind of keen on Snap back in 2017.
+And these days, I can't really say that much nice about it.
+The upstream first promises have all stored.
+It doesn't seem to be an effort to get it really moving again on other distributions.
+So it's not a portable format by any stretch of any imagination.
+There's no open source delivery option, even if the Snap store may always be the best way
+of doing it anyway.
+This is a case to be made for that, even if there was an open source way.
+And it's not really a viable alternative for something like Flatback until unless you use
+Ubuntu, unless you trust Canonical, and unless you're willing to give them money to distribute
+your stuff.
+And so Flatback.
+Now I need to kind of do a little bit of a detour on this, because when I was talking
+five years ago about all of this stuff, one of the things that I was trying to pitch in
+the side thing there was this idea that, well, everybody should be using rolling releases.
+I really, really believe that, and I still believe that now.
+And I really think in this modern age, to get applications in the hands of users, a
+rolling base operating system is the absolute key.
+You need to have it all built together, need to have everything integrated, built consistently,
+tested consistently, and taking the fair share of the maintenance and security burden, and
+then shipping it all in a way that the users don't really care that everything's churning
+around underneath, you know, it just works.
+And at SUSE, we've still been working on this.
+We have an operating system called Open SUSE MicroOS.
+Vanilla MicroOS is much more server-orientated.
+It's immutable, like CoreOS and other similar immutable platforms.
+Can't be modified during runtime at all.
+It's rolling, so changing snapshots, it's actually using the same code base as Tumbleweed, so
+every day, almost.
+It's small, but small enough to do the job that it's meant to do.
+And the assumption is, you know, that server is going to do just one job in a data center,
+so, you know, a VM running one RPM or a VM running containers, and then, you know, as
+many containers on top, but, you know, the job is a container from the operating system
+point of view.
+And this is working really, really quite well.
+In fact, SUSE also has commercial products based on this, Slea Micro is based directly
+off Open SUSE MicroOS.
+The new SUSE Alp you might have heard of, where we're thinking of doing, like, a whole
+new ecosystem of enterprise distros, you know, that's building off what we did with Slea
+Micro and Open SUSE MicroOS.
+But me, you know, I'm still a desktop guy.
+So, you know, doing this with my day job, I found myself asking, yeah, I found myself
+asking, okay, so I've got this nice small OS, and it can run just one thing, you know,
+what if that just one thing was a desktop?
+And so, I started the MicroS desktop project, sort of alongside regular MicroS.
+And yeah, basically, it's a modern Chromebook-like, silver-blue-like environment where you have
+a nice minimal base system.
+My recommendation would be running the GNOME one, that's the one that's most maintained
+with the desktop environment on top.
+And the basic configuration tools are, yeah, the in there, but everything else is provided
+by somewhere else.
+In fact, everything else is provided by Flatpak.
+So this is one of the reasons why I'm doing this presentation.
+I kind of have to explain how in five years I went from Flatpak is the devil to Flatpak
+is the only thing you should be running on your desktop.
+Because I talked to some of the people that I was talking to back then, and this is kind
+of their expression.
+Because five years ago, when I was talking about this stuff, I was meanest about Flatpak
+than all the other ones.
+I was even invited to Gwadek, and I gave the meanest talk I have ever given to anybody
+right to the people who were actually developing the thing.
+And the guys from GNOME, they listened.
+I wasn't right, I'm not right about everything, that's the recurring theme of this presentation.
+But they challenged my opinions, but they accepted at least the cool ones that actually
+mattered, and Flatpak has changed.
+Like I was talking about earlier, responsibility is the key issue when you're talking about
+delivering software, no matter how you're distributing it.
+You need to be thinking about dependencies and licenses and maintenance and security,
+and one thing that Flatpak does very, very well is basically take all of that away from
+the distribution and make it the packages problem.
+Not great if you're a package, but they do it in a way that actually probably lowers
+the burden for everybody, so that's nice, automation and technology is great.
+But really, dependencies become the issue of the person making the Flatpak, licenses
+become the issue there, maintenance, security, et cetera.
+So distros can stop worrying about it.
+And Flatpak does this very well with their runtime concept, where if you're building
+an application for GNOME, you have a GNOME runtime, if you're building an application
+for KDE, you have a KDE runtime, elementary have their runtime as well, and then for everything
+else there's the generic free desktop runtime, which is a little bit heavier and clunkier,
+but gets the job done.
+And back in 2017, this terrified me.
+Not because there was competing distributions, because I'm used to competing distributions.
+The question was really, are these mini-distributions going to be maintained, anything like every
+other distro out there?
+Are these going to handle CVEs well?
+Are they going to not have horrific licensing issues, et cetera, et cetera?
+Well, they've been doing this for five years now.
+These runtimes are very well maintained.
+These snapshots from their various git trees, they're all updating very, very quickly, keeping
+up with their respected upstreams of GTK and QT and what have you.
+Handling CVEs very, very well, I don't know more about that later.
+So basically, they're handling this just as well as any other distribution does, maybe
+even better in some cases, because they're narrow in scope, they've actually got less
+work to do themselves than a full-blown distribution with tens of thousands of packages.
+So you've got your runtimes, and you've got your Flatpak application on top of that, but
+what about the Flatpak client, especially if you think about what I was just talking
+about with Snap earlier, with all of the issues with app armor and custom patches and what
+have you.
+Well, as a distribution guy, getting Flatpak in my distribution is really not that hard
+at all.
+You need to have the client on that, but you're not having to worry about a huge chain of
+dependencies and a whole bunch of plumbing to get it running.
+I don't need to have Fuse2 on my distro.
+All I need to have is bubble wrap, OS3, and a couple of XTG packages, and they themselves
+don't really pull that much in as well.
+So it's small, it's simple, it's relatively easy, self-contained.
+Doesn't cause me huge build chains when I have to rebuild the whole thing in tumbleweed.
+It's a really nice ecosystem to just plop on top of my distro and then all of the applications
+come from Flatpak.
+From a licensing perspective, all the Flatpaks on FlatHub are checked.
+They all have to have some kind of license that allows open redistribution or legal redistribution,
+or they do also support proprietary stuff.
+You can get a Spotify Flatpak.
+But obviously, you can't have the source code for the Spotify binary in their Git tree.
+So all of the proprietary stuff has to be pulled through by discrete declared links.
+And the Flatpak, specifically the FlatHub team, are checking that, verifying that things
+aren't changing there, not letting nasty things happen and binaries flip around.
+So at the very least, you may not know exactly what horrible thing is in this sandbox, but
+it's sandboxed.
+It's not much of a threat to your machine anyway, and it's the one that was sent at
+the submission time.
+You know it was the one that was reviewed.
+You know it isn't changing unexpectedly.
+So basically, it's as good or as better as any other distribution out there with their
+native packages.
+When it comes to maintenance, basically the same story.
+Just like OpenSuser, FlatHub doesn't like Flatpaks to have distro-specific packages.
+They want everything upstream as possible.
+They have an incredibly robust build, test, publish workflow.
+They're not using OBS, I wish there was.
+They're not using OpenQA, I wish there were.
+But what they're using is just as good, maybe in some ways it's better.
+They can actually give everyone nice test channels for testing their application, which
+I really think I want to copy sometime.
+But yeah, it's maintained.
+It's easy for maintainers to keep their app maintained, and that is all ticking over nicely.
+From a security point of view, well, Flatpak is the only one that works everywhere.
+It's the only one that those applications are sandboxed.
+The portal concept where basically holes are pegged through the sandbox to give you things
+like access to the file picker and other parts of the file system and the like has proven
+to be secure enough and expandable enough.
+It's not great.
+It's not perfect.
+Nothing ever is.
+But it's doing the job, and it's doing the job well, and these applications are working
+very well, and Flatpak CVEs happen very, very rarely.
+When they do happen, they're not these terrifying, scary things, because the thing is architected
+very, very well.
+The last CVE that I could find was in February 2022.
+It was a medium score.
+It was fixed incredibly quickly.
+I think every distribution had no problem adding that, because again, like I mentioned earlier,
+given the client is very well structured, you don't have a huge dependency chain.
+Even the most ancient of OTSS distros can then just happily get the patch in, get the
+thing running.
+When I started the microS desktop, I adopted Flatpak, actually November 2017, so if you
+put the timeline in that, I did change my opinion quite a bit from the beginning of
+February 2017 to the end, but I was using Flatpak as it was the one that I could work
+with.
+I couldn't use Snap.
+I couldn't use App Image.
+I didn't trust it that much at the time.
+I was thinking like you've seen with other distributions of building my own Flatpaks
+and using them rather than trusting FlatHub, or doing like Fedora does with, they build
+their own and then they also give FlatHub with some kind of filtering, but I didn't
+really want to mess with that at the beginning of my project doing all of this, so I just
+opted for trusting FlatHub first, and then waiting for the problems to surface.
+It's five years later, and I'm still waiting.
+We haven't had a single issue with the microS desktop where a FlatHub application really
+got in the way and needed us to think, okay, we can't trust these guys, we should start
+doing what I want.
+It just hasn't happened.
+The few times an application hasn't worked right, well, we send a patch.
+We work with them, because that's how open source is meant to work.
+As a distribution guy, I've realized we don't need to be building these giant, humongous,
+huge code bases, even though that's still what we do with Tumbleweed, I don't meet myself.
+I'm purely a microS person now.
+All of my servers are microS.
+My desktop here is microS.
+I'm using a tiny 1,000 package fraction of my Tumbleweed code base, and everything else
+is coming from containers, some of which are built from that much bigger code base.
+All my graphical stuff is coming from FlatHub, and my life is good, and I'm happy.
+This presentation is Libre Office from FlatHub.
+My final thoughts, which I've realized I've actually finished them a little bit early,
+but that's good, more time for Q&A.
+FlatPacks are ready for prime time.
+The other ones aren't.
+Don't use app image, only use Snap if you trust Canonical, but we're here at FOSTEM.
+FlatPacks are the better way to go for people like you who are here at FOSTEM.
+My system automatically updated in the background.
+Desktop Linux distros do not need to package the whole world.
+If you're a distro builder, think about following the model we are doing with microS desktop.
+Think about, if not narrowing your scope because you're building the packages and you don't
+want to tell maintainers to go away, then at least start drawing your focus more on just
+what you need to be doing.
+Start testing that part more.
+Start telling your users, that's the bit you can really, really trust.
+Give some secondary class to the old fashioned way of doing things.
+Yes.
+So you are telling us that FlatPacks run everywhere.
+Is that also true for different architectures?
+That is true at least for ARM, for Z probably not, but do you really have that many desktops
+in the main frame?
+Yes, of course.
+Well, then that's something I'm sure the FlatHop team wouldn't mind, I'm sure we could
+get that working on FlatPack, like if there's a need there, then also thinking about a risk
+drive of course and stuff like that.
+But then that kind of point, actually nicely draws me to my sort of finishing point really.
+None of this stuff is ever going to be perfect.
+No technology ever is.
+That's why we do this stuff in the open.
+That's why we do this stuff open source.
+So when things aren't perfect and aren't the way they are, aren't covering a architecture
+that you want or whatever, isn't it better to go to a project that is already going in
+that direction, that is trying to be available to everybody, that is open to me yelling at
+them for months about how terrible they are and then work with them to get it all done
+rather than sticking in your own tiny little sandbox, doing it all on your own and then
+being burdened with it for decades.
+If you're doing graphical applications, this is the way we should be going.
+It's easier for package maintainers, it's easier for distros, it's easier for everyone
+to keep up, it's easier for users too.
+I mean, you just, you know, nice little web store, they click on what they want, you know,
+they can have the beta version if they publish in the beta version, it's a nice way of getting
+stuff done.
+So yeah, please, if you're doing anything with graphical apps, please get it on FlatHop,
+please contribute to FlatHop, please put FlatHop in your distro.
+And is there any other questions, because, yes, right at the back there.
+You've addressed the outstanding question about CPU architecture, which is a great question.
+How do you feel about the fact, and I realize I'm asking a Linux question of a Linux distro
+maintainer, but how do you feel about the fact that containers tie everyone in the world
+to the Linux kernel interface as their interface, shutting out other open kernel options like
+the BSDs from participating in that ecosystem, and that the overall drive towards containers
+is further orphaning these already minimally represented, but very, very strong options
+in other kernels?
+They're strong, but I mean, I guess the recurring point I get to with all of this kind of thing
+is, you know, niche players are great for playing in niches, you know, when you're talking
+about something that needs to have widespread adoption and or widespread contribution, you
+know, some degree of centralization does make sense.
+It doesn't make sense for everybody to go make their own kernel, it doesn't make sense
+for everybody to make their own distribution, I would say it doesn't make sense for everybody
+to go packaging their own graphical applications 20 times over, so as hard as it is to say
+to somebody who's clearly passionate about other kernels and BSDs and what have you,
+I'm fine with containerization and these technologies dragging everybody to the Linux kernel because
+that's where the contributions are, so, you know, and as long as the Linux kernel is open
+to contributions and everybody can steer it in, you know, a good direction, I'm kind
+of okay with that.
+Thank you for your talk.
+I was with the presentation of 2017, so I think it's very nice that you changed the
+views.
+That year I also watched a presentation about Atomic from Fedora, so it was funny how those
+things interlept.
+I have a question about how you feel about the base system.
+You see currently there are trends like NICs and like SteamOS which use like an immutable
+image as a base.
+How do you feel about that?
+So I think immutable distributions are the way to go.
+Like I think if you're running Linux, it should be immutable.
+Immutability does bring with it a bunch of extra questions and, you know, and for us
+as geeks, I think I can say that without insulting anybody in the room, you know, we are keen
+to tinker with our machines and, of course, immutability quite often can get in the way
+of that.
+You know, if you can't change your running system, how are you going to install that
+one little thing that you want?
+I think there's a sweet spot and I don't think some of the other distributions get it.
+You know, imaged-based deployments, you know, you've got a frozen image, you can't really
+modify that image or you have to build a whole new one.
+That's too much work.
+I don't like imaged-based immutable systems that much.
+NICs has an interesting way with everything being declarative, but it's a lot of hassle.
+Declaring everything, it kind of swings the other way for me.
+So I don't necessarily like the NICs way.
+OS Tree has, you know, an interesting take on the whole thing where, you know, both from
+a user's perspective and the fact it's immutable, like, it's nice, but then you end up with
+a million different layers of OS Tree and that kind of just gets technically burdensome.
+Obviously, I work on micro-OS.
+I think we found that sweet spot.
+You know, in our case, we're using BTFS snapshots to do all the magic underneath the hood where,
+you know, your running system never gets touched, but you can still do traditional package management
+against a new snapshot and that becomes your next boot target.
+So you never affect in the running system, but you can do whatever the heck you want
+with your next boot and then if that next boot goes horribly wrong, we just throw the
+whole snapshot away.
+So, you know, it's super fast, super easy, avoids all of that.
+You can still tinker with it, but you're not, yeah, unfortunately, the downside of that
+is I do sometimes have to tell people, like, don't tinker too much, like, the more you
+do crazy stuff, the more likely you're going to throw that snapshot away, but I think that
+sweet spot is better than super lockdown images or, like, complete freedom of having to declare
+everything in conflict for.
+Okay, thank you for your presentation.
+I had never heard of Flatpak.
+On my Ubuntu, I'm using a Snap to install application and on my Mac, I'm using Homebrew.
+What do you think of Homebrew on Linux?
+I don't see the point of Homebrew on Linux.
+Yeah, it's, yeah, why, like, I get it on Mac, I've installed a few things on my Mac
+that I desperately need there, but, you know, my Mac, I use for photography, I don't do
+anything technical on it, so, yeah, I, yeah, don't see the point.
+Okay, thank you.
+How likely is it for the files stored in the home directory, especially the user files,
+to be affected if I roll back a snapshot after a failed upgrade?
+So, yeah, that's a really, like, micro-specific question, that's cool, though.
+The way we do it on micro-OS is when we talk about the root file system, we're not talking
+about the root partition because we're using BTIFS.
+So BTIFS, you have this concept of sub-volumes, we have a sub-volume for literally everything
+where the data should be changing, so Homeopt because that's third party, so it's not us,
+you know, use a local because, again, that's not us.
+You know, anything that isn't the distro is in a sub-volume, and then the distro's root
+file system is just that last bit that's left.
+So that bit's read-only, that's the bit that's managed by the package manager, all the sub-volumes
+are freely available and read-write.
+That doesn't make ETC a little bit interesting because that's like the one folder where it's
+both, like, distro's put stuff in there, and that, in micro-OS we handle that with
+overlayFS right now, where, yeah, we're basically taking copies of that, having, knowing what
+we put there, knowing what the user put there, or at least trying to, and then merging everything
+together so the thing works.
+Ideally, what we would like is everybody to start using, like most people already are,
+user for putting in distribution configs at USR, you know, it should be, you know, in
+userlib or useretc or whatever, that's just like you see with systemd, right, where distros
+put their distroconfig in userlib systemd, and then users put their localconfig in ETC
+systemd, and that way works very, very nicely.
+But meanwhile, ETC's a bit of a mess, but a mess that we can manage.
+Thank you for the presentation.
+Why isn't FlatBag suitable for CLIs?
+Actually, it is suitable for CLIs.
+It's actually guides now for how to do that.
+I think the, so yeah, I know our examples of apps where they do that, where, you know,
+the assumption is always probably going to be that it's graphical, but there's no reason
+why a graphical application, you know, can't start an exterm and run a CLI app.
+So there's actually examples in the FlatBag documentation of how to do that.
+Maybe speaking though, like sort of, you know, for apps that, you know, might not fit that
+kind of model, I think a lot of that kind of CLI or more sort of service-based command
+line-y stuff, that's handled so well by OCI containers, you know, Podman, Docker and the
+like.
+Like, why mess with that?
+Like, you know, you've got all those containers already out there.
+You've got everyone building the, you know, command line tooling and server tooling in,
+you know, in containers, you know, that does very, very well in that context.
+It just sucks on the desktop.
+Have FlatBag that just handles the desktop issue.
+You don't necessarily have to have one thing to do everything.
+So yeah, I think FlatBag draws that line quite nicely, where it just, it naturally starts
+getting painful when you head down that road.
+Any more questions?
+No?
+Well, hopefully I will see you in a couple of years when I'm long again.
+Thank you very much.
+Thank you.
+Thank you.
+Thank you.
+Thank you very much.

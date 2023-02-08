@@ -1,0 +1,2732 @@
+1
+00:00:00,000 --> 00:00:10,400
+All right. Well, hello everyone. You'll notice I'm not Ben. This is Ben. There's three of
+
+2
+00:00:10,400 --> 00:00:15,240
+us here to talk to you about different things, all about improving clients and making them
+
+3
+00:00:15,240 --> 00:00:21,040
+as fast as you would normally expect them to be. So, first of all, my name is Keegan.
+
+4
+00:00:21,040 --> 00:00:25,320
+I'm going to be talking about sign and sync. And then you've got Ben, going to talk about
+
+5
+00:00:25,320 --> 00:00:31,720
+Russ Eskay, and Mara about Element X. So, first of all, sign and sync, and a bit about myself.
+
+6
+00:00:31,720 --> 00:00:37,680
+I'm a staff software engineer at Element, and I've worked on many different projects over
+
+7
+00:00:37,680 --> 00:00:42,400
+the years, and more recently working on things like Dendrite and Peer to Peer, and sign and sync.
+
+8
+00:00:42,400 --> 00:00:47,440
+But first of all, what even is sign and sync? So, for context, sign and sync,
+
+9
+00:00:47,440 --> 00:00:54,720
+the current sync mechanism in Matrix is really, really slow. So, if you have, you know,
+
+10
+00:00:54,720 --> 00:00:59,040
+you go and open up your mobile app after a weekend away or something like that,
+
+11
+00:00:59,040 --> 00:01:01,560
+it takes a little while to sync. It could take 30 seconds or a minute,
+
+12
+00:01:01,560 --> 00:01:07,320
+depending on how many rooms are on your account. And this is kind of bad, right?
+
+13
+00:01:07,320 --> 00:01:12,800
+We'd like it to sync instantly. And the whole point of sign and sync is trying to make that happen,
+
+14
+00:01:12,800 --> 00:01:18,120
+trying to make it sync instantly, or virtually instantly. There was a talk last year on the
+
+15
+00:01:18,120 --> 00:01:22,360
+online POSDEM. If you want to know more information about the deep dive of how sign and sync works,
+
+16
+00:01:22,360 --> 00:01:27,880
+and there's a QR code there, but I'm not going to be covering too much detail about how sign and
+
+17
+00:01:27,880 --> 00:01:32,760
+sync works, other than enough to kind of fill in the gaps if you have no idea what this is.
+
+18
+00:01:32,760 --> 00:01:40,720
+So, at a high level, sign and sync works by sorting and filtering. So, you can see here,
+
+19
+00:01:40,720 --> 00:01:45,960
+you've got all the rooms on the user's account, and then you can filter that set of rooms down
+
+20
+00:01:45,960 --> 00:01:50,040
+in some way. So, for example, you could filter it based on, like, I want encrypted rooms,
+
+21
+00:01:50,040 --> 00:01:54,920
+or I want DM rooms, things like that. And then you can apply some sort of sorting operation to
+
+22
+00:01:54,920 --> 00:02:00,720
+them. So, you might say, sort them by the room name, or you could say, sort by recency. So,
+
+23
+00:02:00,720 --> 00:02:06,640
+like, the last timestamp in the room, or by the number of notification counts, number of unread
+
+24
+00:02:06,640 --> 00:02:11,040
+messages and stuff that mention your name, and that sort of thing. And then you can request the
+
+25
+00:02:11,040 --> 00:02:17,320
+first five rooms, 10 rooms, 20 rooms, and things like that. Also, the rooms themselves, you can
+
+26
+00:02:17,320 --> 00:02:22,520
+filter the room state using sign and sync. So, in normal sync, you will go and get all of the
+
+27
+00:02:22,520 --> 00:02:27,200
+room state. And if there's a lot of room state, that's not great. So, in sign and sync, you can
+
+28
+00:02:27,200 --> 00:02:32,000
+specify, I'm only interested in, like, the topic of the room, and whether it's encrypted or not,
+
+29
+00:02:32,000 --> 00:02:40,720
+and that's it. This is a pretty big change to how matrix works today. So, how is this actually
+
+30
+00:02:40,720 --> 00:02:45,120
+going to, like, how are we actually going to do this in practice? So, in practice, there is a go
+
+31
+00:02:45,120 --> 00:02:51,160
+process, which is the sign and sync proxy, which I've been working on for over a year now, which
+
+32
+00:02:51,160 --> 00:02:59,480
+has a Postgres database attached, and it will go and do sync v2 requests on your behalf to an
+
+33
+00:02:59,480 --> 00:03:03,360
+upstream server. It could be synapse, it could be dendrite, whatever, it doesn't really matter,
+
+34
+00:03:03,360 --> 00:03:11,200
+it could be conduit. And the important thing here is that this proxy exposes a sign and sync API.
+
+35
+00:03:11,200 --> 00:03:18,080
+So, it exposes a new endpoint for a new sync endpoint, and then a client can go and try the
+
+36
+00:03:18,080 --> 00:03:24,120
+sign and sync API and see how it feels for them. So, they don't need to have a particular
+
+37
+00:03:24,120 --> 00:03:28,720
+implementation on synapse, they'll wait for these implementations to land. You can try it on your
+
+38
+00:03:28,720 --> 00:03:35,760
+own server if you run a proxy. In terms of a protocol level, what this looks like is you can
+
+39
+00:03:35,760 --> 00:03:41,680
+see here you've got some lists, it's a list object, and then you can specify things like things we
+
+40
+00:03:41,680 --> 00:03:45,720
+talked about before. So, you can say you've got the ranges there, you've got, so that's how many,
+
+41
+00:03:45,720 --> 00:03:51,760
+like, the top-end rims that you want, the sort ordering that you want, as well as any filters
+
+42
+00:03:51,760 --> 00:03:55,680
+you apply here. And here you can see we're filtering by isDMTrue, and that's going to be used to
+
+43
+00:03:55,680 --> 00:04:01,440
+populate the people tab, say, on Element Web. You also have these things called rim subscriptions.
+
+44
+00:04:01,440 --> 00:04:07,440
+They are kind of like the rim lists, but this is when you know the specific rim ID. So, if you
+
+45
+00:04:07,440 --> 00:04:13,760
+follow a permalink, which may include the rim ID, or if you, you know, if you refresh the page and
+
+46
+00:04:13,760 --> 00:04:18,320
+you know that, you know, this person was currently viewing this rim, that room may not be in this
+
+47
+00:04:18,320 --> 00:04:23,160
+list, right? So, you would need to subscribe to that room directly because you know the rim ID.
+
+48
+00:04:23,160 --> 00:04:29,280
+And typically, as well, the kinds of information you want here is different. So, in here, we are
+
+49
+00:04:29,280 --> 00:04:34,640
+requesting all the state in the rim and a much higher timeline element because this is being
+
+50
+00:04:34,640 --> 00:04:41,440
+used to populate the actual full room view. The response is very similar, as well. So,
+
+51
+00:04:41,440 --> 00:04:46,000
+you have a list object here, and then you get a list of rim IDs that are used to populate
+
+52
+00:04:46,000 --> 00:04:51,040
+the correct ordering here. And then you also have a top-level rims array, a rims object,
+
+53
+00:04:51,840 --> 00:04:56,240
+and then that's just a key value map where the keys are the rim IDs, and then the values are
+
+54
+00:04:56,240 --> 00:05:03,120
+all the data that you requested. So, these all get aggregated together, which I will speak about
+
+55
+00:05:03,120 --> 00:05:08,320
+a bit later. In terms of what's new, so if you followed Siding Sync, then you might be like,
+
+56
+00:05:08,320 --> 00:05:13,200
+okay, I know all this, but well, what's actually happened over the past year? We have clients
+
+57
+00:05:13,200 --> 00:05:18,400
+now that run Siding Sync. So, this is from Element Web. It's got a nice scary warning there. So,
+
+58
+00:05:18,400 --> 00:05:23,360
+you know, it's great. It all works on web, but also it actually works on mobile devices as well,
+
+59
+00:05:23,360 --> 00:05:29,520
+thanks to the Rust SDK, which I'll leave for Ben to talk about. So, there's also a whole bunch
+
+60
+00:05:29,520 --> 00:05:36,400
+of new extension MSCs. So, extension MSCs are an idea of trying to break up the complexity
+
+61
+00:05:36,400 --> 00:05:41,440
+of Siding Sync, because the Sync API is by far one of the most or not the most complicated part
+
+62
+00:05:41,440 --> 00:05:45,840
+of the client server API, and trying to put everything into one MSC is going to be doomed
+
+63
+00:05:45,840 --> 00:05:53,040
+to failure. So, we're trying to specify a core part of the MSC, a core part of what is syncing,
+
+64
+00:05:53,040 --> 00:05:58,480
+which is the syncing rooms, and working out the sorts and the filter arguments. And then,
+
+65
+00:05:58,480 --> 00:06:03,040
+we're leaving two extensions, all the extra stuff on top. And the idea is that you can opt in to
+
+66
+00:06:03,040 --> 00:06:08,240
+any of these things. So, if your client doesn't do receipts, then great, don't subscribe to receipts,
+
+67
+00:06:08,240 --> 00:06:14,800
+don't even enable this extension. Briefly, how these extensions work. So, these two extensions
+
+68
+00:06:14,800 --> 00:06:19,040
+go together because they're ultimately used to make encryption work in encrypted rooms. So,
+
+69
+00:06:19,040 --> 00:06:25,920
+you can see, or actually, you can't see it all. Here is an encrypted event. So, there's basically,
+
+70
+00:06:25,920 --> 00:06:30,240
+you have to trust me, there's a ciphertext here with lots of gibberish effectively. And then,
+
+71
+00:06:30,240 --> 00:06:39,360
+you need a room key to go decrypted into your normal text. The way that works is that you need to
+
+72
+00:06:39,360 --> 00:06:45,600
+get keys via your two device messages. That's why they go together. The other thing here is that
+
+73
+00:06:45,600 --> 00:06:53,040
+it implements another MSC called Dropping Sales Center Device Messages. You can barely see it
+
+74
+00:06:53,040 --> 00:06:58,880
+on here, but this is an output from Postgres, which is trying to work out how many unreads
+
+75
+00:06:58,880 --> 00:07:04,640
+or unacknowledged two device events are there for a given user device. And you might think that
+
+76
+00:07:04,640 --> 00:07:10,960
+might be, say, a hundred, maybe a thousand tops. It turns out this can be a lot. This is several
+
+77
+00:07:10,960 --> 00:07:17,440
+hundred thousand unread or unacknowledged two device events. And it turns out when I analyzed
+
+78
+00:07:17,440 --> 00:07:23,520
+a lot of this, this was almost entirely down to room keys being requested and then either
+
+79
+00:07:23,520 --> 00:07:33,120
+canceled or successfully sent. So, this MSC 3944 basically says, hey, if you request a room key
+
+80
+00:07:33,120 --> 00:07:38,240
+and then you subsequently cancel that request, you're going to go and delete those two device
+
+81
+00:07:38,240 --> 00:07:42,800
+messages. So, they don't just keep stacking up in this way. And that obviously really helps reduce
+
+82
+00:07:42,800 --> 00:07:48,240
+the amount of bandwidth for sign sync as well. The other thing we've got is account data. So,
+
+83
+00:07:48,800 --> 00:07:53,840
+if you wonder what account data does, if you've ever used the breadcrumbs thing at the top here
+
+84
+00:07:53,840 --> 00:07:59,200
+on Element Web, that's synchronized using account data. Also, account data is really,
+
+85
+00:07:59,200 --> 00:08:05,840
+really useful for working out accurate notification counts. So, at the bottom here, you can just
+
+86
+00:08:05,840 --> 00:08:10,960
+about see that you've got some messages here. You've got a message in a timeline. This is encrypted.
+
+87
+00:08:11,680 --> 00:08:16,080
+And it says here, notification count one. Notification counts are the gray numbers.
+
+88
+00:08:16,080 --> 00:08:20,640
+And you've got a highlight count of zero, which is the red number. And yet on the UI,
+
+89
+00:08:20,640 --> 00:08:26,160
+you can see that it's a red number and it's gone to one. So, some things happened here where the
+
+90
+00:08:26,160 --> 00:08:33,120
+client has worked out that, oh, I should use this as a highlight count, not a notification count.
+
+91
+00:08:33,120 --> 00:08:38,640
+It's overwritten what the service told it. And what's happened here is that the client has
+
+92
+00:08:38,640 --> 00:08:44,080
+decrypted the message and then it's checked the message to say, hey, you know, is there any
+
+93
+00:08:45,760 --> 00:08:49,920
+app mention or any specific keywords based on your push rules? And if that is true,
+
+94
+00:08:49,920 --> 00:08:55,440
+then it knows, ah, okay, I need to actually make this a red highlight rather than just a normal gray
+
+95
+00:08:55,440 --> 00:09:03,760
+unread count. And that's done using push rules. And push rules is stored in the count data. Final
+
+96
+00:09:03,760 --> 00:09:10,000
+two ones are receipts and typing. Thank you. So, hopefully, you know what receipts and typing
+
+97
+00:09:10,000 --> 00:09:17,200
+notifications are. The main changes for Sliding Sync is that the receipts are lazily loaded.
+
+98
+00:09:18,240 --> 00:09:24,560
+So, you might think, what does that mean exactly? Well, if you request a timeline limit of 10,
+
+99
+00:09:24,560 --> 00:09:30,720
+then you will get those 10 events. And then you will get the receipts for those 10 events,
+
+100
+00:09:30,720 --> 00:09:33,520
+and you won't get receipts for any other events. And you might think,
+
+101
+00:09:34,560 --> 00:09:40,320
+hasn't it always done this? Well, not really. So, here's some JQ for matrix HQ, which is this
+
+102
+00:09:40,320 --> 00:09:47,200
+RIM ID. And it's just pulling out the receipt EDU and then kind of checking, like, roughly how
+
+103
+00:09:47,200 --> 00:09:51,120
+many receipts there are. And you know, matrix HQ is quite a big room. So, you might think, you know,
+
+104
+00:09:51,120 --> 00:09:57,760
+100,000. No, there's quite a lot of rooms, quite a lot of receipts in there. And this is not great
+
+105
+00:09:57,760 --> 00:10:03,680
+from a bandwidth perspective, right? We don't want to be sending 53,000 read receipts, particularly
+
+106
+00:10:03,680 --> 00:10:09,200
+for events which you are unlikely to ever view, right? Because these could be for events that
+
+107
+00:10:09,200 --> 00:10:15,760
+occurred like a year ago. So, Sliding Sync also fixes that. So, with all these performance
+
+108
+00:10:15,760 --> 00:10:24,000
+optimizations, a very large account with 4,000 rooms can take less than a second to actually
+
+109
+00:10:24,000 --> 00:10:30,080
+sync, which is down from 15 minutes on Sync V2. So, very happy with that. But it's still not really
+
+110
+00:10:30,080 --> 00:10:37,440
+good enough. We're trying to go big or go home kind of thing. So, we want to make it even faster.
+
+111
+00:10:37,440 --> 00:10:42,000
+So, it is literally instant. You don't want to have to be waiting a couple of seconds. It should
+
+112
+00:10:42,000 --> 00:10:46,160
+just kind of open up. Just like most other messaging clients, you can just open them up and they just
+
+113
+00:10:46,160 --> 00:10:52,480
+work. The problem is that things are going to get a lot worse here, which I will talk about in a
+
+114
+00:10:52,480 --> 00:11:03,280
+moment. So, we've added in a bunch of tracing to the proxy server. So, things like, this is
+
+115
+00:11:03,280 --> 00:11:08,000
+runtime trace. So, you can see exactly the control flow. There's some spans there. And you can see
+
+116
+00:11:08,000 --> 00:11:15,520
+various optimizations that were done. So, this is identifying so bits of code. Lots and lots and
+
+117
+00:11:15,520 --> 00:11:20,400
+lots of commits. Sometimes it's just you forgot to add an index. Sometimes you should be doing
+
+118
+00:11:20,400 --> 00:11:26,800
+things in bulk instead of doing things sequentially. So, lots of work has gone into this. And also,
+
+119
+00:11:26,800 --> 00:11:32,240
+if you were going for 100 milliseconds, aiming for 100 milliseconds, the actual amount of
+
+120
+00:11:32,240 --> 00:11:37,760
+data you send is important because this starts to become quite a large factor in the total time
+
+121
+00:11:37,760 --> 00:11:44,960
+it takes. We can do simple things like deduplication and enabling gzip for large responses, which we
+
+122
+00:11:44,960 --> 00:11:52,240
+now do. And as well as that, we can aggressively cache things in memory wherever possible. So,
+
+123
+00:11:52,240 --> 00:11:57,280
+we don't have to query the database when clients send a request. So, there's three levels of caching
+
+124
+00:11:57,280 --> 00:12:03,680
+involved at the proxy level, whereas a global cache which contains kind of information which
+
+125
+00:12:03,680 --> 00:12:11,600
+doesn't change for any user. So, it's a constant. So, things like the number of joined users in a
+
+126
+00:12:11,600 --> 00:12:17,120
+room, it's the same if you're Alice or if you're Bob. It's always going to be the same. Whereas
+
+127
+00:12:17,120 --> 00:12:21,440
+things like the user cache or things like, what's the unread count for this room? Well,
+
+128
+00:12:21,440 --> 00:12:25,520
+that's going to change depending on which user. And then the connections are things like which
+
+129
+00:12:25,520 --> 00:12:31,120
+room subscriptions have you got or which lists, like what are your top end rooms or whatever
+
+130
+00:12:31,120 --> 00:12:35,840
+your sliding window is. Interesting thing to note here is that the room name is actually not
+
+131
+00:12:35,840 --> 00:12:41,840
+global data. The data that's used to calculate the room name is global data and is the same for
+
+132
+00:12:41,840 --> 00:12:48,800
+everyone, but the room name itself isn't because of DMs. So, if you have a DM with Alice and Bob,
+
+133
+00:12:48,800 --> 00:12:52,320
+then from Alice's point of view, the room name is Bob, but from Bob's point of view, the room name
+
+134
+00:12:52,320 --> 00:13:00,800
+is Alice. So, lots and lots of optimizations have been done. So, with all of this, we're going to
+
+135
+00:13:00,800 --> 00:13:05,120
+we're now getting less than 100 milliseconds, which is what we wanted, but it's still not good
+
+136
+00:13:05,120 --> 00:13:11,920
+enough because things are going to get a lot worse because clients really, it's all up to the
+
+137
+00:13:11,920 --> 00:13:16,160
+clients because clients want offline support and they want instant access. They don't want to have
+
+138
+00:13:16,160 --> 00:13:21,040
+to be having to do a network request to, when they click on a room, they want to just see the
+
+139
+00:13:21,040 --> 00:13:25,440
+list. They don't want to see a spinner. And in the best case, you have a spinner for half a second
+
+140
+00:13:25,440 --> 00:13:31,200
+maybe, and then it loads, which is, you know, it's not great, but maybe acceptable. But then if you're
+
+141
+00:13:31,200 --> 00:13:34,960
+on a mobile app and you go into a tunnel, then it's just going to spin it forever and then
+
+142
+00:13:34,960 --> 00:13:41,200
+you're sad. So, you know, users expect these things to, to kind of work instantly. And you can
+
+143
+00:13:41,200 --> 00:13:45,840
+kind of, you know, Sighting Sync has ways that you can kind of fix this. So, if you want to go
+
+144
+00:13:45,840 --> 00:13:49,840
+and instantly see the room timeline, that's fine because we can pre-cache the room timeline, right?
+
+145
+00:13:49,840 --> 00:13:54,640
+You can use a higher timeline limit and then you can go and pre-cache that. So, you see the
+
+146
+00:13:54,640 --> 00:14:00,480
+room list you click through and immediately you see, you see all the events, at least a screen's
+
+147
+00:14:00,480 --> 00:14:04,640
+worth of events. For the other thing, which is you want to scroll the room list instantly and
+
+148
+00:14:04,640 --> 00:14:10,320
+smoothly, well, you can opt out of the sliding windows entirely and you can just request really
+
+149
+00:14:10,320 --> 00:14:14,560
+small stub information like I just want the avatar, I just want the room name and that's it. And then
+
+150
+00:14:14,560 --> 00:14:20,000
+you'll know the position, the room name, the avatar, and then you can just request all the rooms
+
+151
+00:14:20,000 --> 00:14:26,560
+entirely. So, that will scale with the number of rooms in the user's account, but it's, it's, you
+
+152
+00:14:26,560 --> 00:14:30,960
+know, it's possible. And you can use something like this to see, say, timeline limit of zero,
+
+153
+00:14:30,960 --> 00:14:36,080
+but there's a problem here, right? Because you have a timeline limit of 20 on the first one,
+
+154
+00:14:36,080 --> 00:14:41,120
+then a timeline limit of zero. So, you kind of want a bit of both. So, it turns out what clients
+
+155
+00:14:41,120 --> 00:14:48,080
+really want is delayed data delivery. So, the API wasn't originally designed for that a year ago.
+
+156
+00:14:48,080 --> 00:14:52,720
+So, we've made a lot of changes to support this kind of idea of delayed data delivery. So, one
+
+157
+00:14:52,720 --> 00:14:57,760
+of the things is timeline trickling. So, what timeline trickling is, is that you can initially
+
+158
+00:14:57,760 --> 00:15:03,280
+request a set of rooms and you can say, I want only the most recent message in this room. And
+
+159
+00:15:03,280 --> 00:15:08,320
+then at a later point, you can say, okay, now I want the last 10 messages in this room. And then
+
+160
+00:15:08,320 --> 00:15:16,000
+it will go and, and effectively backpaginate those messages for you. Likewise, the clients want all
+
+161
+00:15:16,000 --> 00:15:22,720
+the rooms in the accounts. So, but they want maybe more detail on the rooms that are in the viewport.
+
+162
+00:15:22,720 --> 00:15:28,800
+So, again, you can support this by having two lists, effectively. You've got one list, which is
+
+163
+00:15:28,800 --> 00:15:34,080
+just the visible rooms. That might have more accurate information for, like, room previews.
+
+164
+00:15:35,040 --> 00:15:38,400
+So, you know, you've got room preview, you might have, you know, typing notifications,
+
+165
+00:15:38,400 --> 00:15:42,400
+might, you might register for typing notifications in those rooms. But then you're not really
+
+166
+00:15:42,400 --> 00:15:47,280
+interested in typing notifications for rooms, you know, really far down the list. And then in the
+
+167
+00:15:47,280 --> 00:15:51,440
+background, you can just have a separate list, which just kind of in the background goes and,
+
+168
+00:15:51,440 --> 00:15:54,640
+and gets all the, the other rooms and all the, the core information that you need.
+
+169
+00:15:56,720 --> 00:16:02,880
+So, this has kind of been a huge trade-off, right? On the one hand, you've got sync v2,
+
+170
+00:16:02,880 --> 00:16:07,920
+which is getting everything and is super slow, but it's got fantastic offline support as a
+
+171
+00:16:07,920 --> 00:16:11,920
+result of that. And on the other side, you've got sliding sync. It's super fast. You only
+
+172
+00:16:11,920 --> 00:16:16,480
+literally getting the data that you need, but, you know, there's compromises to be made there,
+
+173
+00:16:16,480 --> 00:16:21,440
+because you have to do network requests all the time and things can be slower. There's only so
+
+174
+00:16:21,440 --> 00:16:26,480
+fast you can do. There's only so much you can optimize a server. So, really, I think element
+
+175
+00:16:26,480 --> 00:16:31,440
+is kind of aiming to do something like that. So, it's mostly kind of sliding sync, but
+
+176
+00:16:31,440 --> 00:16:36,480
+there are compromises and trade-offs that are being made to try to give a really good offline
+
+177
+00:16:36,480 --> 00:16:43,760
+experience as well. So, in terms of what's next, we need to add threads, because there's no
+
+178
+00:16:43,760 --> 00:16:48,240
+threading support at all in sliding sync. And threads obviously only reasonably recently
+
+179
+00:16:48,240 --> 00:16:54,240
+landed and was, was enabled everywhere. Threads is complicated because threads are,
+
+180
+00:16:54,240 --> 00:17:00,320
+changes fundamental answers to questions like, is this room unread? Because normally you could
+
+181
+00:17:00,320 --> 00:17:04,080
+just be like, well, have you, you know, what's your red marker? What's most recent event?
+
+182
+00:17:04,080 --> 00:17:09,680
+Okay, it must be unread. Whereas now you could have scenarios where, you know, the most recent
+
+183
+00:17:10,320 --> 00:17:15,040
+event in the room is, is on a thread. So, if you were just to click on a room and you see the
+
+184
+00:17:15,040 --> 00:17:19,680
+timeline, they're all messages, but in a thread, you know, three days ago, there's actually a,
+
+185
+00:17:19,680 --> 00:17:26,880
+a newer message. So, adding support for threads is going to be quite tricky to get right. And
+
+186
+00:17:26,880 --> 00:17:32,000
+we'll have to probably iterate on it quite a lot, but it is coming. The other thing we're going to
+
+187
+00:17:32,000 --> 00:17:36,560
+be adding in is this concept called delta tokens, which, unless you've read the MSC, you'll have
+
+188
+00:17:36,560 --> 00:17:43,200
+no idea what it is. Ultimately, what delta tokens are is to, sliding sync has a problem
+
+189
+00:17:43,200 --> 00:17:48,160
+at the moment, the proxy server, because it has amnesia. So, it will time out your connection
+
+190
+00:17:48,160 --> 00:17:52,240
+if you don't use it for, say, half an hour. And it will clean up all that in memory state,
+
+191
+00:17:52,240 --> 00:17:59,120
+all those caches and things get cleaned up. And the problem is, is that then when you reconnect,
+
+192
+00:17:59,120 --> 00:18:03,840
+even though your client has stored those rooms and stored a lot of the timeline and stored a
+
+193
+00:18:03,840 --> 00:18:08,800
+bunch of room state, the proxy server doesn't know this. So, it's going to resend that information
+
+194
+00:18:08,800 --> 00:18:15,360
+to you. So, the point of delta tokens is to say, hey, I remember me, I've already stored, I already
+
+195
+00:18:15,360 --> 00:18:21,920
+know about these events. And, and then those events aren't sent to the client again in duplicate.
+
+196
+00:18:21,920 --> 00:18:29,280
+A few more API optimizations that we recently swapped to using lists as keys, which basically
+
+197
+00:18:29,280 --> 00:18:35,280
+means that instead of representing the requests and response lists as an array of lists, they're
+
+198
+00:18:35,280 --> 00:18:41,280
+now just a big key value map, which makes it easier because you can then reference an individual
+
+199
+00:18:41,280 --> 00:18:46,960
+list by the list key name. So, for things like extensions, this is great because you could
+
+200
+00:18:46,960 --> 00:18:52,720
+then have a way of expressing, I want typing notifications, but only on these named lists,
+
+201
+00:18:52,720 --> 00:18:58,400
+whereas before that was very difficult to express. And we also really want to have comprehensive
+
+202
+00:18:58,400 --> 00:19:04,080
+client support. It's getting reasonably stable now, and it's certainly very performant. And
+
+203
+00:19:04,080 --> 00:19:11,280
+Element Web uses SineSync natively in the JS SDK. But obviously, that doesn't really work for mobile.
+
+204
+00:19:11,280 --> 00:19:18,000
+And it would be nice to have some sort of like SDK that could be used for Android and iOS,
+
+205
+00:19:18,000 --> 00:19:22,000
+and maybe even web at some point. I don't think there is.
+
+206
+00:19:22,000 --> 00:19:43,040
+Yes. Let's talk about the Rust SDK. So, this is, sorry, overall a very technical talk. You've
+
+207
+00:19:43,040 --> 00:19:48,880
+already noticed that. But I'm going to lighten up a little bit more. But first about me, I'm Ben.
+
+208
+00:19:48,880 --> 00:19:54,800
+Hi. My name is the only name in the presentation. I don't know why. These guys have more work and
+
+209
+00:19:54,800 --> 00:20:02,000
+show more stuff. So, quick, yeah. I've led the Rust SDK team for the last year for Element,
+
+210
+00:20:02,000 --> 00:20:07,520
+and I've been working in decentralization, decentralized tech for a couple years already.
+
+211
+00:20:07,520 --> 00:20:11,680
+Worked at Parietech before, was leading the substrate client team there, if you know,
+
+212
+00:20:11,680 --> 00:20:16,800
+blockchain, that's one of the most favorite blockchain building systems. I'm going to be
+
+213
+00:20:16,800 --> 00:20:21,680
+working as a tech link for Active Global, where we're building on top of the Rust SDK,
+
+214
+00:20:21,680 --> 00:20:28,720
+a organizing app for NGOs and civil society. So, I've been working in this for over a decade.
+
+215
+00:20:28,720 --> 00:20:36,320
+You might know me from almost not at all threatening talk I gave at Jason, like 2017,
+
+216
+00:20:36,880 --> 00:20:41,920
+that was already about, like, how do you do decentralized privacy-first technology.
+
+217
+00:20:41,920 --> 00:20:50,400
+And now about me. Let's talk about, let me tell you a little story. We're back in 2019, 2020,
+
+218
+00:20:51,360 --> 00:20:56,480
+and it's the state of the clients. For the sake of argument, I'm talking about
+
+219
+00:20:56,480 --> 00:21:00,560
+Element clients here, because I think there's exceptions to what I'm going to tell you. But
+
+220
+00:21:01,200 --> 00:21:04,800
+let me tell you two truths in the line. You can tell me if you can spot the line. So,
+
+221
+00:21:04,800 --> 00:21:09,760
+truth number one, many clients out there don't actually implement end-to-end encryption,
+
+222
+00:21:09,760 --> 00:21:14,320
+which is pretty sad, because it's a very fundamental part of what we're working on.
+
+223
+00:21:15,200 --> 00:21:20,080
+That is mostly because it's hard. Even if you use the most widely used LibOm library,
+
+224
+00:21:20,720 --> 00:21:24,320
+that is a seed library, there's already slightly dated. There's, like, a lot of knowledge that
+
+225
+00:21:24,320 --> 00:21:29,040
+has been built up that is not easy to ingrain in this existing library anymore.
+
+226
+00:21:31,280 --> 00:21:36,160
+Clients usually implement the entire HTTP, or at least most of the state machine around
+
+227
+00:21:36,160 --> 00:21:42,720
+room, room state, who's allowed to write, as well as the entire messaging mechanics themselves,
+
+228
+00:21:42,720 --> 00:21:47,280
+in their own language, in their own environment. Therefore, because we have that, clients are
+
+229
+00:21:47,280 --> 00:21:53,200
+super fast, it is totally integrated into the system that they are, and it's just a smooth
+
+230
+00:21:53,200 --> 00:21:58,960
+experience. I don't have to ask you, you know, which one of this is a lie, the cake is a lie.
+
+231
+00:21:58,960 --> 00:22:06,800
+At this time, enter our hero. Our hero is Damir. Damir is working as a crypto dev for
+
+232
+00:22:06,800 --> 00:22:14,400
+Element. He's a Rust into the S, and he knows the crypto in and out. He's intending to rewrite
+
+233
+00:22:14,400 --> 00:22:20,320
+a plugin that he's using for an ISC client, which is called WeChat, that connects to Matrix. Because
+
+234
+00:22:20,320 --> 00:22:25,760
+of simple problems that are limitations in the Python implementation that WeChat offers,
+
+235
+00:22:25,760 --> 00:22:31,760
+he wants to rewrite it in Rust. But he doesn't really find a good place to build it on. This is
+
+236
+00:22:32,400 --> 00:22:36,160
+not an actual representation, but we're going to use it for now. So he goes out and says,
+
+237
+00:22:36,160 --> 00:22:41,840
+like, okay, let's write this. How hard could it be? He quickly realizes, like, okay, so the crypto
+
+238
+00:22:41,840 --> 00:22:47,040
+side with the C, I would like to have that in Rust, and I'm going to get that Y in a second.
+
+239
+00:22:48,320 --> 00:22:52,640
+And he pulls that out later, which is now called Votazimac. You might have heard about that, which
+
+240
+00:22:52,640 --> 00:23:00,160
+is our crypto implementation that we're pushing forward as live or misdiplicated. But he figures
+
+241
+00:23:00,160 --> 00:23:04,560
+out, like, the stuff around that to make crypto work, not the encryption itself, but the entire
+
+242
+00:23:04,560 --> 00:23:10,800
+thing of, like, how do I know which messages to encrypt with what key, in what room, what if a
+
+243
+00:23:10,800 --> 00:23:14,560
+message comes in and I don't have the encryption key? All of that state management around that is
+
+244
+00:23:14,560 --> 00:23:20,800
+actually as complicated and as problematic as the actual crypto. And that is why a lot of
+
+245
+00:23:20,800 --> 00:23:25,040
+people try to use the crypto, but then fail in doing all of that, making it a really terrible
+
+246
+00:23:25,040 --> 00:23:28,880
+experience, and then, like, drop it and say, like, oh, let's not do encryption. That's too hard.
+
+247
+00:23:31,120 --> 00:23:36,240
+But he continues and pushes on because he really wants that for WeChat and starts out with what we
+
+248
+00:23:36,240 --> 00:23:45,200
+know as the Rust metrics SDK. So why did he pick Rust? I'm not talking in his name, but I'm going
+
+249
+00:23:45,200 --> 00:23:50,960
+to give you some reasons why. If you heard about Rust before, you probably heard about it because
+
+250
+00:23:50,960 --> 00:23:57,760
+it's the most popular, like, most beloved language. Six years running now on the Stack Overflow
+
+251
+00:23:59,040 --> 00:24:05,120
+system. So who here has heard about Rust? All right. Who has used Rust? Keep your hands up.
+
+252
+00:24:05,920 --> 00:24:13,520
+Okay. Okay. That's fairly, fairly good. And while that is definitely true to some degree,
+
+253
+00:24:13,520 --> 00:24:20,640
+like, there's a lot of log for that language, it's even bigger in crypto. Because encryption,
+
+254
+00:24:20,640 --> 00:24:25,520
+building encryption and building that safely is really hard. At the same time, you're not,
+
+255
+00:24:25,520 --> 00:24:29,760
+you can't really go for Python or that kind of stuff because it's, well, too inefficient.
+
+256
+00:24:29,760 --> 00:24:36,000
+So most information used to you see Rust seems like a such nice alternative. So inside crypto
+
+257
+00:24:36,000 --> 00:24:39,840
+and encryption, Rust is already a big thing. So that's probably the main reason he chose it
+
+258
+00:24:39,840 --> 00:24:46,160
+because he wanted to use it. But there's also a good amount of actual reasons why Rust makes sense
+
+259
+00:24:47,280 --> 00:24:53,840
+to build this with. This is a screenshot of the website of Rustlang.org from yesterday.
+
+260
+00:24:53,840 --> 00:24:59,200
+I'm going to break it down a little more because we have to understand one key thing.
+
+261
+00:24:59,200 --> 00:25:06,480
+Rust was invented by Mozilla to build a new browser. They had Firefox 2010, 2011. They were
+
+262
+00:25:06,480 --> 00:25:12,720
+like, there's so much C, C++ in here. It's so complicated. We barely know how we can change
+
+263
+00:25:12,720 --> 00:25:18,080
+stuff ourselves. And it's like, it's still a Netscape code base in there, right? Like, it's like
+
+264
+00:25:18,080 --> 00:25:22,560
+20 years of stuff. So they were like, let's, let's build a new browser. And it's called the,
+
+265
+00:25:22,560 --> 00:25:28,160
+the CERBO project as a recent research project. And through that, they realized like, there's
+
+266
+00:25:28,160 --> 00:25:31,840
+certain things we'd like to have from new languages. And they started building their own
+
+267
+00:25:31,840 --> 00:25:39,040
+language to build a browser. That project still exists. It's server.org today. Mozilla has
+
+268
+00:25:39,040 --> 00:25:43,680
+handed off the, the management to the Linux Foundation. It's still a research project. I
+
+269
+00:25:43,680 --> 00:25:47,600
+recommend if you want to start with Rust. That is a really good community to start with.
+
+270
+00:25:49,440 --> 00:25:58,080
+But the key point here is that it, it was a language built by practitioners for practitioners.
+
+271
+00:25:58,080 --> 00:26:03,600
+That didn't set out to say like, hey, let's make a theoretically proven language. Let's make a really
+
+272
+00:26:03,600 --> 00:26:08,800
+beautiful looking language. All of these ideals were not existing. They wanted a language that
+
+273
+00:26:08,800 --> 00:26:12,560
+they can use that they're more efficient in building a browser with, which is already quite hard. If
+
+274
+00:26:12,560 --> 00:26:17,040
+you say like, I want to build a browser, that's a lot of stuff you have to do. And so they set out
+
+275
+00:26:17,040 --> 00:26:23,840
+to build, this is the previous claim that Rust had, which is a typesave systems language. So
+
+276
+00:26:23,840 --> 00:26:29,200
+systems language like level of C, C++, with zero cost abstractions.
+
+277
+00:26:32,560 --> 00:26:37,520
+Well, by practitioner I said that. So it's a modern language. It's, it reached 1.0 in 2015.
+
+278
+00:26:38,320 --> 00:26:44,720
+It is as speedy as C and C++. Sometimes speedier. The most famous example is ripgrab. If you go
+
+279
+00:26:44,720 --> 00:26:49,600
+for that, it's like 10 times faster than the next comparable implementation to grab over,
+
+280
+00:26:49,600 --> 00:26:57,440
+over a lot of files. And it does all of that without any garbage collector or VM. Again,
+
+281
+00:26:57,440 --> 00:27:02,480
+the goal is to have zero cost abstractions. Any abstraction that Rust gives you, and a lot of
+
+282
+00:27:02,480 --> 00:27:06,880
+the abstractions that the community also gives you in their own crates, has the idea of like,
+
+283
+00:27:06,880 --> 00:27:12,320
+we can lower that down at compile time to nothing. It doesn't actually exist. Therefore,
+
+284
+00:27:12,320 --> 00:27:17,600
+like garbage collector cycles, no. VM below that, no. It should work on an embedded system.
+
+285
+00:27:17,600 --> 00:27:27,600
+That rules out a lot of places. But all of that without memory safety bugs. Just probably the
+
+286
+00:27:27,600 --> 00:27:34,560
+biggest concern for any security researcher. Like buffer overflows are nonexistent effectively in
+
+287
+00:27:34,560 --> 00:27:40,960
+Rust. Very famously, like a couple of days ago, Google announced that since they have been shipping
+
+288
+00:27:40,960 --> 00:27:48,480
+Rust in Android, I think a third of the code that they ship in Android is now Rust.
+
+289
+00:27:49,920 --> 00:27:56,320
+Their amount of memory bugs has halved, even less than that. And that is their main concern
+
+290
+00:27:57,280 --> 00:28:03,520
+so far. Most of that happens at compile time. So at compile time, the compiler is a little
+
+291
+00:28:03,520 --> 00:28:07,040
+more annoying and telling you like, you need to tell me where this memory is going to go.
+
+292
+00:28:07,040 --> 00:28:11,360
+Is that in this thread or in that thread? But it also means that after it compiles, it runs.
+
+293
+00:28:14,720 --> 00:28:18,640
+But again, because it's built from practitioners for practitioners, it's not just about the
+
+294
+00:28:18,640 --> 00:28:24,640
+language. Like, you need to be able to actually work with that. That means that this is very famous
+
+295
+00:28:24,640 --> 00:28:31,120
+for its very good tooling. It has a really nice compiler that very famously when people jump from
+
+296
+00:28:31,120 --> 00:28:34,960
+other languages, and they run through the first error, they see the compiler complaining,
+
+297
+00:28:34,960 --> 00:28:38,640
+they switch immediately back to look at the code. In Rust, you don't do that. The compiler is
+
+298
+00:28:38,640 --> 00:28:43,280
+probably going to tell you what you need to change, or at least what things you need to change
+
+299
+00:28:43,280 --> 00:28:49,120
+to make that run. That is a completely behavioral change. The compiler is your friend telling you,
+
+300
+00:28:49,120 --> 00:28:53,600
+look, you need to just tell me, is that in this thread or in that thread? This is what I assume
+
+301
+00:28:53,600 --> 00:28:57,760
+you would want to do. It can be wrong, of course, because you have higher level abstraction that
+
+302
+00:28:57,760 --> 00:29:04,960
+you need to work with. But overall, it's pretty good. The same for cargo, which is the package
+
+303
+00:29:04,960 --> 00:29:10,320
+management system and build system, but also Rust up, which is the meta version of organizing your
+
+304
+00:29:10,320 --> 00:29:23,360
+own Rust installation. And all of that it provides with being built against the LLVM backend,
+
+305
+00:29:23,360 --> 00:29:29,760
+which means it's more or less instantly portable. When you can run it and you don't have any specific
+
+306
+00:29:29,760 --> 00:29:36,960
+architecture code for your Mac, it will compile for Windows as well. You basically just have to
+
+307
+00:29:36,960 --> 00:29:42,320
+say there's another target. The way that LLVM works, it has an abstract syntax tree of its own
+
+308
+00:29:42,320 --> 00:29:47,440
+in between. We compile, basically Rust compiles to that. And then everything that LLVM supports as
+
+309
+00:29:47,440 --> 00:29:55,040
+a target, it can compile to. And that is pretty amazing. That led to Rust being the very first
+
+310
+00:29:55,040 --> 00:30:00,640
+language that had native support for WebAssembly as a target language. Because it was just
+
+311
+00:30:00,640 --> 00:30:07,040
+switching on, oh, yeah, the target for that. At the same time, sorry, my voice isn't a little
+
+312
+00:30:07,040 --> 00:30:13,600
+sick, it allows you to have a C-compatible lib interface. And that makes it really nice to
+
+313
+00:30:13,600 --> 00:30:24,720
+embed it into other stuff and use it as a library. All right, so that's Rust. What
+
+314
+00:30:24,720 --> 00:30:33,040
+currently do we have in the Rust SDK now a year later? The idea is essentially that everything
+
+315
+00:30:33,040 --> 00:30:41,360
+you need to have to build a matrix client, it should be there. Batteries included. That specifically
+
+316
+00:30:41,360 --> 00:30:47,920
+means we want, we have an async type safe API. Like requests you do, they're type safe. They come
+
+317
+00:30:47,920 --> 00:30:56,640
+back, we check that the JSON that comes back is what it needs to be. It has a full featured
+
+318
+00:30:56,640 --> 00:31:00,960
+room state. So for every room that you're in, it can tell you, can you write in that room,
+
+319
+00:31:00,960 --> 00:31:05,680
+what kind of messages can you write, what are the other users in the room, what is their avatar,
+
+320
+00:31:05,680 --> 00:31:10,960
+what other states do they have, all of that stuff, it is managing for you. You don't have to
+
+321
+00:31:10,960 --> 00:31:17,360
+bother too much about that. It has a persistent storage layer support. So you don't have to
+
+322
+00:31:17,360 --> 00:31:22,080
+worry about caching it or putting it somewhere locally. You can still do that on your own if
+
+323
+00:31:22,080 --> 00:31:26,320
+you want. It is a pluggable interface, but it already comes with a native version which is
+
+324
+00:31:26,320 --> 00:31:32,000
+kind of deprecated slab, which we intend to replace with the SQLite, which is still partially there
+
+325
+00:31:32,000 --> 00:31:37,760
+for crypto, but not from the other side yet. But it also has, for example, support for web,
+
+326
+00:31:37,760 --> 00:31:42,720
+for index DB. So you can run it in the browser. One of the examples actually is an acrobot that
+
+327
+00:31:42,720 --> 00:31:51,120
+runs in your browser in Wasm. It's pretty awesome. And for us, almost the most important part is
+
+328
+00:31:51,120 --> 00:31:56,240
+that it has transparent end-to-end encryption support. When you're in a room and that room is
+
+329
+00:31:56,240 --> 00:32:02,080
+encrypted, it's going to send the messages out to get the keys that you need to allow you to verify
+
+330
+00:32:02,080 --> 00:32:08,880
+with a different device. But from the point that you join with a new device and you just say
+
+331
+00:32:08,880 --> 00:32:13,680
+room sent and you give it the message, it's going to send an encrypted message. That's it.
+
+332
+00:32:14,560 --> 00:32:20,160
+For the most part of it, unless user interaction is required, you don't have to bother about that.
+
+333
+00:32:20,160 --> 00:32:24,000
+It's going to store that information. It's going to make sure that when you start up the next time
+
+334
+00:32:24,000 --> 00:32:29,200
+through the storage support that you have all the keys there, you don't have to bother about
+
+335
+00:32:29,200 --> 00:32:33,840
+there being an additional end-to-end encryption that you have to take care with. I already mentioned
+
+336
+00:32:33,840 --> 00:32:40,800
+that it has Wasm and web support. And because of the C layer, we're also able to offer support to
+
+337
+00:32:41,840 --> 00:32:47,120
+different bindings out there. So we have two bindings that are used in the next generation
+
+338
+00:32:47,120 --> 00:32:53,200
+of element apps. You're going to see that later for Kotlin and Swift through Uni-FFI. But there's
+
+339
+00:32:53,200 --> 00:32:59,360
+also custom bindings for Node.js and for JS on the web as well. I think there's Python bindings
+
+340
+00:32:59,360 --> 00:33:07,520
+out there, but they're not maintained by us. This all allows us to go beyond what we have so far.
+
+341
+00:33:08,800 --> 00:33:15,280
+It allows us to ingrain more of the stuff that different clients and implementations have been
+
+342
+00:33:15,280 --> 00:33:20,240
+using, but that has verily cross-pollinated. If you had a really clever way of managing your
+
+343
+00:33:20,240 --> 00:33:27,120
+timeline in Android, the iOS people wouldn't know. That all converges into this singular place now,
+
+344
+00:33:27,120 --> 00:33:32,880
+and that allows us to do a lot more things a lot quicker. One of the things that we currently do
+
+345
+00:33:33,920 --> 00:33:39,680
+is we offer a new experimental timeline API that manages the state for you. Like back in 2018,
+
+346
+00:33:39,680 --> 00:33:45,680
+2019, editing messages came around and that fundamentally changed the idea of an event
+
+347
+00:33:45,680 --> 00:33:51,360
+in matrix. It's just not a stream of events anymore, but events acting upon other events.
+
+348
+00:33:51,360 --> 00:33:56,640
+This changes a message from a previous thing. With a new timeline API, you don't have to bother.
+
+349
+00:33:56,640 --> 00:34:01,840
+We're just going to tell you, oh, position 17. This is now this. The same is true for
+
+350
+00:34:01,840 --> 00:34:08,240
+reductions. The same is true for reactions. All of these things ensune threads. I don't know how
+
+351
+00:34:08,240 --> 00:34:13,040
+we're going to do threads yet, but that all is supposed to be right there. You don't have to
+
+352
+00:34:13,040 --> 00:34:16,640
+bother about the state machine changes that this requires. It's just going to tell you, hey, you
+
+353
+00:34:16,640 --> 00:34:23,280
+need to render a different thing now. The other thing that was mentioned before as well is support
+
+354
+00:34:23,280 --> 00:34:27,440
+for sliding sync. Both of these are still experimental. You have to actively switch them on
+
+355
+00:34:27,440 --> 00:34:31,760
+because it's interfaces that we're not confident with that are going to stick exactly the way they
+
+356
+00:34:31,760 --> 00:34:39,280
+are, but there's implementations out there using that. All right, so does it work? Does it live up
+
+357
+00:34:39,280 --> 00:34:47,520
+to the promise? Well, let's see. So in order to build sliding sync, I built a small testing UI,
+
+358
+00:34:47,520 --> 00:34:53,840
+and with sliding sync right now, this is a room. This is Mr. Big, my test account with, I don't
+
+359
+00:34:53,840 --> 00:34:58,160
+know how many rooms, but usually loading it on an element web is like a minute for initials think.
+
+360
+00:34:59,440 --> 00:35:07,200
+With my timeline, with sliding sync up and this testing system, it's 200 milliseconds.
+
+361
+00:35:07,200 --> 00:35:14,720
+It's 200 milliseconds to render the room. You can see this down here. And to pull up all other
+
+362
+00:35:14,720 --> 00:35:21,680
+rooms, it's like another 30 milliseconds. So yeah, it's fast. It does what it's supposed to do.
+
+363
+00:35:23,520 --> 00:35:29,440
+But is that actually true? I'm a core developer. Of course, the thing that I'm building here
+
+364
+00:35:29,440 --> 00:35:37,760
+is hopefully going to work, but how plausible is that as a SDK? Like maybe I'm just building a lot
+
+365
+00:35:37,760 --> 00:35:43,280
+of stuff. Okay, let's take a look at the thing itself. So the implementation on top of the Rust SDK
+
+366
+00:35:43,920 --> 00:35:50,800
+for this UI is a whopping 2,000 lines. It's pretty small. And most of that is actually
+
+367
+00:35:50,800 --> 00:35:55,440
+2e realm stuff, because actually 2e's in Rust are not that great. So you have to do a lot of
+
+368
+00:35:55,440 --> 00:36:02,640
+state management. The actual implementation of managing the Rust SDK is less than 130 lines
+
+369
+00:36:02,640 --> 00:36:08,560
+of code. Everything else you saw, including that this stores it on your hard drive, totally
+
+370
+00:36:08,560 --> 00:36:14,000
+abstracted away. I don't have to bother about this from that perspective. So I would say, yeah,
+
+371
+00:36:14,640 --> 00:36:23,680
+definitely. It does SDK. But again, so I'm a core developer. Hopefully it's easy for me to build
+
+372
+00:36:23,680 --> 00:36:30,160
+this. It should be fairly okay to build something as quick. But of course, it's supposed to be
+
+373
+00:36:30,160 --> 00:36:36,640
+working for you. All right. All right. For that, we have also brushed up our game a little bit
+
+374
+00:36:36,640 --> 00:36:42,960
+on documentation. And one thing I would like you to look at to check the time. It's all right.
+
+375
+00:36:45,120 --> 00:36:49,440
+So we have reorganized the repo a little bit to make it a little cleaner. You can see like
+
+376
+00:36:49,440 --> 00:36:54,560
+there's a bunch of stuff around that. There's Xtas, which is our task manager, benchmarks,
+
+377
+00:36:55,200 --> 00:37:00,000
+testing. That should be self-explanatory. We have the bindings and the UniFFI bind gen to
+
+378
+00:37:00,000 --> 00:37:04,720
+organize bindings. We have the labs, which is also where you find the jack-in implementation,
+
+379
+00:37:04,720 --> 00:37:10,800
+if you're curious about this. But the main stuff lives in crates and contrap is other
+
+380
+00:37:10,800 --> 00:37:15,760
+things built on hub. Do we have an examples folder exactly for this kind of stuff? So let me
+
+381
+00:37:15,760 --> 00:37:22,480
+quickly, is that possible? Roughly. I put the slides into the dev room if you want to look at them.
+
+382
+00:37:24,480 --> 00:37:31,920
+Quickly run through one, the SDK bot 101 thing. It allows you to directly use that from the repo
+
+383
+00:37:31,920 --> 00:37:36,880
+with that command. What you see on the first screen is just the imports that we need. You see
+
+384
+00:37:36,880 --> 00:37:46,240
+mostly Rust SDK stuff, some minor managing around that. If you're familiar with Rust,
+
+385
+00:37:46,240 --> 00:37:50,560
+you know that binary has this main function. We use Tokyo here. It's an async function,
+
+386
+00:37:50,560 --> 00:37:56,720
+right? Told you, async API. Most of that is just parsing in a very ugly way, the command line,
+
+387
+00:37:56,720 --> 00:38:03,600
+and then handing it over to Login and Sync. This Login and Sync sets up some minor stuff. You see
+
+388
+00:38:03,600 --> 00:38:10,560
+that we have a lot of information about this in code comments for right here for you. It does even
+
+389
+00:38:10,560 --> 00:38:18,880
+set up a slept store. You can call the Login username, you can give it a name for the bot,
+
+390
+00:38:18,880 --> 00:38:29,360
+that is the device that you will see, and it logs in. Going further, I don't have the time to go
+
+391
+00:38:29,360 --> 00:38:35,280
+through the entire thing, but it explains everything here. This bot does two things. For every
+
+392
+00:38:36,480 --> 00:38:40,560
+room that you ask it to join, it will automatically join, which is this first event handler,
+
+393
+00:38:40,560 --> 00:38:45,200
+and the second event handler is reacting on messages. An event handler in the client is
+
+394
+00:38:45,200 --> 00:38:50,240
+basically just a callback that you can say, like, when these kind of events come in, please tell me,
+
+395
+00:38:50,240 --> 00:38:56,720
+and then I react to this. Those themselves can be async again pretty nice. Then it just starts
+
+396
+00:38:56,720 --> 00:39:03,200
+syncing, and that's all it does, which means it's running the sync loop. This does not, at this point,
+
+397
+00:39:03,840 --> 00:39:09,200
+use sliding sync. As I told you, it's kind of experimental. So let's look at the room message.
+
+398
+00:39:09,200 --> 00:39:15,760
+So the unroom message, whenever we receive a message, we can again mention that before it's
+
+399
+00:39:15,760 --> 00:39:20,800
+type safe, it's going to give us the actual room message in a typed format, so we can rely on the
+
+400
+00:39:20,800 --> 00:39:26,880
+compiler here to make sure that things are as they should be. We make sure that we are in this room.
+
+401
+00:39:26,880 --> 00:39:32,240
+We try to figure out if it's a text message. If it's a text message we check for, is it
+
+402
+00:39:32,240 --> 00:39:41,200
+dollar bank party? If so, we're going to respond with a message, and that's all the thing does.
+
+403
+00:39:41,200 --> 00:39:46,320
+In reality, it looks like this. So I'm showing you this is just regular main at the moment,
+
+404
+00:39:46,320 --> 00:39:51,600
+and then if I run the bot, this is slightly capped so you can't see my password.
+
+405
+00:39:53,680 --> 00:39:59,040
+I'm here connected to that bot. You see that I'm in here. I had two more prints that are not in
+
+406
+00:39:59,040 --> 00:40:03,360
+main right now to make it a little cleaner. So I'm sending a message. We see that this message is
+
+407
+00:40:03,360 --> 00:40:11,120
+ignored, but if I send bank party, you can see it's reacting. It's sending this, and most importantly,
+
+408
+00:40:11,120 --> 00:40:19,520
+this is an encrypted room. I didn't have to do anything to build a bot that allows me to
+
+409
+00:40:19,520 --> 00:40:23,760
+live and interact with encrypted room. That's an encrypted message. I didn't have to do
+
+410
+00:40:23,760 --> 00:40:28,960
+anything. You saw that there was no setup. I hadn't to manage anything. The Rust SDK did all of that
+
+411
+00:40:29,600 --> 00:40:37,280
+for me. So if you want to learn more, if you want to use this, you can find all of the code,
+
+412
+00:40:37,280 --> 00:40:43,600
+of course, at metrics.metrics.rustsdk. You can join our developer and general
+
+413
+00:40:43,600 --> 00:40:48,720
+talking about the Rust SDK room. The example you just saw is inside the examples folder getting
+
+414
+00:40:48,720 --> 00:40:54,800
+started. Jack-in, the other client you saw before is in labs. Jack-in, all of that code, obviously.
+
+415
+00:40:56,080 --> 00:40:59,920
+I really recommend going for the getting started. It has a lot of documentation.
+
+416
+00:40:59,920 --> 00:41:07,600
+I also want to send honorable mention to Benjamin, who is working on Trinity, which is a
+
+417
+00:41:07,600 --> 00:41:13,760
+build on top of the Rust SDK, a bot framework, I would say. It allows you to write some very
+
+418
+00:41:13,760 --> 00:41:19,840
+small Rust that is compiled to Wasm, that it runs in the client that can react to messages.
+
+419
+00:41:19,840 --> 00:41:24,320
+So you can write just the message part and say, like, I have a bot that reacts to messages.
+
+420
+00:41:24,320 --> 00:41:32,800
+This is one. Oh, yeah. And Element is hiring. So if you are interested in working on this full-time
+
+421
+00:41:35,120 --> 00:41:41,280
+Element IO queries, we're going to have time for questions later. We have to get through all of
+
+422
+00:41:41,280 --> 00:42:02,720
+these first. So let's see what you can actually build with this. Thank you. So hello, everyone.
+
+423
+00:42:03,280 --> 00:42:08,880
+My name is Mauro. Honestly, my colleagues are at a slide where they presented themselves.
+
+424
+00:42:08,880 --> 00:42:15,040
+I don't have such a thing. So I have to be brief. I come from Italy, Naples. I'm a software engineer,
+
+425
+00:42:15,040 --> 00:42:21,600
+work at Element. I mostly work on the IO side of things and started working on some Rust
+
+426
+00:42:21,600 --> 00:42:28,240
+implementations. And, yeah, today I'm going to talk about the new client, Element X. So this
+
+427
+00:42:28,240 --> 00:42:35,040
+client is pretty much being built with the idea of both defined goals. The first one of them
+
+428
+00:42:35,040 --> 00:42:38,960
+is pretty much user experience. The thing is that we really wanted to improve over the user
+
+429
+00:42:38,960 --> 00:42:46,880
+experience of the current Element implementation. The thing is that Element was started as a
+
+430
+00:42:46,880 --> 00:42:53,840
+pretty much a showcase for what Magics was capable of. So it was a bit like an app made by
+
+431
+00:42:53,840 --> 00:43:01,280
+engineers for engineers. So, yeah, not everyone is into this kind of stuff. So sometimes it's a bit
+
+432
+00:43:01,280 --> 00:43:06,480
+hard to use for the average user and we want to improve over this. Also, we want, of course,
+
+433
+00:43:06,480 --> 00:43:12,320
+to have a performance to be another very important goal. Actually, just as important as UX,
+
+434
+00:43:12,320 --> 00:43:16,720
+we're actually, thanks to the slide in sync implementation on Element X, we're aiming to
+
+435
+00:43:16,720 --> 00:43:21,120
+actually launch the app in less than 100 milliseconds. That's pretty much the thing that
+
+436
+00:43:21,120 --> 00:43:27,440
+we're aiming for. And, of course, also optimize the bandwidth usage. Also, we want to build an app
+
+437
+00:43:27,440 --> 00:43:34,400
+that is reliable just from the start. So, testing code coverage is pretty much right from the start
+
+438
+00:43:34,400 --> 00:43:39,200
+of the project, a Niagara priority. And also, we want to build the app in a way that is actually
+
+439
+00:43:39,200 --> 00:43:45,280
+relying on shared components pretty much. Mattis Francis decay is just one of them,
+
+440
+00:43:45,280 --> 00:43:50,480
+but, of course, we're planning to build more components that will be shared across different
+
+441
+00:43:50,480 --> 00:43:54,560
+implementation across different platforms, different projects. So, not even necessarily
+
+442
+00:43:54,560 --> 00:43:59,440
+Element X, it is that we will be able to use them and, of course, anyone in the open source
+
+443
+00:43:59,440 --> 00:44:05,920
+community will be able to use them. So, why are we writing the Android and the iOS app?
+
+444
+00:44:05,920 --> 00:44:09,040
+That's actually a good question because some of these goals could actually also be achieved
+
+445
+00:44:09,040 --> 00:44:16,320
+with a very big refactor, but let's go more in depth on why we want to do our right. So,
+
+446
+00:44:16,320 --> 00:44:25,840
+let's start with Element iOS. Element iOS, it's quite old. It started in 2015. Essentially,
+
+447
+00:44:25,840 --> 00:44:30,480
+it was, as I said, pretty much a POC to showcase what Metrics was capable of.
+
+448
+00:44:32,240 --> 00:44:40,240
+It started as being named the Metrics iOS console, in fact. Then it went through a bunch of identity
+
+449
+00:44:40,240 --> 00:44:47,440
+crisis and changed its name three times. It was first console, then Vator, then Riot,
+
+450
+00:44:47,440 --> 00:44:55,440
+now it's Element. Let's hope it's going to stick with that. So, and it was built by engineers
+
+451
+00:44:55,440 --> 00:45:01,440
+to showcase pretty much what Metrics was capable of. But the thing is that, first of all, as I
+
+452
+00:45:01,440 --> 00:45:08,640
+said, the user experience was not great. Second, it was made with some very old components written
+
+453
+00:45:08,640 --> 00:45:15,760
+on Objective-C that used some very old architectural pattern, like MVC, which should stand for
+
+454
+00:45:17,200 --> 00:45:20,400
+overview controller, but in reality stands more for massive view controller because you
+
+455
+00:45:20,400 --> 00:45:25,360
+never find in this very, very big controller. It's just a huge mess and you start looking at
+
+456
+00:45:25,360 --> 00:45:30,160
+60,000 lines of code in a controller and you're like, oh my God, why am I alive? And so, yeah,
+
+457
+00:45:32,000 --> 00:45:36,400
+you don't want to see that anymore, pretty much. We want to move to a newer architecture.
+
+458
+00:45:36,400 --> 00:45:43,200
+And also, even if we did a lot of refactors on the Element iOS implementation, you essentially,
+
+459
+00:45:44,080 --> 00:45:49,600
+yeah, we were essentially not able to change all the old implementations since they were very hard
+
+460
+00:45:49,600 --> 00:45:54,960
+to maintain and we still relied on these components a lot. So, yeah, four components
+
+461
+00:45:55,520 --> 00:46:00,960
+are still using these old implementations. Half of the code is still in Objective-C and code
+
+462
+00:46:00,960 --> 00:46:08,560
+coverage is quite low. So, we decided to experiment a bit in Q2 2022. We decided to pretty much
+
+463
+00:46:08,560 --> 00:46:14,960
+build a minimum client using the MatrixRust SDK and pretty much the state-of-the-art frameworks
+
+464
+00:46:14,960 --> 00:46:20,080
+provided by Apple, like SwiftUI, but not only that, like, not so icing away and things like that.
+
+465
+00:46:20,080 --> 00:46:28,160
+So, yeah, and we were actually able to build this new minimum client that had a room list timeline
+
+466
+00:46:28,160 --> 00:46:33,520
+and it was, let's just say, a technical success. It was super fast and amazing. So, we decided to
+
+467
+00:46:33,520 --> 00:46:41,520
+build on top of this second POC by giving a more focus on the UX because, as I said,
+
+468
+00:46:41,520 --> 00:46:47,120
+yeah, now we have a performance client, but now we need to have a simple client that anyone
+
+469
+00:46:47,120 --> 00:46:54,240
+is able to use. So, ElementX iOS was then born. On the Android side, things are slightly different
+
+470
+00:46:54,240 --> 00:46:59,760
+because, technically speaking, the Android application already had a rewrite in 2019.
+
+471
+00:47:00,480 --> 00:47:04,480
+So, we had two choices. We could essentially just take the Android SDK,
+
+472
+00:47:06,400 --> 00:47:11,760
+put it on our side and pretty much replace it with the Rust SDK, that would be okay,
+
+473
+00:47:12,880 --> 00:47:18,160
+or maybe just rewrite it from scratch and using pretty much the state-of-the-art frameworks that
+
+474
+00:47:18,160 --> 00:47:22,640
+Android provides right now, like, for example, Jetpack Compose. In the end, we decided to go for the
+
+475
+00:47:22,640 --> 00:47:27,520
+latter for two reasons. First of all, I mean, if we're building an application on iOS that uses
+
+476
+00:47:27,520 --> 00:47:33,120
+the latest frameworks, why do you want to do the same for Android? And second, UX. As I said,
+
+477
+00:47:33,120 --> 00:47:39,360
+UX was a very, very important concern. So, even if you wanted to rebuild the app from scratch or
+
+478
+00:47:39,360 --> 00:47:44,560
+rewrite it, just pretty much change some stuff for the existing app, it would still require pretty
+
+479
+00:47:44,560 --> 00:47:49,440
+much a huge UX overall, which in the end made the rewrite even more sense.
+
+480
+00:47:49,440 --> 00:47:55,200
+So, pretty much, obviously, the architecture of Element Pack structured. Well, we have pretty much
+
+481
+00:47:55,200 --> 00:47:59,840
+the backbone of the client. It's pretty much all sitting in the Magic Trust SDK. It's all there.
+
+482
+00:48:00,640 --> 00:48:06,880
+And the Magic Trust SDK, through Uni-SFI, is able to expose WIFT bindings and Kotlin bindings.
+
+483
+00:48:06,880 --> 00:48:14,080
+It's interesting because, as pretty much Ben said, it's exposing objects that are reactive,
+
+484
+00:48:14,080 --> 00:48:19,360
+that the client is the only thing that it needs to care about, doesn't need to care about the events,
+
+485
+00:48:19,360 --> 00:48:24,240
+all the events, the newer events. It just needs to know that the event has been changed and it's
+
+486
+00:48:24,240 --> 00:48:27,680
+in that place. It doesn't need to know that it's a new event that came afterwards and so on. So,
+
+487
+00:48:27,680 --> 00:48:35,040
+the idea is that these objects at the bindings expose are actually ready to be displayed,
+
+488
+00:48:35,040 --> 00:48:40,320
+essentially. So, you just need to render them on the UI. And that makes the development way
+
+489
+00:48:40,320 --> 00:48:47,680
+wazier. And, of course, Sliding Sync is pretty much a high requirement on Element Tax, in
+
+490
+00:48:47,680 --> 00:48:52,160
+sense that it's being built with the idea that Sliding Sync will be pretty much the next standard
+
+491
+00:48:52,160 --> 00:48:57,520
+for the clients. And so, it will only work with servers that implement, for now, the Sliding Sync
+
+492
+00:48:57,520 --> 00:49:03,200
+proxy, essentially. So, this is an example of how the code is pretty much translated from Rust
+
+493
+00:49:03,200 --> 00:49:10,000
+into Zwift and Kotlin through Unify. As you can see, there is the timeline item. As I say,
+
+494
+00:49:10,000 --> 00:49:13,920
+it is pretty much an object that is pretty much like a view model. It's already ready to be
+
+495
+00:49:13,920 --> 00:49:19,600
+displayed. It just pretty much need to take the presentation data from this object and render
+
+496
+00:49:19,600 --> 00:49:25,760
+them on the UI. And that's it, which will make implementing clients for the future with the
+
+497
+00:49:25,760 --> 00:49:37,680
+Matrix Rust SDK way, way easier. So, the bindings are pretty much a separate repo. Anyone can
+
+498
+00:49:37,680 --> 00:49:43,920
+download them as a file, a year file for Android, or as a framework for Zwift implementations,
+
+499
+00:49:43,920 --> 00:49:48,320
+or you can just pretty much use a package manager like Maven Central on Android, or
+
+500
+00:49:48,320 --> 00:49:53,520
+Zwift package manager on, yeah, on Zwift implementations, essentially. I think it's
+
+501
+00:49:53,520 --> 00:49:57,200
+Zwift implementations because actually it's interesting, but the Matrix Rust SDK is scalable
+
+502
+00:49:57,200 --> 00:50:01,600
+of running on any Apple system target. So, I really can't wait for someone crazy enough to
+
+503
+00:50:01,600 --> 00:50:07,680
+build a client for Apple Watch or Apple TV. I'm pretty sure that the 10 people in the world
+
+504
+00:50:07,680 --> 00:50:14,880
+at the moment at Apple TV will be very pleased that there is a Matrix client on their Apple TV.
+
+505
+00:50:14,880 --> 00:50:22,480
+So, yeah. But, of course, ElementX is going to share more than just the Rust SDK. We're
+
+506
+00:50:22,480 --> 00:50:29,440
+pretty much trying to build other components that we hope to share just across ElementX,
+
+507
+00:50:29,440 --> 00:50:34,160
+but across multiple projects. For example, we want to be an open ID connect component,
+
+508
+00:50:34,160 --> 00:50:38,560
+an element call component. And, of course, since the two apps are pretty much the same up on
+
+509
+00:50:38,560 --> 00:50:42,160
+different platforms, they're going to share translation, they're going to share design
+
+510
+00:50:42,160 --> 00:50:49,200
+tokens. So, I mean, why don't we just pretty much make a component to share these elements already.
+
+511
+00:50:50,160 --> 00:50:56,240
+And we're actually also building an interesting component which is called Rich Text Editor,
+
+512
+00:50:57,600 --> 00:51:06,880
+which is essentially an SDK of written Rust that then exposes these bindings in Zwift and Kotlin
+
+513
+00:51:06,880 --> 00:51:16,480
+through IDFI and also in WebAssembly. And it's essentially a UI framework that you can import
+
+514
+00:51:16,480 --> 00:51:23,840
+into your client to render Rich Text in what you see is what you get fashion, essentially.
+
+515
+00:51:24,720 --> 00:51:29,680
+It's something that is going to come also into ElementX. So, keep an eye for it. But,
+
+516
+00:51:30,560 --> 00:51:35,600
+hey, what's this slide? Oh, actually, it's already there. Oh, but this is not ElementX.
+
+517
+00:51:35,600 --> 00:51:40,240
+Actually, this element, the Rich Text Editor, is already an element right now.
+
+518
+00:51:41,440 --> 00:51:46,800
+But in iOS, Android, and Web, you can enable it in labs. You can just go to labs,
+
+519
+00:51:47,520 --> 00:51:51,040
+enable it, and test it. And, you know, if you're able to break it, just, you know,
+
+520
+00:51:51,040 --> 00:51:55,920
+send us some feedback and we'll try to fix it as soon as possible. It's a project that I've
+
+521
+00:51:55,920 --> 00:52:01,680
+worked on. I'm very proud of it. I think we achieved something really great because it's a very
+
+522
+00:52:01,680 --> 00:52:06,720
+simple way to pretty much... It's a way in which you can create Rich Text without the need of using
+
+523
+00:52:06,720 --> 00:52:12,320
+markdowns and see how they look like, which will make life easier for when you create something
+
+524
+00:52:12,320 --> 00:52:16,960
+like this. Because I challenge everyone to make something like this with markdowns. I mean,
+
+525
+00:52:16,960 --> 00:52:24,480
+you would go crazy with that. So, yeah. The cool thing is that this Rich Text Editor SDK that we
+
+526
+00:52:24,480 --> 00:52:28,880
+built, I mean, it's not just for metrics, so, metrics client. I mean, technically speaking,
+
+527
+00:52:28,880 --> 00:52:34,240
+anyone could use this. Maybe you want to make a note app. You want to make, I don't know,
+
+528
+00:52:35,040 --> 00:52:39,520
+like an app that is your diary, whatever you want. You can pretty much implement this. And,
+
+529
+00:52:40,240 --> 00:52:44,640
+if you want to test it, you can scan the QR code. You will get pretty much to the
+
+530
+00:52:44,640 --> 00:52:50,320
+latest main implementation on Web. It's a test debug version there. The one on labs is more
+
+531
+00:52:50,320 --> 00:52:56,400
+stable. This one is more to play around with it. It's cool because this one, it allows you to pretty
+
+532
+00:52:56,400 --> 00:53:05,120
+much see how the Rich Text is transformed into a DOM representation, which is in Rust, and then
+
+533
+00:53:05,120 --> 00:53:10,000
+transformed back into an HTML, which is the one that we are sending over at MetricsLiance, of
+
+534
+00:53:10,000 --> 00:53:15,680
+course. So, of course, testing for liability, another important keyword. It's something that
+
+535
+00:53:15,680 --> 00:53:23,040
+we want to pretty much improve. And so, pretty much, we built a very, yeah, very stack test
+
+536
+00:53:23,040 --> 00:53:28,240
+infrastructure that we hope is going to cover all these areas. It's already covering most of
+
+537
+00:53:28,240 --> 00:53:34,800
+these areas. And, yeah, pretty much make the app more reliable, and the project way, way safer.
+
+538
+00:53:36,160 --> 00:53:41,040
+So, yeah, Element Tax actually has come with a lot of benefits. First of all, on the tax side,
+
+539
+00:53:41,040 --> 00:53:48,160
+it's way, way faster, both because the MetricsLiance SDK, I mean, it's amazing. It makes things easier
+
+540
+00:53:48,160 --> 00:53:53,440
+both from a development standpoint, because you just write it once and deploy it everywhere. But
+
+541
+00:53:53,440 --> 00:53:58,480
+at the same time, the fact that you just have your models already ready to be displayed, it's amazing.
+
+542
+00:54:00,240 --> 00:54:08,240
+And also, slide-in sync. And, of course, the use of declarative UIs like SwiftUI and Jetpack Compose
+
+543
+00:54:08,240 --> 00:54:16,320
+makes development time actually faster. And actually, also easier to test, I would say.
+
+544
+00:54:16,320 --> 00:54:22,160
+But also, the UI performance, also, has been improved, actually. Also, sharing components is
+
+545
+00:54:22,160 --> 00:54:28,240
+something that will benefit not only just Element Tax, but pretty much any client that wants to
+
+546
+00:54:28,240 --> 00:54:32,880
+implement a MetricsLiance. But actually, we hope that some of the sharing components that we're
+
+547
+00:54:32,880 --> 00:54:36,800
+building will not just benefit the Metrics community, but the overall open source community.
+
+548
+00:54:38,080 --> 00:54:43,040
+So, yeah, but, yeah, the major benefit, actually, we should not focus just on the main benefit that
+
+549
+00:54:43,040 --> 00:54:47,440
+we're offering on the tax side. We actually want to focus on the benefit we're really offering to
+
+550
+00:54:47,440 --> 00:54:52,240
+the users, because, in the end, the main focus of Element Tax, yeah, its performance, its tax,
+
+551
+00:54:52,240 --> 00:54:57,040
+its sharing components, but, of course, it's making the app more usable, more accessible,
+
+552
+00:54:57,040 --> 00:55:03,040
+easier to use. We want to make an app that is not just... We want to make an app that essentially
+
+553
+00:55:03,040 --> 00:55:09,280
+also can be used by your friends and family to chat with you, even casually during the day.
+
+554
+00:55:09,280 --> 00:55:13,520
+So, not just for people that essentially want to keep their conversation safe and secure for the
+
+555
+00:55:13,520 --> 00:55:21,920
+Metrics protocol. Rootmap. Pretty much this is the present of the future of Element Tax.
+
+556
+00:55:21,920 --> 00:55:30,240
+For now, you can log in, check the room list, timeline, send messages, edit, reply, react.
+
+557
+00:55:30,240 --> 00:55:34,640
+But there are some restrictions. First of all, of course, as I say, Sliding Sync is required,
+
+558
+00:55:34,640 --> 00:55:40,400
+so if your server doesn't have a Sliding Sync proxy, yeah, you can pretty much use the client
+
+559
+00:55:40,400 --> 00:55:48,640
+on that server. Also, it only supports authentication, and authentication, it's only through the
+
+560
+00:55:48,640 --> 00:55:54,240
+Metrics protocol. We want to support also OIDC and registration, but when we will build the OIDC
+
+561
+00:55:54,240 --> 00:55:58,640
+component, we will support that. The device verification is there, but only for emojis,
+
+562
+00:55:58,640 --> 00:56:05,280
+the new QR verification yet, and also no message history description. Yeah, this is pretty much
+
+563
+00:56:05,280 --> 00:56:12,240
+where you can find the Element X iOS version repo. There will be a public test flight coming soon,
+
+564
+00:56:12,240 --> 00:56:20,000
+and actually, Matthew will demo this in this afternoon. Okay, that's the plan. And regarding
+
+565
+00:56:20,000 --> 00:56:25,120
+Element X Android, it's a bit behind schedule because, as I said, it was developed after
+
+566
+00:56:25,120 --> 00:56:30,880
+Element X iOS, so it's more in a state of being set up. But of course, you can try to run it,
+
+567
+00:56:30,880 --> 00:56:35,120
+check the state of the repo. If you want to play around with it, this is pretty much where you
+
+568
+00:56:35,120 --> 00:56:42,480
+can find the actual repo of Element X Android. This is pretty much the roadmap on what we plan
+
+569
+00:56:42,480 --> 00:56:49,280
+to do. Actually, more than a plan, it's more like what we, let's say, it's not a deadline,
+
+570
+00:56:49,280 --> 00:56:55,680
+it's more like what we imagine we're able to achieve in these dates. And I was also told to be
+
+571
+00:56:55,680 --> 00:57:00,320
+as vague as possible, so for the release date of the public launch, I will just say that
+
+572
+00:57:00,320 --> 00:57:07,280
+it will come sometime in the future. Oh, all right. Okay. And that should deal with it.
+
+573
+00:57:08,640 --> 00:57:14,400
+So, yeah, that's all. And we can do, I think, a rapid QA session, right?
+
+574
+00:57:14,400 --> 00:57:20,720
+Yes, yes, we have 10 minutes. Oh, okay, nice. Rectal schedule. Nice. Oh, there's a lot of people.
+
+575
+00:57:20,720 --> 00:57:28,960
+Okay. Yeah, it's this around. Yeah. Please go ahead. If I remember correctly, the sliding sync
+
+576
+00:57:30,240 --> 00:57:36,080
+optionally element web said that you can't disable it in the warning, why is that?
+
+577
+00:57:36,080 --> 00:57:41,920
+So the question is, let me repeat it for the camera, why can't you disable the sliding sync
+
+578
+00:57:41,920 --> 00:57:48,560
+labs feature in the current version? Mostly because of N2N encrypted messages, you would
+
+579
+00:57:48,560 --> 00:57:55,280
+risk being unable to decrypt your N2N encrypted messages in that session. So the reason why is
+
+580
+00:57:55,280 --> 00:58:02,800
+because when you log into the proxy, it's going to be syncing on your account, right? And it's
+
+581
+00:58:02,800 --> 00:58:07,120
+going to sync forever. Well, until the access token gets invalidated, but it's going to be
+
+582
+00:58:07,120 --> 00:58:13,600
+syncing on your behalf. If you toggled sliding sync on then off, if you turned it off, then your
+
+583
+00:58:13,600 --> 00:58:19,360
+element web would be using the V2 sync as well as the proxy because the proxy didn't know you
+
+584
+00:58:19,360 --> 00:58:24,160
+toggled it off. So that means you've got two sync loops for your account. And that's going to cause
+
+585
+00:58:24,160 --> 00:58:31,680
+problems when it causes a race condition because two device messages, when they're acknowledged,
+
+586
+00:58:31,680 --> 00:58:36,320
+and they get acknowledged by increasing the since token, they get deleted on the server.
+
+587
+00:58:36,320 --> 00:58:41,840
+So if your element web was super, super fast and managed to race ahead slightly of the proxy,
+
+588
+00:58:41,840 --> 00:58:48,720
+then it would go and get all the two device events and the proxy would not or vice versa. And
+
+589
+00:58:48,720 --> 00:58:55,040
+this vice versa is the problem that is, that's trying to warn against. So if it's, if the proxy
+
+590
+00:58:55,040 --> 00:58:59,760
+was ahead, then you would not get a certain two device events and therefore you may potentially
+
+591
+00:58:59,760 --> 00:59:07,200
+lose room keys and therefore may potentially be unable to decrypt messages. Hopefully that's clear.
+
+592
+00:59:07,200 --> 00:59:12,320
+Do you have any data on whether sliding sync significantly impacts server load?
+
+593
+00:59:13,120 --> 00:59:16,960
+So the question is what about server load on sliding sync? Do we have any data?
+
+594
+00:59:18,400 --> 00:59:23,040
+I need clarification because do you mean at a proxy level or do you mean in like a general
+
+595
+00:59:23,040 --> 00:59:28,960
+general sense for native implementations of the server? Does using sliding sync improve
+
+596
+00:59:28,960 --> 00:59:34,800
+server performance? A native implementation, yes it would. So the, that's one of the reasons why
+
+597
+00:59:34,800 --> 00:59:38,880
+the existing sync implementation is slow is just because the servers have to do an awful
+
+598
+00:59:38,880 --> 00:59:43,920
+lot of work. And obviously I've been developing on dendrite, I know exactly what things are slow
+
+599
+00:59:43,920 --> 00:59:52,640
+there. So a lot of the API that's exposed to, to the clients are basically efficient ways that
+
+600
+00:59:52,640 --> 00:59:56,960
+you can do it. So you only get like the current state of rooms. You don't tend to need to go back
+
+601
+00:59:56,960 --> 01:00:00,800
+in time. You don't need to remember all your synth tokens since the beginning of time. These are
+
+602
+01:00:00,800 --> 01:00:05,680
+things that slow down the processing. So yes, a native implementation, but a proxy implementation
+
+603
+01:00:05,680 --> 01:00:11,200
+obviously is a sync loop that's going to be made. So that will increase load, right? Because that's
+
+604
+01:00:11,200 --> 01:00:20,000
+going to be constantly syncing on your account. Is there any plan to handle multiple accounts
+
+605
+01:00:20,000 --> 01:00:24,480
+in a client so you can have like an account on magic.org and have the one on your local server?
+
+606
+01:00:28,320 --> 01:00:33,680
+Okay, so that's an element X question, I guess. Wait, let me repeat it first. So the question is
+
+607
+01:00:33,680 --> 01:00:41,360
+about multi-user account support in the app. It's something that we're discussing, but for now
+
+608
+01:00:41,360 --> 01:00:51,840
+there is no definite plan. From the metrics SDK side, I can tell you that you can do it.
+
+609
+01:00:51,840 --> 01:01:15,200
+That's not an issue. So I don't, I think you were next. Saw you.
+
+610
+01:01:15,200 --> 01:01:18,320
+Yeah, so the question is basically how long is it going to take for sliding sync to land
+
+611
+01:01:18,320 --> 01:01:23,840
+and will we get native implementations in Synapse? You will get a native implementation in Synapse.
+
+612
+01:01:23,840 --> 01:01:29,840
+I don't know when. And yes, we're going to try to merge and land it as soon as it's practically
+
+613
+01:01:29,840 --> 01:01:34,560
+possible, which, you know, there's still things we need to fix, right? Like things like threading
+
+614
+01:01:34,560 --> 01:01:37,920
+and stuff just doesn't work. And that's actually one of the biggest blockers at the moment from us
+
+615
+01:01:38,800 --> 01:01:44,000
+trying out just defaulting element web to sliding sync on by default is that for compatible
+
+616
+01:01:44,000 --> 01:01:48,320
+servers, obviously, is the fact that we don't have threading support, so you wouldn't have feature
+
+617
+01:01:48,320 --> 01:01:53,920
+parity. So when we do have feature parity, then, you know, there could be element web clients
+
+618
+01:01:53,920 --> 01:01:58,800
+which enable it by default. It won't be in labs or be enabled in labs by default. So, you know,
+
+619
+01:01:58,800 --> 01:02:05,440
+we're getting there, but it's, I can't give you a time, unfortunately. Thank you. You were next.
+
+620
+01:02:05,440 --> 01:02:25,520
+So the question is the authentication parts in the REST SDK. So, yes, we have a login via
+
+621
+01:02:26,720 --> 01:02:35,280
+username and password. We have implemented OIDC in general, but I don't think it's fully tested.
+
+622
+01:02:35,280 --> 01:02:42,240
+And we have an SSO feature as well. So we ask the server, the specification says that, right?
+
+623
+01:02:42,240 --> 01:02:47,760
+The server tells us what is possible, and then we allow you to use those. So generally, yeah,
+
+624
+01:02:47,760 --> 01:02:51,440
+if your server is SSO, you can use the REST SDK with it. Jan here.
+
+625
+01:02:51,440 --> 01:02:53,280
+Question from the internet.
+
+626
+01:02:53,280 --> 01:02:55,680
+Ooh, a question from the internet. I heard about that.
+
+627
+01:02:55,680 --> 01:03:00,800
+Are there any plans or what is the status of the matrix RTC in the REST SDK?
+
+628
+01:03:00,800 --> 01:03:10,720
+So that the question is about RTC in the REST SDK. If you followed the RTC talk before,
+
+629
+01:03:10,720 --> 01:03:15,440
+you noticed that most of the RTC part of the RTC is actually offloaded to web RTC
+
+630
+01:03:15,440 --> 01:03:20,880
+in the current implementation. So going through a web view for us as Rust, that means we don't
+
+631
+01:03:20,880 --> 01:03:26,000
+have to bother about most of that. There's only some signaling that happens on the actual matrix
+
+632
+01:03:26,000 --> 01:03:32,080
+protocol. So we don't have at the moment the plan to implement an actual RTC
+
+633
+01:03:32,720 --> 01:03:39,760
+our side. I wouldn't see where you would want to do that for other than that view.
+
+634
+01:03:41,280 --> 01:03:45,440
+So currently it's not on the boat map, at least for our side.
+
+635
+01:03:45,440 --> 01:04:05,440
+Yeah. So that's a common one as Rust is very, so the question is about IoT devices.
+
+636
+01:04:05,440 --> 01:04:13,200
+Could you do that with Rust? I see you can. Yes. That is generally possible. We have,
+
+637
+01:04:13,200 --> 01:04:16,800
+because of the storage systems and some other things in there, and because
+
+638
+01:04:17,520 --> 01:04:20,400
+matrix itself is still quite heavy as an overall protocol.
+
+639
+01:04:21,760 --> 01:04:25,440
+We have tried to get it into an actual embedded device. That is not at the moment possible.
+
+640
+01:04:25,440 --> 01:04:31,040
+We would have to improve a lot on the way that we use Rust. Rust itself provides that, but we
+
+641
+01:04:31,040 --> 01:04:38,320
+can't do that. But you can use it, for example, on an Android, not an Androidino, but a Raspberry Pi.
+
+642
+01:04:38,320 --> 01:04:42,160
+We know of people that run Raspberry Pis that have signals coming in and then they use the
+
+643
+01:04:42,160 --> 01:04:47,360
+Rust SDK to send it over into rooms. That is definitely possible, because it's more or less
+
+644
+01:04:47,360 --> 01:04:52,640
+just a bot, right? From our perspective, it's just a bot. So that is possible, but you still need
+
+645
+01:04:53,920 --> 01:04:58,320
+significant amount of memory at the moment, and that would make it not possible for actual
+
+646
+01:04:58,320 --> 01:05:04,000
+embedded devices yet. If anybody wants to do that, come to me. I can show you and mentor you
+
+647
+01:05:04,000 --> 01:05:09,200
+and help you, because it would be very exciting if we had possible to do that. Yan, another question
+
+648
+01:05:09,200 --> 01:05:14,320
+from the internet? There's also a question about the element X. What you see is what you get,
+
+649
+01:05:14,320 --> 01:05:21,200
+Editor, is it still possible to use just markdown if you want to just use knockdown?
+
+650
+01:05:21,920 --> 01:05:26,880
+So the question is about the element X. With your big editor, can you still use markdown
+
+651
+01:05:26,880 --> 01:05:31,520
+if you want to use markdown? Yeah, actually, even on the current element implementation
+
+652
+01:05:31,520 --> 01:05:36,640
+that is on the on the client, you can actually also still use markdown. So there's an option
+
+653
+01:05:36,640 --> 01:05:42,480
+that allows you to turn off the rich text and turn back the simple text. And when the simple text
+
+654
+01:05:42,480 --> 01:05:49,920
+is on, pretty much you can use markdowns. But when it renders in what you see, what you get fashion?
+
+655
+01:05:51,360 --> 01:05:54,240
+So the question is about does the markdown then render in the WYSIWYG?
+
+656
+01:05:56,240 --> 01:06:00,960
+No, when you're using the simple text version, it's rendering pretty much like a simple text
+
+657
+01:06:00,960 --> 01:06:08,400
+with the markdowns. Or naming it in the rich text with also the markdowns. Currently not,
+
+658
+01:06:08,400 --> 01:06:12,720
+we're pretty much trying to build the rich text editor as it is with just the rich text
+
+659
+01:06:12,720 --> 01:06:18,240
+using the formatting toolbar to be the most performant and good and in simple tools as possible.
+
+660
+01:06:18,240 --> 01:06:23,840
+But it is something that for sure, when we have a very stable product, we will work into, we'll
+
+661
+01:06:23,840 --> 01:06:29,600
+look into. Another question for me? Will this finally unite the markdown syntaxes that you
+
+662
+01:06:29,600 --> 01:06:35,760
+can use in different element clients? Will that finally reduce the amount of different
+
+663
+01:06:35,760 --> 01:06:37,680
+markdown syntaxes that you can use in element clients?
+
+664
+01:06:40,160 --> 01:06:41,920
+And I'm sure about the question actually.
+
+665
+01:06:41,920 --> 01:06:48,320
+Okay, will the WYSIWYG editor in simple text mode use one unified markdown implementation
+
+666
+01:06:48,320 --> 01:06:53,680
+so you don't have to remember different variants of markdown and different clients?
+
+667
+01:06:53,680 --> 01:07:00,000
+But you're talking if we are going in the future to support the markdowns inside the WYSIWYG
+
+668
+01:07:00,000 --> 01:07:03,280
+directly without turning off the rich text? This is what you mean?
+
+669
+01:07:14,080 --> 01:07:19,440
+I think there's a confusion here. You switch on the WYSIWYG editor, then you get the WYSIWYG.
+
+670
+01:07:19,440 --> 01:07:23,920
+If you turn it off, you have a simple text mode that is some, you can do some markdown,
+
+671
+01:07:23,920 --> 01:07:28,160
+but it's not going to be rendered inside of this. So it's just going to fall back to the existing,
+
+672
+01:07:29,200 --> 01:07:32,960
+right? It's going to fall back to the existing implementation. So therefore, yeah, to answer
+
+673
+01:07:32,960 --> 01:07:37,680
+your question, it's falling back to the existing implementation. So no, they will still be incompatible.
+
+674
+01:07:37,680 --> 01:07:43,040
+So that we might switch to use the markdown for round tripping, because at some point,
+
+675
+01:07:43,040 --> 01:07:47,040
+I think this was the previous question, that people are going to want to round trip between
+
+676
+01:07:47,040 --> 01:07:52,960
+the markdown implementation and the WYSIWYG one. And to do that consistently, you're going to want
+
+677
+01:07:52,960 --> 01:07:57,200
+to use the same library. You put that in the Rust layer. And finally, we get out to the nightmare
+
+678
+01:07:57,200 --> 01:08:01,840
+of Common Mark versus GitHub, Flavid, Markdown, versus whatever random library is the different
+
+679
+01:08:01,840 --> 01:08:04,880
+element platforms have. I think Android is still out of sync with the others.
+
+680
+01:08:06,480 --> 01:08:11,600
+One last question. Where can we meet you today, or maybe later, if we have more questions?
+
+681
+01:08:11,600 --> 01:08:15,200
+I think we're going to hang around here, right? Yeah, for sure. We'll be able to stand soon.
+
+682
+01:08:15,200 --> 01:08:20,640
+We have a stand in K1. I'm just going to be around here lurking, so just talk to me.
+
+683
+01:08:20,640 --> 01:08:46,080
+Yeah, same for me. I'm going to be here. I'm the guy with that hat. All right. Thank you very much.
+

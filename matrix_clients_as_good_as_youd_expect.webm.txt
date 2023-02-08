@@ -1,0 +1,683 @@
+All right. Well, hello everyone. You'll notice I'm not Ben. This is Ben. There's three of
+us here to talk to you about different things, all about improving clients and making them
+as fast as you would normally expect them to be. So, first of all, my name is Keegan.
+I'm going to be talking about sign and sync. And then you've got Ben, going to talk about
+Russ Eskay, and Mara about Element X. So, first of all, sign and sync, and a bit about myself.
+I'm a staff software engineer at Element, and I've worked on many different projects over
+the years, and more recently working on things like Dendrite and Peer to Peer, and sign and sync.
+But first of all, what even is sign and sync? So, for context, sign and sync,
+the current sync mechanism in Matrix is really, really slow. So, if you have, you know,
+you go and open up your mobile app after a weekend away or something like that,
+it takes a little while to sync. It could take 30 seconds or a minute,
+depending on how many rooms are on your account. And this is kind of bad, right?
+We'd like it to sync instantly. And the whole point of sign and sync is trying to make that happen,
+trying to make it sync instantly, or virtually instantly. There was a talk last year on the
+online POSDEM. If you want to know more information about the deep dive of how sign and sync works,
+and there's a QR code there, but I'm not going to be covering too much detail about how sign and
+sync works, other than enough to kind of fill in the gaps if you have no idea what this is.
+So, at a high level, sign and sync works by sorting and filtering. So, you can see here,
+you've got all the rooms on the user's account, and then you can filter that set of rooms down
+in some way. So, for example, you could filter it based on, like, I want encrypted rooms,
+or I want DM rooms, things like that. And then you can apply some sort of sorting operation to
+them. So, you might say, sort them by the room name, or you could say, sort by recency. So,
+like, the last timestamp in the room, or by the number of notification counts, number of unread
+messages and stuff that mention your name, and that sort of thing. And then you can request the
+first five rooms, 10 rooms, 20 rooms, and things like that. Also, the rooms themselves, you can
+filter the room state using sign and sync. So, in normal sync, you will go and get all of the
+room state. And if there's a lot of room state, that's not great. So, in sign and sync, you can
+specify, I'm only interested in, like, the topic of the room, and whether it's encrypted or not,
+and that's it. This is a pretty big change to how matrix works today. So, how is this actually
+going to, like, how are we actually going to do this in practice? So, in practice, there is a go
+process, which is the sign and sync proxy, which I've been working on for over a year now, which
+has a Postgres database attached, and it will go and do sync v2 requests on your behalf to an
+upstream server. It could be synapse, it could be dendrite, whatever, it doesn't really matter,
+it could be conduit. And the important thing here is that this proxy exposes a sign and sync API.
+So, it exposes a new endpoint for a new sync endpoint, and then a client can go and try the
+sign and sync API and see how it feels for them. So, they don't need to have a particular
+implementation on synapse, they'll wait for these implementations to land. You can try it on your
+own server if you run a proxy. In terms of a protocol level, what this looks like is you can
+see here you've got some lists, it's a list object, and then you can specify things like things we
+talked about before. So, you can say you've got the ranges there, you've got, so that's how many,
+like, the top-end rims that you want, the sort ordering that you want, as well as any filters
+you apply here. And here you can see we're filtering by isDMTrue, and that's going to be used to
+populate the people tab, say, on Element Web. You also have these things called rim subscriptions.
+They are kind of like the rim lists, but this is when you know the specific rim ID. So, if you
+follow a permalink, which may include the rim ID, or if you, you know, if you refresh the page and
+you know that, you know, this person was currently viewing this rim, that room may not be in this
+list, right? So, you would need to subscribe to that room directly because you know the rim ID.
+And typically, as well, the kinds of information you want here is different. So, in here, we are
+requesting all the state in the rim and a much higher timeline element because this is being
+used to populate the actual full room view. The response is very similar, as well. So,
+you have a list object here, and then you get a list of rim IDs that are used to populate
+the correct ordering here. And then you also have a top-level rims array, a rims object,
+and then that's just a key value map where the keys are the rim IDs, and then the values are
+all the data that you requested. So, these all get aggregated together, which I will speak about
+a bit later. In terms of what's new, so if you followed Siding Sync, then you might be like,
+okay, I know all this, but well, what's actually happened over the past year? We have clients
+now that run Siding Sync. So, this is from Element Web. It's got a nice scary warning there. So,
+you know, it's great. It all works on web, but also it actually works on mobile devices as well,
+thanks to the Rust SDK, which I'll leave for Ben to talk about. So, there's also a whole bunch
+of new extension MSCs. So, extension MSCs are an idea of trying to break up the complexity
+of Siding Sync, because the Sync API is by far one of the most or not the most complicated part
+of the client server API, and trying to put everything into one MSC is going to be doomed
+to failure. So, we're trying to specify a core part of the MSC, a core part of what is syncing,
+which is the syncing rooms, and working out the sorts and the filter arguments. And then,
+we're leaving two extensions, all the extra stuff on top. And the idea is that you can opt in to
+any of these things. So, if your client doesn't do receipts, then great, don't subscribe to receipts,
+don't even enable this extension. Briefly, how these extensions work. So, these two extensions
+go together because they're ultimately used to make encryption work in encrypted rooms. So,
+you can see, or actually, you can't see it all. Here is an encrypted event. So, there's basically,
+you have to trust me, there's a ciphertext here with lots of gibberish effectively. And then,
+you need a room key to go decrypted into your normal text. The way that works is that you need to
+get keys via your two device messages. That's why they go together. The other thing here is that
+it implements another MSC called Dropping Sales Center Device Messages. You can barely see it
+on here, but this is an output from Postgres, which is trying to work out how many unreads
+or unacknowledged two device events are there for a given user device. And you might think that
+might be, say, a hundred, maybe a thousand tops. It turns out this can be a lot. This is several
+hundred thousand unread or unacknowledged two device events. And it turns out when I analyzed
+a lot of this, this was almost entirely down to room keys being requested and then either
+canceled or successfully sent. So, this MSC 3944 basically says, hey, if you request a room key
+and then you subsequently cancel that request, you're going to go and delete those two device
+messages. So, they don't just keep stacking up in this way. And that obviously really helps reduce
+the amount of bandwidth for sign sync as well. The other thing we've got is account data. So,
+if you wonder what account data does, if you've ever used the breadcrumbs thing at the top here
+on Element Web, that's synchronized using account data. Also, account data is really,
+really useful for working out accurate notification counts. So, at the bottom here, you can just
+about see that you've got some messages here. You've got a message in a timeline. This is encrypted.
+And it says here, notification count one. Notification counts are the gray numbers.
+And you've got a highlight count of zero, which is the red number. And yet on the UI,
+you can see that it's a red number and it's gone to one. So, some things happened here where the
+client has worked out that, oh, I should use this as a highlight count, not a notification count.
+It's overwritten what the service told it. And what's happened here is that the client has
+decrypted the message and then it's checked the message to say, hey, you know, is there any
+app mention or any specific keywords based on your push rules? And if that is true,
+then it knows, ah, okay, I need to actually make this a red highlight rather than just a normal gray
+unread count. And that's done using push rules. And push rules is stored in the count data. Final
+two ones are receipts and typing. Thank you. So, hopefully, you know what receipts and typing
+notifications are. The main changes for Sliding Sync is that the receipts are lazily loaded.
+So, you might think, what does that mean exactly? Well, if you request a timeline limit of 10,
+then you will get those 10 events. And then you will get the receipts for those 10 events,
+and you won't get receipts for any other events. And you might think,
+hasn't it always done this? Well, not really. So, here's some JQ for matrix HQ, which is this
+RIM ID. And it's just pulling out the receipt EDU and then kind of checking, like, roughly how
+many receipts there are. And you know, matrix HQ is quite a big room. So, you might think, you know,
+100,000. No, there's quite a lot of rooms, quite a lot of receipts in there. And this is not great
+from a bandwidth perspective, right? We don't want to be sending 53,000 read receipts, particularly
+for events which you are unlikely to ever view, right? Because these could be for events that
+occurred like a year ago. So, Sliding Sync also fixes that. So, with all these performance
+optimizations, a very large account with 4,000 rooms can take less than a second to actually
+sync, which is down from 15 minutes on Sync V2. So, very happy with that. But it's still not really
+good enough. We're trying to go big or go home kind of thing. So, we want to make it even faster.
+So, it is literally instant. You don't want to have to be waiting a couple of seconds. It should
+just kind of open up. Just like most other messaging clients, you can just open them up and they just
+work. The problem is that things are going to get a lot worse here, which I will talk about in a
+moment. So, we've added in a bunch of tracing to the proxy server. So, things like, this is
+runtime trace. So, you can see exactly the control flow. There's some spans there. And you can see
+various optimizations that were done. So, this is identifying so bits of code. Lots and lots and
+lots of commits. Sometimes it's just you forgot to add an index. Sometimes you should be doing
+things in bulk instead of doing things sequentially. So, lots of work has gone into this. And also,
+if you were going for 100 milliseconds, aiming for 100 milliseconds, the actual amount of
+data you send is important because this starts to become quite a large factor in the total time
+it takes. We can do simple things like deduplication and enabling gzip for large responses, which we
+now do. And as well as that, we can aggressively cache things in memory wherever possible. So,
+we don't have to query the database when clients send a request. So, there's three levels of caching
+involved at the proxy level, whereas a global cache which contains kind of information which
+doesn't change for any user. So, it's a constant. So, things like the number of joined users in a
+room, it's the same if you're Alice or if you're Bob. It's always going to be the same. Whereas
+things like the user cache or things like, what's the unread count for this room? Well,
+that's going to change depending on which user. And then the connections are things like which
+room subscriptions have you got or which lists, like what are your top end rooms or whatever
+your sliding window is. Interesting thing to note here is that the room name is actually not
+global data. The data that's used to calculate the room name is global data and is the same for
+everyone, but the room name itself isn't because of DMs. So, if you have a DM with Alice and Bob,
+then from Alice's point of view, the room name is Bob, but from Bob's point of view, the room name
+is Alice. So, lots and lots of optimizations have been done. So, with all of this, we're going to
+we're now getting less than 100 milliseconds, which is what we wanted, but it's still not good
+enough because things are going to get a lot worse because clients really, it's all up to the
+clients because clients want offline support and they want instant access. They don't want to have
+to be having to do a network request to, when they click on a room, they want to just see the
+list. They don't want to see a spinner. And in the best case, you have a spinner for half a second
+maybe, and then it loads, which is, you know, it's not great, but maybe acceptable. But then if you're
+on a mobile app and you go into a tunnel, then it's just going to spin it forever and then
+you're sad. So, you know, users expect these things to, to kind of work instantly. And you can
+kind of, you know, Sighting Sync has ways that you can kind of fix this. So, if you want to go
+and instantly see the room timeline, that's fine because we can pre-cache the room timeline, right?
+You can use a higher timeline limit and then you can go and pre-cache that. So, you see the
+room list you click through and immediately you see, you see all the events, at least a screen's
+worth of events. For the other thing, which is you want to scroll the room list instantly and
+smoothly, well, you can opt out of the sliding windows entirely and you can just request really
+small stub information like I just want the avatar, I just want the room name and that's it. And then
+you'll know the position, the room name, the avatar, and then you can just request all the rooms
+entirely. So, that will scale with the number of rooms in the user's account, but it's, it's, you
+know, it's possible. And you can use something like this to see, say, timeline limit of zero,
+but there's a problem here, right? Because you have a timeline limit of 20 on the first one,
+then a timeline limit of zero. So, you kind of want a bit of both. So, it turns out what clients
+really want is delayed data delivery. So, the API wasn't originally designed for that a year ago.
+So, we've made a lot of changes to support this kind of idea of delayed data delivery. So, one
+of the things is timeline trickling. So, what timeline trickling is, is that you can initially
+request a set of rooms and you can say, I want only the most recent message in this room. And
+then at a later point, you can say, okay, now I want the last 10 messages in this room. And then
+it will go and, and effectively backpaginate those messages for you. Likewise, the clients want all
+the rooms in the accounts. So, but they want maybe more detail on the rooms that are in the viewport.
+So, again, you can support this by having two lists, effectively. You've got one list, which is
+just the visible rooms. That might have more accurate information for, like, room previews.
+So, you know, you've got room preview, you might have, you know, typing notifications,
+might, you might register for typing notifications in those rooms. But then you're not really
+interested in typing notifications for rooms, you know, really far down the list. And then in the
+background, you can just have a separate list, which just kind of in the background goes and,
+and gets all the, the other rooms and all the, the core information that you need.
+So, this has kind of been a huge trade-off, right? On the one hand, you've got sync v2,
+which is getting everything and is super slow, but it's got fantastic offline support as a
+result of that. And on the other side, you've got sliding sync. It's super fast. You only
+literally getting the data that you need, but, you know, there's compromises to be made there,
+because you have to do network requests all the time and things can be slower. There's only so
+fast you can do. There's only so much you can optimize a server. So, really, I think element
+is kind of aiming to do something like that. So, it's mostly kind of sliding sync, but
+there are compromises and trade-offs that are being made to try to give a really good offline
+experience as well. So, in terms of what's next, we need to add threads, because there's no
+threading support at all in sliding sync. And threads obviously only reasonably recently
+landed and was, was enabled everywhere. Threads is complicated because threads are,
+changes fundamental answers to questions like, is this room unread? Because normally you could
+just be like, well, have you, you know, what's your red marker? What's most recent event?
+Okay, it must be unread. Whereas now you could have scenarios where, you know, the most recent
+event in the room is, is on a thread. So, if you were just to click on a room and you see the
+timeline, they're all messages, but in a thread, you know, three days ago, there's actually a,
+a newer message. So, adding support for threads is going to be quite tricky to get right. And
+we'll have to probably iterate on it quite a lot, but it is coming. The other thing we're going to
+be adding in is this concept called delta tokens, which, unless you've read the MSC, you'll have
+no idea what it is. Ultimately, what delta tokens are is to, sliding sync has a problem
+at the moment, the proxy server, because it has amnesia. So, it will time out your connection
+if you don't use it for, say, half an hour. And it will clean up all that in memory state,
+all those caches and things get cleaned up. And the problem is, is that then when you reconnect,
+even though your client has stored those rooms and stored a lot of the timeline and stored a
+bunch of room state, the proxy server doesn't know this. So, it's going to resend that information
+to you. So, the point of delta tokens is to say, hey, I remember me, I've already stored, I already
+know about these events. And, and then those events aren't sent to the client again in duplicate.
+A few more API optimizations that we recently swapped to using lists as keys, which basically
+means that instead of representing the requests and response lists as an array of lists, they're
+now just a big key value map, which makes it easier because you can then reference an individual
+list by the list key name. So, for things like extensions, this is great because you could
+then have a way of expressing, I want typing notifications, but only on these named lists,
+whereas before that was very difficult to express. And we also really want to have comprehensive
+client support. It's getting reasonably stable now, and it's certainly very performant. And
+Element Web uses SineSync natively in the JS SDK. But obviously, that doesn't really work for mobile.
+And it would be nice to have some sort of like SDK that could be used for Android and iOS,
+and maybe even web at some point. I don't think there is.
+Yes. Let's talk about the Rust SDK. So, this is, sorry, overall a very technical talk. You've
+already noticed that. But I'm going to lighten up a little bit more. But first about me, I'm Ben.
+Hi. My name is the only name in the presentation. I don't know why. These guys have more work and
+show more stuff. So, quick, yeah. I've led the Rust SDK team for the last year for Element,
+and I've been working in decentralization, decentralized tech for a couple years already.
+Worked at Parietech before, was leading the substrate client team there, if you know,
+blockchain, that's one of the most favorite blockchain building systems. I'm going to be
+working as a tech link for Active Global, where we're building on top of the Rust SDK,
+a organizing app for NGOs and civil society. So, I've been working in this for over a decade.
+You might know me from almost not at all threatening talk I gave at Jason, like 2017,
+that was already about, like, how do you do decentralized privacy-first technology.
+And now about me. Let's talk about, let me tell you a little story. We're back in 2019, 2020,
+and it's the state of the clients. For the sake of argument, I'm talking about
+Element clients here, because I think there's exceptions to what I'm going to tell you. But
+let me tell you two truths in the line. You can tell me if you can spot the line. So,
+truth number one, many clients out there don't actually implement end-to-end encryption,
+which is pretty sad, because it's a very fundamental part of what we're working on.
+That is mostly because it's hard. Even if you use the most widely used LibOm library,
+that is a seed library, there's already slightly dated. There's, like, a lot of knowledge that
+has been built up that is not easy to ingrain in this existing library anymore.
+Clients usually implement the entire HTTP, or at least most of the state machine around
+room, room state, who's allowed to write, as well as the entire messaging mechanics themselves,
+in their own language, in their own environment. Therefore, because we have that, clients are
+super fast, it is totally integrated into the system that they are, and it's just a smooth
+experience. I don't have to ask you, you know, which one of this is a lie, the cake is a lie.
+At this time, enter our hero. Our hero is Damir. Damir is working as a crypto dev for
+Element. He's a Rust into the S, and he knows the crypto in and out. He's intending to rewrite
+a plugin that he's using for an ISC client, which is called WeChat, that connects to Matrix. Because
+of simple problems that are limitations in the Python implementation that WeChat offers,
+he wants to rewrite it in Rust. But he doesn't really find a good place to build it on. This is
+not an actual representation, but we're going to use it for now. So he goes out and says,
+like, okay, let's write this. How hard could it be? He quickly realizes, like, okay, so the crypto
+side with the C, I would like to have that in Rust, and I'm going to get that Y in a second.
+And he pulls that out later, which is now called Votazimac. You might have heard about that, which
+is our crypto implementation that we're pushing forward as live or misdiplicated. But he figures
+out, like, the stuff around that to make crypto work, not the encryption itself, but the entire
+thing of, like, how do I know which messages to encrypt with what key, in what room, what if a
+message comes in and I don't have the encryption key? All of that state management around that is
+actually as complicated and as problematic as the actual crypto. And that is why a lot of
+people try to use the crypto, but then fail in doing all of that, making it a really terrible
+experience, and then, like, drop it and say, like, oh, let's not do encryption. That's too hard.
+But he continues and pushes on because he really wants that for WeChat and starts out with what we
+know as the Rust metrics SDK. So why did he pick Rust? I'm not talking in his name, but I'm going
+to give you some reasons why. If you heard about Rust before, you probably heard about it because
+it's the most popular, like, most beloved language. Six years running now on the Stack Overflow
+system. So who here has heard about Rust? All right. Who has used Rust? Keep your hands up.
+Okay. Okay. That's fairly, fairly good. And while that is definitely true to some degree,
+like, there's a lot of log for that language, it's even bigger in crypto. Because encryption,
+building encryption and building that safely is really hard. At the same time, you're not,
+you can't really go for Python or that kind of stuff because it's, well, too inefficient.
+So most information used to you see Rust seems like a such nice alternative. So inside crypto
+and encryption, Rust is already a big thing. So that's probably the main reason he chose it
+because he wanted to use it. But there's also a good amount of actual reasons why Rust makes sense
+to build this with. This is a screenshot of the website of Rustlang.org from yesterday.
+I'm going to break it down a little more because we have to understand one key thing.
+Rust was invented by Mozilla to build a new browser. They had Firefox 2010, 2011. They were
+like, there's so much C, C++ in here. It's so complicated. We barely know how we can change
+stuff ourselves. And it's like, it's still a Netscape code base in there, right? Like, it's like
+20 years of stuff. So they were like, let's, let's build a new browser. And it's called the,
+the CERBO project as a recent research project. And through that, they realized like, there's
+certain things we'd like to have from new languages. And they started building their own
+language to build a browser. That project still exists. It's server.org today. Mozilla has
+handed off the, the management to the Linux Foundation. It's still a research project. I
+recommend if you want to start with Rust. That is a really good community to start with.
+But the key point here is that it, it was a language built by practitioners for practitioners.
+That didn't set out to say like, hey, let's make a theoretically proven language. Let's make a really
+beautiful looking language. All of these ideals were not existing. They wanted a language that
+they can use that they're more efficient in building a browser with, which is already quite hard. If
+you say like, I want to build a browser, that's a lot of stuff you have to do. And so they set out
+to build, this is the previous claim that Rust had, which is a typesave systems language. So
+systems language like level of C, C++, with zero cost abstractions.
+Well, by practitioner I said that. So it's a modern language. It's, it reached 1.0 in 2015.
+It is as speedy as C and C++. Sometimes speedier. The most famous example is ripgrab. If you go
+for that, it's like 10 times faster than the next comparable implementation to grab over,
+over a lot of files. And it does all of that without any garbage collector or VM. Again,
+the goal is to have zero cost abstractions. Any abstraction that Rust gives you, and a lot of
+the abstractions that the community also gives you in their own crates, has the idea of like,
+we can lower that down at compile time to nothing. It doesn't actually exist. Therefore,
+like garbage collector cycles, no. VM below that, no. It should work on an embedded system.
+That rules out a lot of places. But all of that without memory safety bugs. Just probably the
+biggest concern for any security researcher. Like buffer overflows are nonexistent effectively in
+Rust. Very famously, like a couple of days ago, Google announced that since they have been shipping
+Rust in Android, I think a third of the code that they ship in Android is now Rust.
+Their amount of memory bugs has halved, even less than that. And that is their main concern
+so far. Most of that happens at compile time. So at compile time, the compiler is a little
+more annoying and telling you like, you need to tell me where this memory is going to go.
+Is that in this thread or in that thread? But it also means that after it compiles, it runs.
+But again, because it's built from practitioners for practitioners, it's not just about the
+language. Like, you need to be able to actually work with that. That means that this is very famous
+for its very good tooling. It has a really nice compiler that very famously when people jump from
+other languages, and they run through the first error, they see the compiler complaining,
+they switch immediately back to look at the code. In Rust, you don't do that. The compiler is
+probably going to tell you what you need to change, or at least what things you need to change
+to make that run. That is a completely behavioral change. The compiler is your friend telling you,
+look, you need to just tell me, is that in this thread or in that thread? This is what I assume
+you would want to do. It can be wrong, of course, because you have higher level abstraction that
+you need to work with. But overall, it's pretty good. The same for cargo, which is the package
+management system and build system, but also Rust up, which is the meta version of organizing your
+own Rust installation. And all of that it provides with being built against the LLVM backend,
+which means it's more or less instantly portable. When you can run it and you don't have any specific
+architecture code for your Mac, it will compile for Windows as well. You basically just have to
+say there's another target. The way that LLVM works, it has an abstract syntax tree of its own
+in between. We compile, basically Rust compiles to that. And then everything that LLVM supports as
+a target, it can compile to. And that is pretty amazing. That led to Rust being the very first
+language that had native support for WebAssembly as a target language. Because it was just
+switching on, oh, yeah, the target for that. At the same time, sorry, my voice isn't a little
+sick, it allows you to have a C-compatible lib interface. And that makes it really nice to
+embed it into other stuff and use it as a library. All right, so that's Rust. What
+currently do we have in the Rust SDK now a year later? The idea is essentially that everything
+you need to have to build a matrix client, it should be there. Batteries included. That specifically
+means we want, we have an async type safe API. Like requests you do, they're type safe. They come
+back, we check that the JSON that comes back is what it needs to be. It has a full featured
+room state. So for every room that you're in, it can tell you, can you write in that room,
+what kind of messages can you write, what are the other users in the room, what is their avatar,
+what other states do they have, all of that stuff, it is managing for you. You don't have to
+bother too much about that. It has a persistent storage layer support. So you don't have to
+worry about caching it or putting it somewhere locally. You can still do that on your own if
+you want. It is a pluggable interface, but it already comes with a native version which is
+kind of deprecated slab, which we intend to replace with the SQLite, which is still partially there
+for crypto, but not from the other side yet. But it also has, for example, support for web,
+for index DB. So you can run it in the browser. One of the examples actually is an acrobot that
+runs in your browser in Wasm. It's pretty awesome. And for us, almost the most important part is
+that it has transparent end-to-end encryption support. When you're in a room and that room is
+encrypted, it's going to send the messages out to get the keys that you need to allow you to verify
+with a different device. But from the point that you join with a new device and you just say
+room sent and you give it the message, it's going to send an encrypted message. That's it.
+For the most part of it, unless user interaction is required, you don't have to bother about that.
+It's going to store that information. It's going to make sure that when you start up the next time
+through the storage support that you have all the keys there, you don't have to bother about
+there being an additional end-to-end encryption that you have to take care with. I already mentioned
+that it has Wasm and web support. And because of the C layer, we're also able to offer support to
+different bindings out there. So we have two bindings that are used in the next generation
+of element apps. You're going to see that later for Kotlin and Swift through Uni-FFI. But there's
+also custom bindings for Node.js and for JS on the web as well. I think there's Python bindings
+out there, but they're not maintained by us. This all allows us to go beyond what we have so far.
+It allows us to ingrain more of the stuff that different clients and implementations have been
+using, but that has verily cross-pollinated. If you had a really clever way of managing your
+timeline in Android, the iOS people wouldn't know. That all converges into this singular place now,
+and that allows us to do a lot more things a lot quicker. One of the things that we currently do
+is we offer a new experimental timeline API that manages the state for you. Like back in 2018,
+2019, editing messages came around and that fundamentally changed the idea of an event
+in matrix. It's just not a stream of events anymore, but events acting upon other events.
+This changes a message from a previous thing. With a new timeline API, you don't have to bother.
+We're just going to tell you, oh, position 17. This is now this. The same is true for
+reductions. The same is true for reactions. All of these things ensune threads. I don't know how
+we're going to do threads yet, but that all is supposed to be right there. You don't have to
+bother about the state machine changes that this requires. It's just going to tell you, hey, you
+need to render a different thing now. The other thing that was mentioned before as well is support
+for sliding sync. Both of these are still experimental. You have to actively switch them on
+because it's interfaces that we're not confident with that are going to stick exactly the way they
+are, but there's implementations out there using that. All right, so does it work? Does it live up
+to the promise? Well, let's see. So in order to build sliding sync, I built a small testing UI,
+and with sliding sync right now, this is a room. This is Mr. Big, my test account with, I don't
+know how many rooms, but usually loading it on an element web is like a minute for initials think.
+With my timeline, with sliding sync up and this testing system, it's 200 milliseconds.
+It's 200 milliseconds to render the room. You can see this down here. And to pull up all other
+rooms, it's like another 30 milliseconds. So yeah, it's fast. It does what it's supposed to do.
+But is that actually true? I'm a core developer. Of course, the thing that I'm building here
+is hopefully going to work, but how plausible is that as a SDK? Like maybe I'm just building a lot
+of stuff. Okay, let's take a look at the thing itself. So the implementation on top of the Rust SDK
+for this UI is a whopping 2,000 lines. It's pretty small. And most of that is actually
+2e realm stuff, because actually 2e's in Rust are not that great. So you have to do a lot of
+state management. The actual implementation of managing the Rust SDK is less than 130 lines
+of code. Everything else you saw, including that this stores it on your hard drive, totally
+abstracted away. I don't have to bother about this from that perspective. So I would say, yeah,
+definitely. It does SDK. But again, so I'm a core developer. Hopefully it's easy for me to build
+this. It should be fairly okay to build something as quick. But of course, it's supposed to be
+working for you. All right. All right. For that, we have also brushed up our game a little bit
+on documentation. And one thing I would like you to look at to check the time. It's all right.
+So we have reorganized the repo a little bit to make it a little cleaner. You can see like
+there's a bunch of stuff around that. There's Xtas, which is our task manager, benchmarks,
+testing. That should be self-explanatory. We have the bindings and the UniFFI bind gen to
+organize bindings. We have the labs, which is also where you find the jack-in implementation,
+if you're curious about this. But the main stuff lives in crates and contrap is other
+things built on hub. Do we have an examples folder exactly for this kind of stuff? So let me
+quickly, is that possible? Roughly. I put the slides into the dev room if you want to look at them.
+Quickly run through one, the SDK bot 101 thing. It allows you to directly use that from the repo
+with that command. What you see on the first screen is just the imports that we need. You see
+mostly Rust SDK stuff, some minor managing around that. If you're familiar with Rust,
+you know that binary has this main function. We use Tokyo here. It's an async function,
+right? Told you, async API. Most of that is just parsing in a very ugly way, the command line,
+and then handing it over to Login and Sync. This Login and Sync sets up some minor stuff. You see
+that we have a lot of information about this in code comments for right here for you. It does even
+set up a slept store. You can call the Login username, you can give it a name for the bot,
+that is the device that you will see, and it logs in. Going further, I don't have the time to go
+through the entire thing, but it explains everything here. This bot does two things. For every
+room that you ask it to join, it will automatically join, which is this first event handler,
+and the second event handler is reacting on messages. An event handler in the client is
+basically just a callback that you can say, like, when these kind of events come in, please tell me,
+and then I react to this. Those themselves can be async again pretty nice. Then it just starts
+syncing, and that's all it does, which means it's running the sync loop. This does not, at this point,
+use sliding sync. As I told you, it's kind of experimental. So let's look at the room message.
+So the unroom message, whenever we receive a message, we can again mention that before it's
+type safe, it's going to give us the actual room message in a typed format, so we can rely on the
+compiler here to make sure that things are as they should be. We make sure that we are in this room.
+We try to figure out if it's a text message. If it's a text message we check for, is it
+dollar bank party? If so, we're going to respond with a message, and that's all the thing does.
+In reality, it looks like this. So I'm showing you this is just regular main at the moment,
+and then if I run the bot, this is slightly capped so you can't see my password.
+I'm here connected to that bot. You see that I'm in here. I had two more prints that are not in
+main right now to make it a little cleaner. So I'm sending a message. We see that this message is
+ignored, but if I send bank party, you can see it's reacting. It's sending this, and most importantly,
+this is an encrypted room. I didn't have to do anything to build a bot that allows me to
+live and interact with encrypted room. That's an encrypted message. I didn't have to do
+anything. You saw that there was no setup. I hadn't to manage anything. The Rust SDK did all of that
+for me. So if you want to learn more, if you want to use this, you can find all of the code,
+of course, at metrics.metrics.rustsdk. You can join our developer and general
+talking about the Rust SDK room. The example you just saw is inside the examples folder getting
+started. Jack-in, the other client you saw before is in labs. Jack-in, all of that code, obviously.
+I really recommend going for the getting started. It has a lot of documentation.
+I also want to send honorable mention to Benjamin, who is working on Trinity, which is a
+build on top of the Rust SDK, a bot framework, I would say. It allows you to write some very
+small Rust that is compiled to Wasm, that it runs in the client that can react to messages.
+So you can write just the message part and say, like, I have a bot that reacts to messages.
+This is one. Oh, yeah. And Element is hiring. So if you are interested in working on this full-time
+Element IO queries, we're going to have time for questions later. We have to get through all of
+these first. So let's see what you can actually build with this. Thank you. So hello, everyone.
+My name is Mauro. Honestly, my colleagues are at a slide where they presented themselves.
+I don't have such a thing. So I have to be brief. I come from Italy, Naples. I'm a software engineer,
+work at Element. I mostly work on the IO side of things and started working on some Rust
+implementations. And, yeah, today I'm going to talk about the new client, Element X. So this
+client is pretty much being built with the idea of both defined goals. The first one of them
+is pretty much user experience. The thing is that we really wanted to improve over the user
+experience of the current Element implementation. The thing is that Element was started as a
+pretty much a showcase for what Magics was capable of. So it was a bit like an app made by
+engineers for engineers. So, yeah, not everyone is into this kind of stuff. So sometimes it's a bit
+hard to use for the average user and we want to improve over this. Also, we want, of course,
+to have a performance to be another very important goal. Actually, just as important as UX,
+we're actually, thanks to the slide in sync implementation on Element X, we're aiming to
+actually launch the app in less than 100 milliseconds. That's pretty much the thing that
+we're aiming for. And, of course, also optimize the bandwidth usage. Also, we want to build an app
+that is reliable just from the start. So, testing code coverage is pretty much right from the start
+of the project, a Niagara priority. And also, we want to build the app in a way that is actually
+relying on shared components pretty much. Mattis Francis decay is just one of them,
+but, of course, we're planning to build more components that will be shared across different
+implementation across different platforms, different projects. So, not even necessarily
+Element X, it is that we will be able to use them and, of course, anyone in the open source
+community will be able to use them. So, why are we writing the Android and the iOS app?
+That's actually a good question because some of these goals could actually also be achieved
+with a very big refactor, but let's go more in depth on why we want to do our right. So,
+let's start with Element iOS. Element iOS, it's quite old. It started in 2015. Essentially,
+it was, as I said, pretty much a POC to showcase what Metrics was capable of.
+It started as being named the Metrics iOS console, in fact. Then it went through a bunch of identity
+crisis and changed its name three times. It was first console, then Vator, then Riot,
+now it's Element. Let's hope it's going to stick with that. So, and it was built by engineers
+to showcase pretty much what Metrics was capable of. But the thing is that, first of all, as I
+said, the user experience was not great. Second, it was made with some very old components written
+on Objective-C that used some very old architectural pattern, like MVC, which should stand for
+overview controller, but in reality stands more for massive view controller because you
+never find in this very, very big controller. It's just a huge mess and you start looking at
+60,000 lines of code in a controller and you're like, oh my God, why am I alive? And so, yeah,
+you don't want to see that anymore, pretty much. We want to move to a newer architecture.
+And also, even if we did a lot of refactors on the Element iOS implementation, you essentially,
+yeah, we were essentially not able to change all the old implementations since they were very hard
+to maintain and we still relied on these components a lot. So, yeah, four components
+are still using these old implementations. Half of the code is still in Objective-C and code
+coverage is quite low. So, we decided to experiment a bit in Q2 2022. We decided to pretty much
+build a minimum client using the MatrixRust SDK and pretty much the state-of-the-art frameworks
+provided by Apple, like SwiftUI, but not only that, like, not so icing away and things like that.
+So, yeah, and we were actually able to build this new minimum client that had a room list timeline
+and it was, let's just say, a technical success. It was super fast and amazing. So, we decided to
+build on top of this second POC by giving a more focus on the UX because, as I said,
+yeah, now we have a performance client, but now we need to have a simple client that anyone
+is able to use. So, ElementX iOS was then born. On the Android side, things are slightly different
+because, technically speaking, the Android application already had a rewrite in 2019.
+So, we had two choices. We could essentially just take the Android SDK,
+put it on our side and pretty much replace it with the Rust SDK, that would be okay,
+or maybe just rewrite it from scratch and using pretty much the state-of-the-art frameworks that
+Android provides right now, like, for example, Jetpack Compose. In the end, we decided to go for the
+latter for two reasons. First of all, I mean, if we're building an application on iOS that uses
+the latest frameworks, why do you want to do the same for Android? And second, UX. As I said,
+UX was a very, very important concern. So, even if you wanted to rebuild the app from scratch or
+rewrite it, just pretty much change some stuff for the existing app, it would still require pretty
+much a huge UX overall, which in the end made the rewrite even more sense.
+So, pretty much, obviously, the architecture of Element Pack structured. Well, we have pretty much
+the backbone of the client. It's pretty much all sitting in the Magic Trust SDK. It's all there.
+And the Magic Trust SDK, through Uni-SFI, is able to expose WIFT bindings and Kotlin bindings.
+It's interesting because, as pretty much Ben said, it's exposing objects that are reactive,
+that the client is the only thing that it needs to care about, doesn't need to care about the events,
+all the events, the newer events. It just needs to know that the event has been changed and it's
+in that place. It doesn't need to know that it's a new event that came afterwards and so on. So,
+the idea is that these objects at the bindings expose are actually ready to be displayed,
+essentially. So, you just need to render them on the UI. And that makes the development way
+wazier. And, of course, Sliding Sync is pretty much a high requirement on Element Tax, in
+sense that it's being built with the idea that Sliding Sync will be pretty much the next standard
+for the clients. And so, it will only work with servers that implement, for now, the Sliding Sync
+proxy, essentially. So, this is an example of how the code is pretty much translated from Rust
+into Zwift and Kotlin through Unify. As you can see, there is the timeline item. As I say,
+it is pretty much an object that is pretty much like a view model. It's already ready to be
+displayed. It just pretty much need to take the presentation data from this object and render
+them on the UI. And that's it, which will make implementing clients for the future with the
+Matrix Rust SDK way, way easier. So, the bindings are pretty much a separate repo. Anyone can
+download them as a file, a year file for Android, or as a framework for Zwift implementations,
+or you can just pretty much use a package manager like Maven Central on Android, or
+Zwift package manager on, yeah, on Zwift implementations, essentially. I think it's
+Zwift implementations because actually it's interesting, but the Matrix Rust SDK is scalable
+of running on any Apple system target. So, I really can't wait for someone crazy enough to
+build a client for Apple Watch or Apple TV. I'm pretty sure that the 10 people in the world
+at the moment at Apple TV will be very pleased that there is a Matrix client on their Apple TV.
+So, yeah. But, of course, ElementX is going to share more than just the Rust SDK. We're
+pretty much trying to build other components that we hope to share just across ElementX,
+but across multiple projects. For example, we want to be an open ID connect component,
+an element call component. And, of course, since the two apps are pretty much the same up on
+different platforms, they're going to share translation, they're going to share design
+tokens. So, I mean, why don't we just pretty much make a component to share these elements already.
+And we're actually also building an interesting component which is called Rich Text Editor,
+which is essentially an SDK of written Rust that then exposes these bindings in Zwift and Kotlin
+through IDFI and also in WebAssembly. And it's essentially a UI framework that you can import
+into your client to render Rich Text in what you see is what you get fashion, essentially.
+It's something that is going to come also into ElementX. So, keep an eye for it. But,
+hey, what's this slide? Oh, actually, it's already there. Oh, but this is not ElementX.
+Actually, this element, the Rich Text Editor, is already an element right now.
+But in iOS, Android, and Web, you can enable it in labs. You can just go to labs,
+enable it, and test it. And, you know, if you're able to break it, just, you know,
+send us some feedback and we'll try to fix it as soon as possible. It's a project that I've
+worked on. I'm very proud of it. I think we achieved something really great because it's a very
+simple way to pretty much... It's a way in which you can create Rich Text without the need of using
+markdowns and see how they look like, which will make life easier for when you create something
+like this. Because I challenge everyone to make something like this with markdowns. I mean,
+you would go crazy with that. So, yeah. The cool thing is that this Rich Text Editor SDK that we
+built, I mean, it's not just for metrics, so, metrics client. I mean, technically speaking,
+anyone could use this. Maybe you want to make a note app. You want to make, I don't know,
+like an app that is your diary, whatever you want. You can pretty much implement this. And,
+if you want to test it, you can scan the QR code. You will get pretty much to the
+latest main implementation on Web. It's a test debug version there. The one on labs is more
+stable. This one is more to play around with it. It's cool because this one, it allows you to pretty
+much see how the Rich Text is transformed into a DOM representation, which is in Rust, and then
+transformed back into an HTML, which is the one that we are sending over at MetricsLiance, of
+course. So, of course, testing for liability, another important keyword. It's something that
+we want to pretty much improve. And so, pretty much, we built a very, yeah, very stack test
+infrastructure that we hope is going to cover all these areas. It's already covering most of
+these areas. And, yeah, pretty much make the app more reliable, and the project way, way safer.
+So, yeah, Element Tax actually has come with a lot of benefits. First of all, on the tax side,
+it's way, way faster, both because the MetricsLiance SDK, I mean, it's amazing. It makes things easier
+both from a development standpoint, because you just write it once and deploy it everywhere. But
+at the same time, the fact that you just have your models already ready to be displayed, it's amazing.
+And also, slide-in sync. And, of course, the use of declarative UIs like SwiftUI and Jetpack Compose
+makes development time actually faster. And actually, also easier to test, I would say.
+But also, the UI performance, also, has been improved, actually. Also, sharing components is
+something that will benefit not only just Element Tax, but pretty much any client that wants to
+implement a MetricsLiance. But actually, we hope that some of the sharing components that we're
+building will not just benefit the Metrics community, but the overall open source community.
+So, yeah, but, yeah, the major benefit, actually, we should not focus just on the main benefit that
+we're offering on the tax side. We actually want to focus on the benefit we're really offering to
+the users, because, in the end, the main focus of Element Tax, yeah, its performance, its tax,
+its sharing components, but, of course, it's making the app more usable, more accessible,
+easier to use. We want to make an app that is not just... We want to make an app that essentially
+also can be used by your friends and family to chat with you, even casually during the day.
+So, not just for people that essentially want to keep their conversation safe and secure for the
+Metrics protocol. Rootmap. Pretty much this is the present of the future of Element Tax.
+For now, you can log in, check the room list, timeline, send messages, edit, reply, react.
+But there are some restrictions. First of all, of course, as I say, Sliding Sync is required,
+so if your server doesn't have a Sliding Sync proxy, yeah, you can pretty much use the client
+on that server. Also, it only supports authentication, and authentication, it's only through the
+Metrics protocol. We want to support also OIDC and registration, but when we will build the OIDC
+component, we will support that. The device verification is there, but only for emojis,
+the new QR verification yet, and also no message history description. Yeah, this is pretty much
+where you can find the Element X iOS version repo. There will be a public test flight coming soon,
+and actually, Matthew will demo this in this afternoon. Okay, that's the plan. And regarding
+Element X Android, it's a bit behind schedule because, as I said, it was developed after
+Element X iOS, so it's more in a state of being set up. But of course, you can try to run it,
+check the state of the repo. If you want to play around with it, this is pretty much where you
+can find the actual repo of Element X Android. This is pretty much the roadmap on what we plan
+to do. Actually, more than a plan, it's more like what we, let's say, it's not a deadline,
+it's more like what we imagine we're able to achieve in these dates. And I was also told to be
+as vague as possible, so for the release date of the public launch, I will just say that
+it will come sometime in the future. Oh, all right. Okay. And that should deal with it.
+So, yeah, that's all. And we can do, I think, a rapid QA session, right?
+Yes, yes, we have 10 minutes. Oh, okay, nice. Rectal schedule. Nice. Oh, there's a lot of people.
+Okay. Yeah, it's this around. Yeah. Please go ahead. If I remember correctly, the sliding sync
+optionally element web said that you can't disable it in the warning, why is that?
+So the question is, let me repeat it for the camera, why can't you disable the sliding sync
+labs feature in the current version? Mostly because of N2N encrypted messages, you would
+risk being unable to decrypt your N2N encrypted messages in that session. So the reason why is
+because when you log into the proxy, it's going to be syncing on your account, right? And it's
+going to sync forever. Well, until the access token gets invalidated, but it's going to be
+syncing on your behalf. If you toggled sliding sync on then off, if you turned it off, then your
+element web would be using the V2 sync as well as the proxy because the proxy didn't know you
+toggled it off. So that means you've got two sync loops for your account. And that's going to cause
+problems when it causes a race condition because two device messages, when they're acknowledged,
+and they get acknowledged by increasing the since token, they get deleted on the server.
+So if your element web was super, super fast and managed to race ahead slightly of the proxy,
+then it would go and get all the two device events and the proxy would not or vice versa. And
+this vice versa is the problem that is, that's trying to warn against. So if it's, if the proxy
+was ahead, then you would not get a certain two device events and therefore you may potentially
+lose room keys and therefore may potentially be unable to decrypt messages. Hopefully that's clear.
+Do you have any data on whether sliding sync significantly impacts server load?
+So the question is what about server load on sliding sync? Do we have any data?
+I need clarification because do you mean at a proxy level or do you mean in like a general
+general sense for native implementations of the server? Does using sliding sync improve
+server performance? A native implementation, yes it would. So the, that's one of the reasons why
+the existing sync implementation is slow is just because the servers have to do an awful
+lot of work. And obviously I've been developing on dendrite, I know exactly what things are slow
+there. So a lot of the API that's exposed to, to the clients are basically efficient ways that
+you can do it. So you only get like the current state of rooms. You don't tend to need to go back
+in time. You don't need to remember all your synth tokens since the beginning of time. These are
+things that slow down the processing. So yes, a native implementation, but a proxy implementation
+obviously is a sync loop that's going to be made. So that will increase load, right? Because that's
+going to be constantly syncing on your account. Is there any plan to handle multiple accounts
+in a client so you can have like an account on magic.org and have the one on your local server?
+Okay, so that's an element X question, I guess. Wait, let me repeat it first. So the question is
+about multi-user account support in the app. It's something that we're discussing, but for now
+there is no definite plan. From the metrics SDK side, I can tell you that you can do it.
+That's not an issue. So I don't, I think you were next. Saw you.
+Yeah, so the question is basically how long is it going to take for sliding sync to land
+and will we get native implementations in Synapse? You will get a native implementation in Synapse.
+I don't know when. And yes, we're going to try to merge and land it as soon as it's practically
+possible, which, you know, there's still things we need to fix, right? Like things like threading
+and stuff just doesn't work. And that's actually one of the biggest blockers at the moment from us
+trying out just defaulting element web to sliding sync on by default is that for compatible
+servers, obviously, is the fact that we don't have threading support, so you wouldn't have feature
+parity. So when we do have feature parity, then, you know, there could be element web clients
+which enable it by default. It won't be in labs or be enabled in labs by default. So, you know,
+we're getting there, but it's, I can't give you a time, unfortunately. Thank you. You were next.
+So the question is the authentication parts in the REST SDK. So, yes, we have a login via
+username and password. We have implemented OIDC in general, but I don't think it's fully tested.
+And we have an SSO feature as well. So we ask the server, the specification says that, right?
+The server tells us what is possible, and then we allow you to use those. So generally, yeah,
+if your server is SSO, you can use the REST SDK with it. Jan here.
+Question from the internet.
+Ooh, a question from the internet. I heard about that.
+Are there any plans or what is the status of the matrix RTC in the REST SDK?
+So that the question is about RTC in the REST SDK. If you followed the RTC talk before,
+you noticed that most of the RTC part of the RTC is actually offloaded to web RTC
+in the current implementation. So going through a web view for us as Rust, that means we don't
+have to bother about most of that. There's only some signaling that happens on the actual matrix
+protocol. So we don't have at the moment the plan to implement an actual RTC
+our side. I wouldn't see where you would want to do that for other than that view.
+So currently it's not on the boat map, at least for our side.
+Yeah. So that's a common one as Rust is very, so the question is about IoT devices.
+Could you do that with Rust? I see you can. Yes. That is generally possible. We have,
+because of the storage systems and some other things in there, and because
+matrix itself is still quite heavy as an overall protocol.
+We have tried to get it into an actual embedded device. That is not at the moment possible.
+We would have to improve a lot on the way that we use Rust. Rust itself provides that, but we
+can't do that. But you can use it, for example, on an Android, not an Androidino, but a Raspberry Pi.
+We know of people that run Raspberry Pis that have signals coming in and then they use the
+Rust SDK to send it over into rooms. That is definitely possible, because it's more or less
+just a bot, right? From our perspective, it's just a bot. So that is possible, but you still need
+significant amount of memory at the moment, and that would make it not possible for actual
+embedded devices yet. If anybody wants to do that, come to me. I can show you and mentor you
+and help you, because it would be very exciting if we had possible to do that. Yan, another question
+from the internet? There's also a question about the element X. What you see is what you get,
+Editor, is it still possible to use just markdown if you want to just use knockdown?
+So the question is about the element X. With your big editor, can you still use markdown
+if you want to use markdown? Yeah, actually, even on the current element implementation
+that is on the on the client, you can actually also still use markdown. So there's an option
+that allows you to turn off the rich text and turn back the simple text. And when the simple text
+is on, pretty much you can use markdowns. But when it renders in what you see, what you get fashion?
+So the question is about does the markdown then render in the WYSIWYG?
+No, when you're using the simple text version, it's rendering pretty much like a simple text
+with the markdowns. Or naming it in the rich text with also the markdowns. Currently not,
+we're pretty much trying to build the rich text editor as it is with just the rich text
+using the formatting toolbar to be the most performant and good and in simple tools as possible.
+But it is something that for sure, when we have a very stable product, we will work into, we'll
+look into. Another question for me? Will this finally unite the markdown syntaxes that you
+can use in different element clients? Will that finally reduce the amount of different
+markdown syntaxes that you can use in element clients?
+And I'm sure about the question actually.
+Okay, will the WYSIWYG editor in simple text mode use one unified markdown implementation
+so you don't have to remember different variants of markdown and different clients?
+But you're talking if we are going in the future to support the markdowns inside the WYSIWYG
+directly without turning off the rich text? This is what you mean?
+I think there's a confusion here. You switch on the WYSIWYG editor, then you get the WYSIWYG.
+If you turn it off, you have a simple text mode that is some, you can do some markdown,
+but it's not going to be rendered inside of this. So it's just going to fall back to the existing,
+right? It's going to fall back to the existing implementation. So therefore, yeah, to answer
+your question, it's falling back to the existing implementation. So no, they will still be incompatible.
+So that we might switch to use the markdown for round tripping, because at some point,
+I think this was the previous question, that people are going to want to round trip between
+the markdown implementation and the WYSIWYG one. And to do that consistently, you're going to want
+to use the same library. You put that in the Rust layer. And finally, we get out to the nightmare
+of Common Mark versus GitHub, Flavid, Markdown, versus whatever random library is the different
+element platforms have. I think Android is still out of sync with the others.
+One last question. Where can we meet you today, or maybe later, if we have more questions?
+I think we're going to hang around here, right? Yeah, for sure. We'll be able to stand soon.
+We have a stand in K1. I'm just going to be around here lurking, so just talk to me.
+Yeah, same for me. I'm going to be here. I'm the guy with that hat. All right. Thank you very much.

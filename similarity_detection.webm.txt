@@ -1,0 +1,607 @@
+So, it's nice to see a nice crowd after two years of pandemic.
+You're beautiful.
+So today we're going to talk about similarity detection and how we use it in integrity.
+As a way to ensure that the website is a safe place, that people just maintain an integrity
+of place.
+The outline of the presentation is as follows.
+We're going to outline the problem, then how we use automation and similarity detection
+in order to achieve what we want.
+The current technology that we use for images, which is the vector search, then we are going
+to discuss in depth what is the actual technology, the vector embedding that makes possible to
+transform a picture into an element of search.
+The current platform offering that met up with this proposal to allow other people to
+crowd source all of their findings into a centralized place.
+And last but not least, what we have of open and free that you can install in your own,
+you can deploy in your own site to benefit all these technological findings.
+So the problem is that any big platform bears the responsibility to ensure it's a safe place
+to serve.
+No matter what also the law says, that you have to make sure whatever the user posts,
+you are ultimately responsible to make sure that everybody is just not exposed to things
+that will violate your community guidelines.
+Meta has almost three billion users, it's likely less than a world population.
+And although the vast majority of our users follow rules, some fringe bad actors will
+always be present.
+And at that scale, fringe means tens of millions of bad person creating a lot of problems.
+And when I mean issues, problems, I mean child exploitation, imageries, non-consensual intimate
+imagery, which is a way to say revenge porn, adult sexual exploitation, people forced to
+perform sexual acts in front of camera against their will, terrorism, violence, whatever.
+And just to give you a couple of numbers, Meta publishes a transparency report quarterly
+about what we do to ensure the platform stays safe.
+And on the second quarter of 2022, we removed the 38 million of adult sexual exploitation
+pieces of content taken down.
+And it's just for this category, child exploitation is not so huge, thank God, but also there
+are other like violence, terrorism and stuff.
+That accounted for the 0.04% of view content worldwide.
+And in case you were asking, 97% of this content was proactively taken off, even before people
+could even see it.
+The remaining 2.8% is user reports, like I found this.
+And we take that down also, and we also add to the data banks just to make sure that we
+are not forgetting about that.
+Sometimes there are false positives because it's just unavoidable.
+And half million was restored upon user appeal.
+And we restore accounts and mostly accounts and the pictures that we're banned for.
+It goes by itself to the sheer volume of content, the huge scale, the problem we are facing,
+requires both automation and also human review to ensure either accuracy, both accuracy and
+also consistency.
+So there will be a problem if we had the 1 million people clicking and making decisions
+and what is violating for one is not for the other and vice versa.
+And so, and we cannot just also just employ automation, because otherwise we will have
+this very powerful site, decapitating everybody, also innocent users.
+So the role of automation and similarity detection, the thing is that a lot of things that happen
+online are things that are being repeated.
+So are things that are already occurred in the past.
+Like people posting a picture of some shooting, some mass shooting, for example, like the
+buffalo or the Christ church, gets taken down and the 10 more accounts spawn and post the
+same things.
+So it's much, it's very efficient to reason in terms of let's just redo the things that
+we already found out that worked.
+We employ automation to scale, of course, handle the scale of the problem and to consistently
+repeat a decision that a human reviewer has already vetted in the past.
+So we tie a content to a decision, a violating content to a decision, let's act upon this.
+And we tie the decision to the actions.
+Let's just repeat this action every time we meet a piece of content that triggered this
+same decision.
+We do that for videos, for pictures, and also for text.
+Today we'll be mostly talking about images because the techniques for video and pictures
+are somewhat very similar.
+Text has a completely different array of techniques that we'll not be presenting today.
+So a way to, if you want to achieve similarity detection, you have to come up with a way
+to achieve similarity first.
+So how do we compare to pictures?
+Of course, we are not, we are not be doing pixel by pixel comparison.
+We want to be much faster.
+Our way to do that is just, okay, let's just MD5 hash all the pictures or SHA-1 all the
+pictures and then we store them somewhere in an indexing system and whenever a new picture
+comes in, we just recreate the hash and if it matches, we just ban, right?
+Well, that doesn't work very well because the cryptographic hashes are not resistant
+to resizing, rotation, one pixel alteration, all the hash changes all together.
+Instead, we can really benefit from local hashing because it allows for similarity measurement.
+Like you change slightly one piece, one portion of the image and the hash changes a little,
+but not completely.
+Then you can reason in terms of distance between two hashes.
+So you have to turn, you have to find a way to turn an image into a vector and then you
+perform a vector search.
+Whenever two vectors are very, very close beyond a certain threshold, then it's probably
+a match.
+And just in case if you're asking, this is your base as the architecture.
+You have more or less all the architectures share these four stages, observation, an image
+has been generated, usually push event like user uploaded something.
+Then you have the representation phase in which you hash the image to a compact representation.
+If you're indexing, you store that into your index and instead if you are at inference time
+like an event someone uploaded something, you search the index they have built with representation.
+In case you have a match, you action upon what you decide what to do with the match you got.
+Usually the idea is that this is very close to an image that I already see in the past
+that was banned and also the account was taken down.
+Do the same to this user.
+So first three pieces of content, Facebook has released a library which is FICE, the
+Facebook similarity search library is a library to do similarity search over a vector of dense
+vectors or vector floats or integers, for example.
+You can think about it like a C++ version of Lucene so you index stuff, puts that in
+a very big space and you can search in this space very fast.
+It supports CUDA so you can use your GPUs to search.
+It's basically index on steroids and it's C++ but it has Python bindings available and
+it scales almost nearly.
+You can really index 100 millions of pieces on a single machine and it just handles them
+really, doesn't need to saturate all the memory so it has a very good optimization properties
+that makes it very good too.
+And you can go and download that on GitHub.
+Today we are also mostly referring to with the perceptual ashing.
+This means that we are reasoning in terms of colors, colors and images, shapes.
+We are not reasoning about what's happening inside the image.
+That's the semantic ashing which we are not going to talk about this today.
+Perceptual ashing just captures visual similarities and it's very nice for use case because it
+exactly does its job.
+So you might think that we are all talking about machine learning systems that come up
+with very clever representations about our pictures and I'm asking do we really need
+a convnet for that?
+Do we really need to employ GPUs?
+You already said that it's on CUDA so perhaps that's a nice hint but absolutely not.
+Most of this technology is like a ashing technology so they just computer represent a mathematical
+transformation over the image and it's really fast and it's really cheap and it can be executed
+almost everywhere.
+So a little bit of history, the first very notable example, it comes from a source that
+nobody would have thought about, it's Microsoft in 2009.
+Microsoft invents photo DNA.
+Photo DNA is the first algorithm employed in fight against exploitive images of children.
+So it transforms a picture into an ash of 144 unsigned integers on 8-bit representation.
+It's proprietary.
+So Microsoft licenses this to any non-profit or any organization that wants to fight exploitive
+images of children.
+It gives you a license, you can use for that and nothing else.
+But I cannot disclose the details of how that works.
+It can be used only for that but Microsoft donated the photo DNA to the National Center
+for the Missing and Exploited Children, the NACMAC.
+It's this American non-profit that basically acts as a coordination center in global fight
+against this phenomenon and shares this library with anyone that wants to integrate.
+This I cannot talk about how this works, this is the only moment in which I will say something
+like that.
+But we can talk about an open source counterpart that almost 10 years later Facebook releases
+PDQ.
+PDQ stands for Perceptual Algorithm Using Discrete Cousin Transform and gives a quality
+metric.
+It's a very, very bad acronym but we need a three-letter acronym so it's that.
+It creates a 256-bit hash, uses hamming distance to compute the distance.
+It's really fast.
+The compute overhead is negligible compared to discrete.
+Can tolerate some level of adversality.
+This means that you change the image because you want to fool the systems in that this
+image is not something which is well-known, PDQ can resist a little to this manipulation
+but not all of them.
+It's used in stopncii.org.
+It's a website where people, in case you have a fight with your ex-fiancé and he's threatening
+to publish your intimate imagery, you go to stopncii.org, you upload your intimate imageries,
+fingerprints get taken, original images get deleted right away of course, and these fingerprints
+are shared with partners that, okay, if I am going to see these fingerprints in my website,
+my platform, I'm going to take them down.
+So it's a crowd source effort and uses PDQ for images.
+How does that work?
+So PDQ hashing is, optionally scale down to a square image, okay.
+Then you compute the luminance.
+Luminance is the idea that you take the pixel that contributes most in the RGB channel.
+Instead of putting black and white, you use the luminance.
+It's just another procedure and the idea is that luminance gives you better information
+about what was the channel that was contributing most to the color, to the light in that place.
+Then you down sample to 64 times 64 using a blur filter.
+And the idea of the blur filter, a tent filter, is that it gets the most significant value
+in that region because if you keep convoluting a pixel with your neighborhood, what you will
+have in the end will be the highest value.
+So you obtain a representation which is compact and retains the most significant information.
+Then you divide the images in 16 times 16 boxes, each one by 4 pixels, and you calculate
+a discrete cosine transform of each box.
+The discrete cosine transform, so the box is at the 4 bar color there.
+You see that the grid with a lot of wobbly images, that is a discrete cosine transform.
+The idea is that any image, any signal can be represented as a sum of cosines, sum of
+cosine signals.
+You only take the signal, the most significant one.
+So it's a form of compression actually.
+And you take the most significant coefficient for the biggest cosine you have.
+And then you calculate if the median is above a certain value, then it's one, otherwise
+it's zero.
+So you get this 256 in an array of 010101 in case this pixel were a high luminance or
+a low luminance.
+The DCT provides a spectral hashing property, identifies what is the point in the images,
+that contributes more or less.
+You have an hashing space, which is 2 to the power of 1 to 28, because it's half the
+ashes, because half is always 0, half is always 1.
+To search, you just do a vector search again, what you've just created.
+In case we want, we can use partially the same technology to do video hashing.
+And this is another, it comes in almost the same paper.
+The TMK is a temporary matching kernel.
+Is a way to use the PDQ creation to do a video similarity detection algorithm.
+It produces a fixed length video hashes.
+So your hashes stays the same length, which is like 256 kilobytes, if I'm not wrong.
+Even if your video lasts for three hours or 30 seconds, it just produces a fixed length.
+So it's really nice.
+What you do is that you resample a video to 15 frames.
+Then you compute the PDQ without the 01 quantization, so you keep the float numbers.
+That's why it's called PDQF, PDQ float.
+And then you compute the average of the old descriptors that you have within various periods
+of the cousin and scene.
+Why we add the cousin curves?
+Because a cousin or a scene adds out this wobbly movement that tells you whether a frame
+is before or later in the near surroundings, the near neighborhood of the frames.
+So in case you have like 10 pictures, you add this cousin signal.
+You know this picture is before this one, because you see the cousin curve, which is
+going up and going down.
+And it's a nice uniqueness fingerprinting time signature algorithm to add a cousin.
+So you compute the average of all the frames, the PDQF for all the frames, with various
+periods, various scene and cousin.
+And then you pack them all together, and you have these like five or six averages.
+And that's your PDQF embedding.
+Everything is just you compare first the vector zero, which is the average of all the frames
+and doesn't retain a temporal signature.
+Then if there is a match, you compare also all the other vectors at different periods,
+which are the level two action as the time signature.
+And so you can be really be sure that the videos are really the same.
+Because if you find the same averages with the same periods, it must be the same video.
+It's nice that it's resistant to resampling, because you always resample.
+So in some way, if you vary the frame rate, the video will change, and MD5 ash will change,
+but this one is not full.
+Ashing is really slow, because you have to do a transcoding of all the videos first,
+and then you have to read all the frames and compute the PDQ for every frame.
+But search is actually very fast.
+Another nice hashing technique that we have is the video MD5.
+I said that we will not be using a crypto ashes highlight.
+We use crypto ashes, but just for videos.
+This because if you take MD5 of video and find exact copies, it's really cheap in this way.
+A lot of actors just repost unmodified content.
+They are not going really through the hassle of doing encoding just to try to fool the systems.
+They just try to repost again.
+So the MD5 actually works, and it can be done with vector search, if we use the bytes for
+the MD5 algorithm.
+And it's used widely in stopncii.org also.
+In 2022, Facebook has released the video PDQ, which is a different algorithm from the former
+one.
+Hashing is that we hash every frame to a PDQ ash, and we just pack the list.
+It's much bigger.
+It's not slower than the other one.
+But it has a nice property that we just have to search for individual frames.
+So we treat the problem as a back of word approach.
+So we just put all these frames inside the index library.
+Then we search, and we take all the candidates, and we do a pairwise comparison.
+If the pairwise comparison is successful beyond a certain threshold, then it's a match.
+And also this you get for free, and it's released along with the PDQ, along with the TMK, PDQF.
+All this is available inside the Facebook research GitHub repository.
+What do you do once you have all these ashes?
+So your platform is computing the ashes, but it's the first time that you see this content.
+But perhaps all other actors have already seen this content too.
+Well you upload them to the threat exchange platform.
+Necmack shares the PDNA ashes, I told you, with all companies that are asking for them.
+So can you please tell me where this picture that someone uploaded is a match in Necmack?
+So I already know that this is something I should call the law enforcement.
+Meta does the equivalent, but for the PDQ, because it has much less friction to adopt
+the PDQ compared to the PDNA.
+There's a team, the Internet Safety Engineering that builds and operates all this service
+where anyone can upload fingerprints, and so you can crowdsource a big graph of matches.
+Those rest API to access and post new data, has multi-language clients, uses PDQ, and
+users can also download the data.
+You are not forced to stay online, stay connected.
+You can just request for a dump of the database and you can search it.
+And you find all the data and all the APIs at the GitHub page.
+In 2020, Facebook also has released its most advanced algorithm to spot similar images,
+the SimSearchNet++.
+This is an error network, and it is capable of facing adversarial manipulation that the
+other embeddings just are not able to.
+Unfortunately, SimSearchNet is proprietary, so I cannot really talk about that, but we
+have a cousin product, SSCD, the SimSearch Copy Detection, or Similac Research Copy
+Detection, which is open source and free, so I can really talk about that.
+They are somewhat related in some technological principles, so I can really talk about this.
+So this is a PyTorch-based model.
+So the problem that this, which is a state-of-the-art product, is trying to solve is what happens
+if I take a picture and I put a caption on it, alterating so many pixels everywhere.
+A PDQ or a PDNA hash will be altered dramatically, but is there anything we can do to teach
+a computer to just ignore all the captions, all the rotations, all the jitters, all the
+cropping of the image?
+Yes, there is.
+A person is able to do that, so we can teach a computer to do that, too.
+So models and code are available.
+What is now available is the training data that we use to create a model, of course.
+For those which are into the deep learning, it's a ResNet50 convolutive neural network,
+and the novelty of the approach is that it's based on our MAC vocabularies.
+A regional MAC, for those, how many of you know how a convolutive network work?
+Raise your hand.
+Okay, fine.
+Very good.
+So it's a network for the others that looks at the image, looks at portions of the image.
+Each neuron looks at a different portion, and then they pass what they have understood
+to a higher level series of neurons, the higher and the higher and the higher, until the last
+layer of the neurons has a very wide overview of the whole picture.
+In this case, we are using the maximum activation of all the channels that we have.
+So we take note which are the regions of our Carnaut maps for every different channel,
+which across all channels have the maximum activation.
+If you have ten channels, and that region, across all the different channels, all of
+them, you have a maximum activation, that means that that area is an area of interest.
+So we use these areas of interest as a word in a vocabulary.
+So exactly when you do the cousin similarity search for documents, you take all the words,
+you index all the words, you say these documents as these words, so it's like a vector of words,
+and then we try to see which are the vectors that have the most words in common and put
+in the same place.
+We do the same things, but for portions of the image.
+So we use the rmax.
+The idea is that it's a self-supervised system also.
+So it means that it's trained to recognize augmented input, and it's trained to match
+an input to its augmented version.
+So what we do is that we take the training set, we repeat a lot of augmentation, we add
+the captions, the random, we rotate, we flip, we alter the colors.
+For example, if you do a one degree of whitening, you make the image brighter, which is you
+add plus one to all the pixel in the image, you are altering all the pixels.
+But in this case, a PDQ ash is capable of understanding the difference.
+There's a very weak form of adversarial attack, because the PDQ just computes the difference
+between regions, so it's not going to be fooled.
+But you can be much more violent and put just a spot color somewhere, and PDQ is going to
+be fooled by that.
+Then you do through the CNN.
+You do a thing called gem pool, which means you do a generative mean pooling, a generalization
+of the average pooling in case you were wondering.
+Then you go, and at the end, you use entropy-oriented loss function.
+This means that we want to encourage the network to spread the representation of training data
+along all different places, because we want to maximize the distance between all the training
+examples in the training set.
+So you get a nice uniform search space.
+At the inference time, you do the same with the CNN, and then you obtain a vector, which
+is a representation of an image.
+And the idea is that there is a distance that you can compute between the data set of the
+reference images.
+Of course, you can subtract a background data set that was used generally through augmented
+images.
+But in this case, what you obtain in the end is that the score of the augmented image
+is almost the same of the non-augmented version, because it just learns to ignore the places
+which are not organic in the image.
+And SSCD is freely available.
+You can download that and start playing.
+You find both code and models, as I already said, but not the training data.
+And by the way, Facebook has also announced an image similarity challenge.
+You have to determine whether a query image is a modified copy of any image in a reference
+corpus of one million.
+This is very similar to the Netflix recommendation challenge, where you had to recommend movies
+and you had to beat Netflix algorithm.
+And this is the image similarity challenge, and also the meta-IE video similarity challenge,
+which is two tracks.
+Generate a useful vector representation for a video.
+And also try to find a reference video into this very big corpus.
+And you don't have to only find a video.
+You have to find a clip, so a sub-portion of a video, into a very big corpus.
+And last but not least, since the last part of a donor is the tastier one, we have your
+turnkey open-source solution that you can install in your own on-premise.
+The hushier matcher actioner.
+HMA is an open-source turnkey safety solution.
+So you just download it, install it, and it starts working right away.
+What it does is that it scans the images that you want to push towards it.
+It has an index that is updated with all the hashes coming from thread exchange, but also
+from yours, and is able to, say, to bind banks verticals of violations.
+You might have a non-severe violation or very severe violation.
+You might decide that for non-severe violation, you just delete the content and send a warning,
+or for high severity violation, you just immediately delete the content, shut down the account
+of the poster, and you also signal it to the law enforcement.
+You can do that.
+And you can configure actions in a backend that are tied to the content that you want
+to bank into your HMA platform.
+You can pull violating seeds from Facebook thread exchange API, and works on AWS only,
+because we wanted to make a very easy-to-use thing, and also something that doesn't really
+mix your bill higher.
+So we built it on AWS Lambda.
+So it doesn't cost anything until it runs, then it runs, spawns a Lambda instance, and
+then goes down, and you only pay for the seconds that it actually runs.
+But it's very fast.
+And there's a Terraform module available thanks to the lovely folks of the Internet Safety
+Engineering.
+This is how you deploy that.
+Your infra, you collocate HMA to your platform.
+For example, you might own a platform where people have a chat or people post pictures.
+Whenever new content comes, the web server asks the Azure, have you seen this?
+And the Azure goes to Matcher.
+Matcher goes to the index and says, do I know this?
+And in case there's a match, the actioner module will just tell your, you have to define
+a callback API in your own platform, like whenever the actioner calls, you are killing
+this content in your own backend.
+And, of course, you can fetch from external API new content from the fact exchange platform.
+So wrapping up, automation is necessary to be effective.
+But you will lose precision, of course, because automation doesn't really think.
+It just does whatever you have configured blindly.
+Human support is always needed for appeals and also to establish the ground through.
+So what is actually violating, what is not?
+Do expect false positive, because they will happen.
+You should put in place an appeal process to allow your users to restore the content.
+PDQ, video PDQ, MT5 and SSCD will provide you with a way to obtain compact representation
+of high dimensionality content like pictures and videos.
+HMA provides you with a turnkey solution that you can install on premise, on your premise,
+and search and enforce your integrity policies at your platform.
+And thread exchange provides you with a platform for exchanging representation with other
+big actors, like, maybe itself, for example.
+That was all from me.
+Thank you very much for listening.
+Any question?
+You mentioned it for the challenge, I think?
+Oh, louder.
+So you mentioned it for the challenge, finding a clip of a video.
+Can PDQ do that, actually?
+You can't hear me.
+So can PDQ find clips of videos?
+That's my question, actually.
+So you should, you say, perhaps I heard about YouTube, whether it is something that already
+does.
+Like, if the challenge is to find the clips of videos, yeah, in general it's possible
+of course, and the video PDQ algorithms will ask every frame.
+So in case you send a very small sub portion of a video, you will have, like, 100 frames,
+for example, then these 100 frames will be treated as a bag of words.
+You search the index, you find the video that contained all of these words.
+So you have a match of all your query frames inside the index at the very long video that
+has it.
+And so it's a match.
+That's how we do.
+Of course, there are more clever ways to do that.
+Thanks.
+Hello.
+Not a technical question, but let's see.
+I was thinking that if you're using such a system to try to prevent digital crimes and
+such things like that.
+From an ethical perspective, I was just wondering, I suppose you have such images to compare them,
+and how do you process those?
+How do you make the decisions?
+So I repeat the question.
+From the ethical perspective, the idea is that, of course, we have to see the images
+in order to be able to know what's happening, right?
+Yeah, see, and of course you have to save them and process them, and how do you handle
+this?
+So this is not the kind of question that I really can answer because it is related to
+internal procedures.
+But if we have to compute the fingerprint of an image, there must be a one second in
+which the image is on our servers.
+It is, since the agency is like Necmac, they share ashes, so you might have an ash for
+which you don't have a picture, and you have to trust that this ash is coming from a trusted
+source that has already vetted whether this ash is nasty stuff or not.
+That's how we actually avoid sanctioning heavily innocent people.
+So there is a collaboration with the trusted entities for this.
+When you receive those from an external agent, if those images are on your platform, you
+already know what you've seen.
+Thank you.
+Can you hear me despite the mask?
+Can you hear me?
+Yeah, thank you.
+So I have a question, but first I have a thanks because I have worked in this kind of thing
+and Necmac doesn't share any useful data, IWF doesn't share any useful data, Farrows
+doesn't share any useful data, so I will definitely take a look at the threat exchange
+platform and hope that it's much more useful, and thanks for that.
+Now I have a question anyway.
+If I was an attacker, I could download data from the threat exchange platform and try
+and run as many filters automatically until I find something that is not matched by PDQ,
+video PDQ, et cetera.
+What's the way to counter that?
+Oh, you're asking whether adversarial attacks are possible on PDQ?
+Yeah, of course, PDQ is a very naive algorithm that just detects the patches of colors.
+It is actually possible to create adversarial attacks.
+Just if you think that you alter many pixels in the image and perceptually, for us, doesn't
+change anything, but you might end up changing the most relevant pictures for the DCT algorithm.
+I will create a completely different ashing in the end.
+Also, someone has demonstrated an attack, a reverse engineering attack on photo DNA,
+like from the project it's called ribosome, and it's a neural network that from a hash
+reconstructs a very blurry picture, so it is actually possible to do that, but PDQ is
+a very simple and fast algorithm.
+If you really want to combat seriously adversarial engineering the things, you need neural networks
+like SSCD because it contains so many relations to different parts of the images, it's much
+harder to fool.
+I'm not saying it's not impossible because, of course, it's possible.
+Sooner or later, someone will find a way, but it's the usual arms race between attackers
+and defenders, and it's no exception.
+Thank you for your question.
+Hello.
+Hi.
+First, thank you for the presentation.
+I think it's a very interesting topic.
+I wanted to link it to because it's been a bit of a buzz the past few weeks, the generative
+AI, especially chat GPT, was wondering if when you use that kind of algorithm and you scan
+an image, detects something, is there a level of confidence attached to the result and can
+you detect when an image is potentially a fake or...
+There's a lot of time because there's an echo, so I cannot really... Can you do it louder
+please?
+It's hard to understand from here.
+Hello.
+Okay.
+Is it better?
+Okay.
+Yeah, so I said thank you, but I wanted to link to generative AI and I was asking, so
+when you run that kind of algorithm to detect violence or child abuse or anything else,
+can you also attach a level of confidence in the response to define whether it's a potentially
+fake picture or is there an extension to the algorithm where you can link with the generative
+AI?
+I'm not sure about the answer.
+Sorry, we can go for a beer and I can explain more details and let's see.
+Yeah, you have a question.
+Hi.
+Thank you for the talk.
+It was very interesting.
+Thank you.
+One more question also.
+Do you run SSCD in production as well?
+The deep learning network?
+If we're using SSCD in production, can't I reply to this question?
+Okay.
+We're using search net plus plus.
+Yes.
+We use this other one because we have written a blog post about this, so I can confirm that
+we use the same search net plus plus.
+Okay.
+I cannot nor confirm or deny about SSCD, but those are related technologies, so I can
+talk.
+That's okay.
+What does the production stack for SIM search nets plus plus look like?
+How do you serve it?
+It must be pretty hard to deal with the GPUs and everything.
+This is not a question that unfortunately...
+Okay.
+I'm sorry.
+I cannot talk about production setups.
+I'm sorry.
+Okay.
+Any question nearby?
+Thank you.
+But of course, you can imagine that we do not operate in the vacuum.
+So if you can think about how we serve results from a neural network, it is something perhaps
+similar to what would you do if you would have to put behind an API a model?
+So I kind of have two questions.
+The first question is to what extent do...
+So I think there are potentially two problems.
+Intentional mismatches and unintentional mismatches.
+So situations where perhaps an image has been recompressed or has been cropped or is perhaps
+another image of the same situation versus situations where people have deliberately
+deformed the image to try and get around these kind of systems.
+So...
+Do you have any idea of how performant it is against the two scenarios of either accidental
+or unintentional mismatches versus intentionally trying to avoid it?
+So it is, of course, possible to have unintentional mismatches.
+And I've seen images that were adversarial engineered to give the same embedding.
+Those are absolutely possible, again, in PDQ, PDNA and all the perceptual hashing, which
+is just a mathematical transformation.
+You just have to find a way where the input seems the same to the algorithm.
+For the neural network things, it depends.
+You can study the code.
+You can study how it's done.
+If you can...
+It is absolutely possible sooner or later because the adversarial attacker on combinets
+are a reality.
+So it's absolutely possible.
+I've seen some mismatches, but usually to perceptual hashes.
+Usually the more refined the technique, the harder it is to attack, of course, otherwise
+we just will stay with MD5 because it will be enough.
+Crops.
+PDQ is resistant to crops, SSCD is very resistant to crops.
+If you have rotations, I believe also PDQ is resistant to rotations like flips, but
+you cannot ask much more than that.
+Other questions?
+Yeah.
+Do you have any information about speed difference between SSCD and PDQ?
+So the question is whether I have some speed benchmarks for the difference of performance
+between PDQ and SSCD at inference time.
+PDQ is faster than your time to read the image from disk.
+So it's negligible.
+It will just compute.
+It's a mathematical transformation on the pixel.
+The neural network requires a dedicated hardware, if you do that on CPU, it will take seconds
+also because the model I think is big enough.
+It's not as big as GPT, but it's a 50 level CNET.
+So it's of course lower and requires dedicated hardware, but it's more precise.
+It just finds, SSCD finds anything that PDQ is able to find and much more.
+So in case if you are very curious about, sorry, if you are very conscious about, I
+have to scan this stuff just to make sure they don't come from a ill source.
+You might want to set up an async process that will take more, but will just batch process
+all your stuff.
+If you need a super fast thing, PDQ will not really wait over your server.
+Thank you.
+Any other question?
+Hi.
+First of all, great question from my former colleague David, I think, down there.
+Not even looking this way.
+But what happens if you get a false positive match?
+How do you disregard that in the future without potentially disregarding a real match?
+So if we get a false positive match, how do we do to restore?
+Yeah, how do you restore and keep it there?
+With HMA, you mean or in MEDA all day?
+Just anywhere, like as a concept.
+So in MEDA, I cannot really say.
+With the Hasher Matcher Actioner, you have the, you should provide a capability to your
+own platform for which you are soft deleting the image, because you have to provide away
+an API in your platform that HMA will call on, where you say, soft delete this picture,
+so make it unavailable, but do not really delete it in case you want to appeal.
+So you need to provide an undelete, and unsoft delete, and soft delete capabilities.
+This is the simplest and most effective way to deal with false positive in case, whoops,
+I did a mistake, I want to restore the content.
+Sure, but if you have an image that someone wants to upload, say it's a popular image
+that a lot of people are going to upload, but it matches a pattern of another bad image,
+can you, is there a good way to make a more precise hash and exclude that, and say this
+one is a false positive, it doesn't match what you think it does, so you don't have
+to keep undoing.
+Okay, if I understand correctly, if the image is popular, so we have many examples, and
+we have many examples of an image which is not bad, and then comes a bad image, whether
+we can use the fact that it's very widespread to augment our position, is this the question?
+Okay, well, really, there's nothing in this presentation that says these, because once
+you train, the network is trained, you start serving, and the network will give you the
+same answers to the same question, to the same query.
+PDQ or other mathematical algorithm, perceptual algorithm, it's just a mathematical function
+so it will not change, there's nothing to train.
+So to change a deficiency of your model, you have to retrain, and you can do a better retraining
+here, and sometimes models are retrained as anything which is still under maintenance.
+For example, we get new data, for example, and we might want to retrain as any other
+model also for the spam filters, it's the same.
+Do we have more room for questions?
+I think it's done.
+Thank you so much, you'll be a wonderful audience.

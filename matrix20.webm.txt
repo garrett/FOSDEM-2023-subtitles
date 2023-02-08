@@ -1,0 +1,489 @@
+Okay, hello everybody. Can you hear me? Yes, I see thumbs up at the back. Please come in,
+come in, roll up, roll up for the Matrix show or introducing Matrix 2.0 or how we are going
+to make or how we have made Matrix go boom, very technical term. Please take your seats,
+ladies and gentlemen. Right, so hi everybody. I'm Matthew. I'm the project lead and co-founder
+of Matrix and I'm here to tell you all about the work we've been doing to fix Matrix's performance
+problems and a few other things as well. So I'm guessing that a bunch of people know what Matrix
+is, given that Vostem has been running on Matrix during the pandemic and we're doing
+four hard to lead doing a hybrid Matrix version of Vostem right now as we speak. So hello to
+everybody following along on the HLS stream by Matrix. You probably know that Matrix is an open
+network for secure decentralized real-time communication. We have to say this because
+people watching the video might not know later on. You can use it for interoperable chats,
+so following along on Vostem, bridge through to ILC or X and PP, etc. You can use it for
+interoperable VoIP, but Matrix at its core is a real-time communication fabric for any kind
+of real-time comms. So you could use it for communication within VR or AR. You could use it
+to synchronize world data within VR and AR. You could use it for IoT. It is basically meant to be
+the missing communication layer of the open web. So no single party in Matrix owns your conversations.
+The second you talk to somebody on a different server, your conversations get replicated equally
+between the different servers, so there cannot be a gatekeeper. There cannot be some big tech company
+going and holding your conversations hostage. Instead, the conversations are shared between
+all the participants. To apologize, the network is a mesh of servers like Vostem.org, say,
+on the right, which might be talking to Mozilla.org, which might be talking to Matrix.org, or Nome.org,
+KDE.org, or whatever it is, and you have native Matrix clients like Element, or Fluffy Chat,
+or Mecca, or Katernion, or hundreds of others these days, which connect through to the Matrix
+server. Then you have application services, which glue additional things onto the Matrix server,
+like bridges, or bots. You have identity servers, which we don't talk about because they're a mess
+and we need to get rid of them. And then you've got application services that bridge through to
+things like Slack, or Teams, or Telegram, or ILC, or XMPP, et cetera. And that is a schematic view
+of the public Matrix network. Now, the Matrix ecosystem, as it sits today, looks something
+like this. You've got the Matrix spec still being the kind of one true commonality across the whole
+ecosystem, spec.matrix.org, a whole bunch of markdown, and swagger, or open API, I should say,
+that defines how the server is on the bottom, talks to the clients on the top. So you've got
+Synapse as our first-gen Python server, which has been proving to be a bit more than first
+generation, as we've invested a lot of time making it fast and generally performant. So
+Synapse is not going away any time soon. If anything, it is corroding into Rust as the Python
+is augmented cybernetically with a bunch of Rust. Then we have Dendrite in Go, which is also doing
+very well and is ending up focusing more on embedded use cases. So you use Synapse for massive
+servers and use Dendrite for ones you embed into an app. Then we have application services and
+bridges for things like IRC bridging, et cetera. And then many other servers and bots and bridges
+from the wider community. The green stuff is stuff that we published as the matrix.org foundation,
+all Apache licensed for people to build on top of. We have then the clients on the far left,
+we have our original SDKs of matrix JS SDK, React SDK on top of it, and then iOS SDK and
+Android SDK too. These are relatively venerable SDKs now. JS SDK is eight years old, which is,
+you know, enough to probably get a degree or something. iOS SDK is about the same age. Android
+SDK is a little bit younger, but this is what the current generations of element use today.
+Then we have Hydrogen, which is a relative newcomer. This is a progressive web app SDK,
+super small. It's about 70, 80 kilobytes in total for the whole thing, including all end-to-end
+encryption. And it's designed for embedded web matrix instances. So we have Hydrogen itself,
+hydrogen.element.io as a very lightweight PWA for playing around with matrix. We have chatterbox
+as intercom style embeds a matrix chatbox into your website. We have Surderoom, which is our
+crazy science fiction spatial collaboration on top of matrix platform, where you want to have
+matrix bit as lightweight as possible, which is why we use Hydrogen, the lightest element to make
+it happen. And then the thing we'll be talking about a lot today is element X. So this is a
+total rewrite of element mobile on iOS and Android. And for maximum cliche, we have rewritten it in
+Rust using the matrix Rust SDK. I hear we have Rust fans in the audience. So we'll be talking a
+lot about that. Meanwhile, on the community side, there are just more and more clients all over
+the place, like Thunderbird released its native matrix implementation. We've got Watch the Matrix,
+which is an excellent Apple Watch matrix client, which doesn't tether to your phone. It's actually
+running on the watch itself. Neo chats and KDE and QTE and C++. I wish I could name them all.
+I can't. I don't have time. So help for the network. Here is the total number of users we've
+ever seen on matrix, which is looked as if it was going to hit 90 million and then somebody turned
+off a server. Kids, this is what happens if you turn off the server because it means the graph
+goes down. So please never, ever turn off your matrix servers ever again. This is literally
+in phone home stats that Synapse reports. So it doesn't include Android. It doesn't include
+and conduit or other servers. It also doesn't include all of the paranoid people, which is quite
+a lot of people running matrix who obviously aren't going to phone home their usage stats to us.
+It does include guest users and bridge users. So it's a little bit of an overestimate. But the
+important thing is the shape of the graph, which as you can see is continuing to go well, apart
+from that guy who turned off his server. In terms of the spec, we have fallen into this cadence of
+quarterly releases of matrix since the big 1.0 back in 2020. And then particularly in 2022,
+we've managed to crank out a point release every quarter. Just in, I think the day before last
+Fosden, we had spaces, restricted joins, and actually the matrix ERI scheme, which is now
+being implemented all over the place. And then a few months later, we added aggregations and
+restricted knocking. Now, these features have often been around for years, but this is actually
+formalizing them into the proper long term supported spec. 1.4 added threads, massive feature that has
+been an epic to get done, but it landed edits and private read receipts. A very long time
+complaint about matrix being that you couldn't turn off read receipts, turns out it's surprisingly
+hard to do, but we now have it spec and implemented. Then 1.5 in November, we added in formalized
+references, we fixed up some things in the ASAPI, and I think we have basically maintenance release
+on 1.6 any day now. So nothing too exciting in the next release, mainly because we're building up
+to the big 2.0. Nice step is that there were 120 MSCs in 2022, of which 39 came from the community,
+27 from new contributors, 30 from the gray beards of the spec core team, and then 51 from the folks
+who are paid to work on matrix.org, mainly by element. So it's a reasonable mix of community
+and core project work. In terms of uptake, other than that, we obviously helped the world's best
+open source conference, dodge COVID. Hopefully, apologies if matrix was painful over the last
+couple of years, but it's probably better than forced them at all. Lots of government uptake.
+New news is Germany, we have bundles messenger rolling out matrix across the whole German government
+in November. Also good martyred the German healthcare agency, proposing it as a neutral
+standard for secure messaging in healthcare. Lots and lots of associated deployments in healthcare,
+education, utilities, manufacturing. Basically, if you are an organization who cannot put their
+data unencrypted into some proprietary silo, like teams or Slack, I think matrix hopefully provides
+a good alternative. Moodle is busy integrating matrix into the learning management system.
+Automatic have got a project called chat tricks, which embeds matrix into WordPress so you can
+literally dump your little chat console based on hydrogen into your WordPress blog.
+Reddit is rumored to be building chat capability powered by matrix,
+mainly because I think they had public who signed up, enabled and somebody logged in and
+discovered a matrix over there. There's a lot of interest over matrix being potentially the
+communication there for the digital market sites. Last year, we put out this slide to
+basically say the plan for 2022. In the early days of matrix, we were just trying to make it work,
+then we tried to make it work right and managed to exit beta and launch the 1.0. The last year
+particularly has been trying to make it work fast and I hope we have now made it work fast and I
+will attempt to prove this to you with a demo. Well, you haven't seen anything yet. So there is
+one of my cats helping me as a kid. On the bottom here, you might see three, four icons in fact,
+element X, element R, element X itself, so that's element X nightly and then element normal.
+We're going to talk about element X here. So I've got the nightly here and I'm going on the ship.
+This is what you see as a little splash screen. I'm going to hit continue on that and hope that
+I've got enough connectivity to connect to the server. That's a good start. If it takes that long
+to discover that there's a server out there, then this demo might not go so smoothly. I'm going to
+log in as my actual main real matrix account. I'm not going to type in my password in front of you,
+but I'm going to pull it out of my password manager and hit continue. And if the server is there,
+there's too many people in the room. It hasn't even started talking to the server yet. Okay. And
+that's it. I'm in. So my account. So if I was going to try to log in on my normal element
+account, it would take 20 minutes because I'm in 4,000 rooms a day back to literally day one,
+or actually day minus two weeks or something of matrix. And I can go and scrub through all of these
+gazillion rooms there. And they are all actually there. I can go and find somewhere. I know,
+try not to expose anything too sensitive. But you can see it's actually already pulled in
+room previews on all of these things. Going to, I know, this week in matrix. And there is the chat.
+There is just no spinner here other than the slow network at the beginning, which really was the
+slow network. And you can see we've got reactions in here. We've got some nice bubbles. We've got
+replies. We've got joins and parts and day markers, read markers. We've got Matt Markdown.
+This is the SwiftUI incarnation of element X, but all of the heavy lifting here is done by Rust.
+And it is transformative. The whole point here was to be faster than Telegram. And I think that
+we might have got it. Although if anybody's in a Telegram account with 4,000 rooms, please tell me
+how long it takes to log into it afresh and how long it takes to launch. So talking about how long
+it takes to launch, if I go and quit the app like that and relaunch it, we're in. That was it.
+And I'm going to risk doing one other thing, which is to launch my non-nightly, which I haven't
+actually used for a couple of hours. And again, it's synced almost instantly. And what I'm going to
+do is that this is on a custom build, which is hooked up to Yeager. And if I go over to Yeager,
+and if I have enough internet connection to even load the Yeager UI, this is going to be really
+fun for demoing later if this is how bad the connectivity is. And I search for the well-known
+element X Matthew app in the last, actually, let's do the last 15 minutes or five minutes even,
+then we've actually hooked up Rust SDK so that all of the logging is structured and all of the
+logging gets uploaded via LTP to Yeager. And if I had internet access, I should start tethering,
+I would be able to show you a blow-by-blow account of what happened when I launched the app
+then a minute ago. So what we're going to see when it finally loads, hopefully,
+is first of all, it has to pull up a local cache of my messages if you're already logged in from
+disk. For this, we currently use Sled, which is a key value database native to Rust. It hasn't
+been going amazingly well for us, and let's hope that's the right one. And as you can see here,
+at the top, we've got the build operation and the 410 milliseconds there, frankly,
+should be more like 40, because all it's doing is loading up 20 rooms also out of Sled. We're
+going to move to SQLite because if nothing else, Sled spends its entire life rebuilding itself
+and defragmenting itself when you launch it, which is a bit unfortunate when you're trying to launch
+an app quickly. Then it restores your session and gets a whole bunch of events out of it,
+which is the first couple of events on the page. And if we scroll past those, the really interesting
+one here is doing the sync. So this on the server is 90 milliseconds to calculate your sync response.
+It's ended up being 900 over the wire because of all you people with your electronic magnetic
+interference and your mobile phones. But still, you saw that it was very usable. It's like a
+second to get to the point that you're viewing stuff. And in fact, we already are interactive
+before the sync response returns, thanks to the local store having been resumed. So we have gone
+deep down the rabbit hole, so the saying goes, to try to optimize the performance on element X.
+So it is as snappy as iMessage, or WhatsApp, or Telegram, rather than the slightly clunky beast
+that we've had historically. So before it looked like this, you got a synapse on the right with
+all sorts of fun workers to do the various bits and bobs. And then we had element iOS with iOS SDK,
+mainly written in Objective-C, matrix kit in the UI layer with more Swift in it.
+We had MXCrypto, again written, I think, in Objective-C, and LibOm as the encryption library in
+C++ and C sitting below it. And then the database layer was horrific with a mix of flat files,
+realm, core data, carrier pigeon. Element iOS has some issues. In our brave new sliding sync world,
+everything has changed. On the left-hand side, we now have on iOS SwiftUI for the funky app I
+just showed you. On Android, we have Jetpack Compose. Then we have Unify bindings to the Rust SDK,
+which has been a lot of fun, even on our Rust team has been hacking way, contributing async
+bindings through to Unify so that we could expose Rust SDK, complete with nice features and async
+through to Swift and Kotlin. And then you've got Rust SDK itself, which is doing all the heavy
+lifting. It's got the crypto crate within it, and within that is Vdozomats, which is our native
+Rust encryption implementation for Matrix. Below that, you've got sled and in-future SQLite.
+This then talks through to a sliding sync proxy. And this is written in Go, and it implements MSC
+3575, which is sliding sync. And this is the magic for how this works so quickly. It's basically
+storing, well, it's going and talking normal sync to normal Synapse. So this could be Synapse or
+Dendrite or Conduit or anything on the right-hand side. The go lang thing is an intermediary that
+is going and sucking up the state of your account, storing it in a local Postgres, and then talking
+the very, very responsive API in order to pull that data into Element X itself. It does it by
+looking like this. Sliding sync lets the clients request the bare minimum of data that they need
+to render the UI. So here's an almost real request where we say, I want to see the currently
+visible rooms. I want to see the first page to preload it. So I want 20 rooms, 0 to 20. I want
+it sorted by recency and then name. I only want the avatar and whether it's encrypted. I'm going
+to get the calculated name, whatever. I don't want any messages, because we've done a waste time
+actually downloading scroll back. And we're going to filter it to not have invites, not have old
+rooms, and not have those pesky space rooms. And whilst we're at it, we want to have end-to-end
+encryption. We want to have two device messages, and we want account data. And the third of it,
+or the sliding sync proxy, will literally just return about 10K of data, which is those 20 rooms
+with the bare data, bare essentials that you requested. The key design criteria for sliding
+sync is the performance is constant with the number of rooms. And this was the horrible mistake
+with the old API, and frankly the whole design of matrix historically, that as you join more rooms,
+it gets linearly slow for basically everything. And that was fine for the first few years when
+people are in a couple of hundred rooms, but obviously we don't want to predicate the success
+of the protocol on, yeah, it's fine as long as you're not a power user, or it's fine as long as
+you don't actually use it. And if you think of matrix being a bit like a file system, imagine
+how awful, and I'm looking at you, EXT2, a file system would be if it just slowed down linearly
+with the number of files that you put in a directory or some other characteristic. And
+as more and more rooms pop up in matrix, it's not just chat rooms, it could be spaces. Now imagine
+that you go and join the EU, and you're working in the EU government, and the EU has got a massive
+space of hierarchy over all of the countries and all of their public sector bodies. Even before
+you've talked to somebody, you might need to have visibility over this big hierarchy of
+1,000 rooms. You do not want your matrix client to take 1,000 times longer to log in or sync.
+So that's basically the entire idea here, that you can have an infinite number of rooms,
+bit like IMAP, where you can have massive mail folders, and yet you're only going to care about
+the subset that your client wants to actually manipulate. Having requested this range of 20
+rooms, you then get updates from the server, and this is why it's called sliding sync, that you
+basically have requested a window over these rooms, these 20 rooms, or whatever it might be,
+and then as the state changes on the server, you get updates of inserts of room here,
+delete one here, invalidate it here. It doesn't have to be rooms, in future it could be members or
+other sort of characteristics. This has been shamelessly stolen from Discord, so apologies
+to Discord folks if you're listening, but thank you also for coming up with this nice approach
+for how to maintain performance and scrolling on apps. And the end result is, it just made
+a lot more. It makes login instant, sync instant, and also time-to-view rooms instant.
+Element X is only going to talk sliding sync. There is no point in us wasting time
+implementing both approaches, because they're really quite different, and we want everybody
+using Element X to have a snappy snappy snappy experience. We've done a lot of iterations.
+I've been driving the poor Rust team and sliding sync team and Element X team mad by constantly
+demanding us to try to get the launch time down to 100 mils or something. And there's gone through
+probably 10 iterations to see how we actually drive the API. And it's been really interesting.
+The end conclusion is, first of all, when you launch the app, you sync that first
+screen's worth of rooms, but without any timeline. Literally the request I just showed you.
+Next, you immediately increase the timeline limit on that window to one. So you'll fill in the
+room previews, and it was happening so fast earlier that we didn't even have time to spot it
+happening. And then you pre-cache a page's worth of history of the visible rooms. So when I jumped
+into TWIM, and the history was already all loaded there, it's because the background
+and pre-cache had already happened, because I'd stopped scrolling the room list and immediately
+jumped in to pre-populate the history for those pages. Then you also incrementally build the big
+list of all your rooms in the background, which I guess technically is on with a number of rooms,
+but because it's happening in the background, it's not on the critical path. It means you can do
+the scroll for all your rooms, or search for a room by name instantly, and be able to find them.
+And finally, you cache it in Sled or SQLite. Rust SDK is doing all the heavy lifting here.
+The code base is maturing really well. We got it audited at the Vdozomat Slare last year, thanks
+to Least Authority, funded by Gamartic. And we have, I think, three other audits planned this year.
+They were meant to happen last year, but we had disruption along the way. Then high-quality bindings
+are critical for this. I mentioned that we've added AsyncFuture to UniFFI. I think this stack
+could be the ultimate stack for building cross-platform mobile apps going forwards.
+I mean, you can use Rust for the heavy lifting, and then you hook up at the top, a very thin,
+but very native, performant layer based on whatever the OS gives you. And at the beginning,
+UniFFI was a little bit, it didn't have everything we needed, and so we invested to go,
+and particularly, hook up the future support. And the end result, I think, is quite transformational.
+So that's Rust SDK. Meanwhile, whilst element X is maturing, we need to keep the existing client
+secured to. But it's going to take us a while to get to parity between element and element X.
+And the project for this, for crypto, is called element R, confusingly. So this replaces the old
+cryptography implementations in JS, iOS, and Android SDK with the same Rust
+create that powers Rust SDK. So it's just the crypto create that is providing a consistent
+encryption implementation across all the platforms. So this means that if we have hypothetically
+horrible CVEs popping up, we only have to fix them in one place in the Rust SDK, rather than
+having to do it four times over between where by West Android and Rust. And you can use this today.
+It is still beta, so it may kill your cat and flood your house. I've been using it,
+occasionally logs me out, which is a bit frustrating because initial sync on V2 takes 20
+minutes. But I recommend having a play if you're interested. Enable Rusty end-to-end encryption
+in labs on element iOS. Androids will be coming fairly soon, and web started working on Friday.
+We sent the first and received the first encrypted messages by Rust, crypto,
+in a wasm blob inside element web then. Rather anti-climatically, it looks and feels
+identical to the current crypto, except it's written in Rust. Then another big thing we've
+done to speed things up is faster remote room joins. So this is a huge internal change to Synapse.
+So again, you only receive the subset of state you need to participate in a room.
+Breaks all the assumptions that Synapse has. The rooms are typically atomic.
+Instead, you basically trickle in the membership of the room in the background after having
+got the minimum subset to join the room. So for instance, matrix HQ right now, there are 92,948
+state events for every user who has ever joined or changed their name or left and a whole bunch
+of other things. If you actually look at the subset you need to participate in the room,
+it's 152. So this speeds up the room join time from 15 minutes to 14 seconds. So finally,
+we will hopefully have fixed the problem where somebody gets and stalls matrix Synapse,
+immediately tries to join matrix HQ, sits there for 15 minutes looking at errors as their computer
+explodes and wonders why everybody thinks matrix is as amazing as it is. So, I mean,
+the computer will still explode because they're still having to talk to all of the servers in
+the room, but at least they will be responsive in 14 seconds. And we hope that the Synthelating
+conversation in matrix HQ will be such that it distracts them from the smoke coming out to their
+server. There is still a lot of room for improvement here. We shouldn't be hammering dead servers,
+which is where a lot of that time is going. And also, we should be caching the partial state.
+So, you know, if I want to join matrix HQ, the server can just go and hand me the events I need
+to do that. Another big thing is matrix RTC. So this is the name we're referring to MSC3401
+and 3898 as many because those were awful names, whereas matrix RTC is a bit more snappy. And this
+is a multi-party native VoIP. We've always had one-to-one VoIP. Here, we are standardizing
+the multi-party Zoom teams, JTC style experience, but in a heterogeneous way. So you can use
+different clients. This is in lamps and element web. Video rooms looks like this on the right-hand
+side, powered by element cool. And it works as what we call a matroshka widget, where you embed
+element cool here as a widget. So this is an iframe on the left-hand side. But even though element
+cool itself is a matrix client, it is piggybacking on the host's matrix client. So it shares the
+encryption and the identity. You don't have two long-term sessions. And really excitingly,
+we have multiple independent implementations of this in element cool, hydrogen, third room,
+and also, I believe, famously, it has an independent implementation in their healthcare
+product for Germany. And I'll very quickly try to show you a demo of this. And I'm going to show
+you. That's good. If anybody wants to heckle along on this, then feel free.
+Oh, I didn't have any internet access, do I? Video conferencing demo, so when you don't have
+any Wi-Fi, it's always a good idea, right? Let's see how it does. So I'm going to pop into that
+room there. And here is element cool. And then I'm also going to spin up a local hydrogen. Here's
+what I made earlier. Oh, hello, Amundi. Thanks for meeting you here. This is Amundi and everybody.
+She co-founded matrix. And I'm going to wish that this thing was telling me that a video
+call was happening in the room. And still being one that's ended, but in practice,
+there's one happening right now. I wonder if this is... I wonder why? Okay. And perhaps we'll use a
+different room. Let's go to Fozdom 2024. Back to the future, everybody. And go over to hydrogen
+here. And I think I should be able to just be able to join Fozdom 2024 on cool.ams.host.
+Yeah. Okay. Here, I can actually join it. And, hey, presto, you've got me staring at myself
+like a muppet because nobody else is responding to my comedy joke of moving to 2024. So everybody,
+oh, hello. Perfect. Somebody at the back. Thank you. Oh, and there's Amundi.
+So this thing is really cool because it is completely standardized multi-party void signaling.
+We have two entirely different code bases. There is not a line of codes in common between hydrogen
+here on the left and element core here on the right. And just like back in the day on the phone
+network, we could call each other on different things or have different set clients or whatever
+it might happen to be. Oh, we've got somebody remote. That's awesome. Then here we actually
+have a proper heterogeneous thing. So unlike JETC or some other conferencing system where
+everybody has to end up using the same system to work, this is, you know, providing an interoperable
+thing. And crap out on this one because I've got something better. I've got something better.
+So one of the other projects we have, which we're just releasing now is called Waterfall. Now,
+what we just did then was full match. All the clients were talking to one another. I'm amazed
+that it worked as well as it did. What you want to do, though, is to have what's called an SFU.
+So these guys, which go and mix together the local video calls. And Sean Dubois, who's the
+project lead at Pion, the Golang WebRTC, wrote one of these called SFU to SFU based on reading
+MSC3401. And we renamed it Waterfall. We've fleshed it out. And we've hooked it up to Element
+Cool. And I will endeavor to show you what that looks like. And it's going to be quite similar
+in some ways. Let me actually try a demo, demo room in here. Again, if someone is already in
+there, I'm going to try a fresh one. Let's call it fresh demo. Again, if anybody wants to try
+following along on this URL, if you can see it, please do so. Now, this looks a little bit different
+because it's connecting to the SFU instead. Oh, hello and hello. And hopefully we will get some
+video off and on. So this is being bounced off the go SFU. But perhaps I'll distract everybody
+by zooming. So this has got a completely different layout on it. And it thinks it's connected. Oh,
+there's Shimon. Well, I'm glad that Shimon of all people is able to connect because he has written
+the vast majority of Waterfall. So thanks for demoing Shimon. And I suspect it is not like in
+the packet loss here on my side. People are trying to connect in there. But it's working for some
+folks. It's very, very new, very alpha. But it's exciting to actually see this thing working.
+And if I quickly turn on debug here in developer mode, you'll see that it actually supports
+simulcast. So here you can see that Shimon is 640 by 360 pixels. Whereas this guy here in dandelion,
+oh, hello dandelion, is 320 by 240. And if I go and zoom embarrassingly, then it should catch up.
+There we go. 640 by 480. And it's gone and renegotiated the higher resolution stream through.
+And all the people are going and actually uploading multiple low resolution and higher
+resolution ones. So this is very early, but it's the shape of the future for doing proper massive
+scalable SFU based conferences. And that's actually looking good. I'm going to take a quick selfie.
+There we go. Right. Next demo or next stuff. I'm running out of time. I've got a lot of demos.
+OpenID Connect. Matrix is subject to MSE approval. Moving over to OpenID Connect. It rocks and gives
+us 2FA, multi-factor auth, pass keys, QR code login. You don't have to implement the weird
+matrix auth APIs on the server or the clients anymore. Element X has native OIDC on iOS already
+and will be OIDC first. First Room is the first OIDC-only matrix client. Go to our OIDC yet.com
+for the gory details. Signing sync, first adjoins, native VoIP and OIDC is a big change. This is
+fundamentally changing how federation works, how VoIP works, and critically how servers sync data
+to clients and how you log in. Couldn't be a bigger change. So we are taking the liberty of
+declaring it matrix 2.0 when we finally release it. So this is not a breaking change. This is pure
+enthusiasm basically on my behalf because I think it's worth saying, hey guys, come back to matrix,
+give it another go because we fixed all the crap stuff and we're calling it matrix 2.0.
+Okay, I'm not doing well on time. We're halfway through in theory. We're going to go now to the
+future. Flying cars and jet packs and all that good stuff. First of all, digital markets act.
+Where we're going, we do not need gatekeepers. If you haven't heard about the DMA, it is a
+fascinating piece of legislation that mandates the big tech companies must interoperate together,
+particularly for their communication services. The whole idea is that it empowers users to pick
+the services they want to use and trust without sacrificing the ability to talk to other people.
+That frankly forces the gatekeepers to differentiate based on quality and features
+rather than relying on a monopolistic situation where all of their users happen to be trapped
+in the silo. This is happening right now. The rules came into force in November. The rules start
+to apply in May and then gatekeepers get designated and it will start getting enforced,
+which is chunky GDPR style fines in March 2024 if the gatekeepers have not gone and
+interoperated things together. Turns out the matrix already provides a secure interoperable
+communication protocol. Who knows? The DMA requires the gatekeepers to maintain end-to-end
+encryption, which is good news. There's been a lot of paranoia that DMA is a secret attack on
+end-to-end encryption. It really isn't. Having spoken to the folks responsible, they really want
+to make sure that if WhatsApp does E2E today, then an interoperable at WhatsApp also needs to do
+E2E. They don't want to be responsible for destroying privacy. To re-encrypt, you need to
+either do it on the client side, so you would install something like a WhatsApp to Matrix app
+if you want to link your WhatsApp account into Matrix, or you could do a multi-head approach
+effectively, open APIs and have your app talk to WhatsApp as well as Matrix or whatever, or
+everybody ends up talking the same protocol, which means on the server side, the gatekeepers would
+have to add support for Matrix or XMPP or RCS or whatever it might be alongside their somewhat
+legacy proprietary protocol. ITF is established a working group called MIMI, more instant messaging
+interoperability targeting the everybody talks the same protocol approach. We've proposed Matrix
+as an ITF draft for content and transport layers. We're trying to work with them to make the most
+of the mix. Decentralized MLS. This is another big thing where we're going, we don't need salamanders
+because if you haven't noticed, all of the encryption historically have been called axolotl
+or ohm or proteus, all of which are species of salamander. MLS is another ITF working group,
+in fact the one from which MIMI has emerged for next generation end-to-end encryption.
+We have figured out how to make MLS work in a decentralized model. We've implemented it
+in a toy type script stack called MLS TS. It is currently being re-implemented on top of
+open MLS and Rust at which point when it works, we'll integrate it into Rust SDK and build it
+into real clients and write an MSE. Are we MLS yet dot com for all the gory details?
+Here are some early performance testing, which is pretty interesting. Let me get the key right
+for you here. If you look at MEGOM creating new sessions, this is obviously the log log scale
+for all of you mathematicians. You can see this red dashed line here showing how MEGOM sessions
+scale with a number of users. It's upper 100 seconds if you've got 100,000 users in the room,
+which is pretty slow. However, if you look at an MLS, let me get it right, update or adding new
+members, then they're down at 1,000 milliseconds, a couple of seconds. This is a major algorithmic
+improvement for certain operations over even the dosimats. Support developed in the dosimats,
+which feels relatively new, may get displaced by open MLS and DMLS when we get there, hopefully
+later this year. Dendrite impairs peer matrix. Where we're going, we don't need servers.
+Matrix is way too dependent on servers and the admins and the risks of internet shutdowns
+and censorship. This is because home servers have to store their users' chat history and metadata.
+Peer-to-peer matrix exists to fix this. This is a long-running blue sky project, so to speak,
+where we go and embed your home server inside the app in order to not have a server running
+in the cloud. Dendrite is the server we use. Big news on Dendrite is, as of a few weeks ago,
+it passes 100% server API compliance. 93% client server API and the 7% is boring stuff we don't
+really care about for this. Plankone, the peer-to-peer overlay network, is going really well as well.
+We just switched to soft state routing for reliability. As of about 4am this morning,
+not me. Initial store and forward relaying is here. I will very rapidly try to demo that.
+That's still my phone there. If I go and launch peer-to-peer matrix, Dendrite is not running.
+Now it is running. This has literally got a Dendrite running inside my phone here. If I go
+over to Visor here, I should hopefully also be able to run it on my Android thing. Here it is.
+There it is. Did it already crash? It is a bit crashy. It is still beta.
+I have a FOSDEM demo here. I say hello there. You can see messages flowing back and forth,
+peer-to-peer. If I take my phone and put it on to airplane mode and send some messages
+through from Android, they still go. This is peer-to-peer matrix running over Bluetooth
+flow energy. It silently felled over from running over IP into Bluetooth mode.
+Now the exciting thing is that if I also run...
+Well, it's going to be an interesting demo. Here is an element peer-to-peer running in iOS
+or macOS because you can do that on an M1 Mac. Apparently there are five connected peers, which
+is three more than I was expecting. Hello, everybody out there who is about to screw up my demo.
+You can see the same history coming on here. I can send a message through. You can see both
+on iOS. It came through on Android too. The really interesting thing is if I go and...
+You are going to screw up my demo. If I go and kill the peer-to-peer app on Android,
+I send a message here saying, hello, relaying. Actually, not in that room. I am going to do
+it in my DM through to Android. I am going to say testing relays or very badly typed.
+Critically, my... Where is it gone? Is it crashed? No, there it is. I am not actually in that room.
+I am only in one room on my Mac here. However, this hopefully has gone and peered, relayed through
+to my Android phone. If I now go and kill the app here on iOS and relaunch it here on Android,
+if I knew how to use Android, come on. Is this going to work or is it going to search Google?
+There it is. Perfect. Hopefully, the first thing this thing will do is to... I am in the wrong room.
+If Dendrite launches, the red bar is telling me that it can't tell and talk to its own Dendrite.
+You can do it. Yes, testing relaying. This is huge because historically,
+peer-to-peer matrix has had a massive problem that the other guy has to be online running the app
+at the same time. A long story, but I ended up on an aircraft carrier a couple of months ago
+going and trying to explain a bunch of people how they could use matrix in that environment,
+and there are a bunch of us on board this thing. It turns out that an aircraft carrier is a massive
+floating Faraday cage. We went and fired up peer-to-peer matrix on it and were very
+smug that we can talk to one another, but you had to physically wave at the other guy to get
+them to launch the app so they could receive the message. Whereas with a relay, you can obviously
+talk to them even if the app isn't running. So that's big. Right. Almost there.
+Matrix is not just for chat and VoIP. This is the final thing. Third Room is a decentralized
+matrix for any kind of real-time data. Third Room is this tiny project done by Robert and AJ
+to provide an open decentralized platform for spatial collaboration of any kind built on matrix.
+He uses hydrogen, 3JS, bit ECS, and rapier for a new engine called manifold. And the idea is you
+take a matrix room, you upload some GLTF 3D assets to it, you upload some WASM or JavaScript scripts
+to it, they use matrix RTC to spell up spatial VoIP and physics synchronization over WebRTC,
+and you get web-first open decentralized virtual worlds and spatial apps without any of the
+cryptocurrency or token or Facebook stuff, apart from possibly the hardware. And it looks like this.
+So you can literally go to it right now, thirdroom.io, and I'm going to go to a world called
+third room presentation here. And it's going to hopefully pull this up out of my index DB,
+because I don't want to wait to download 50 megabytes over the network. And if the demo
+gods are smiling, then you find yourself in this rather snazzy demo world. Now, this is running
+in browser, no plug-ins or anything, and it's going at 60 frames a second. It does this with
+proper multi-threading using shared array buffers and atomics to synchronize together the WebGL
+thread and also the game thread and the main thread in the UI. You can see I'm indeed wandering
+around there wearing a placeholder avatar. I can flip into third person view here, and you can see
+I'm also wearing the same beautiful thing. We haven't got customizable avatars yet. Some of the
+things I can show you here is that you can go and click on buttons, and this is actually a script
+showing the layout of the different threads. I don't have time to show you that right now, but
+the game thread has got, like, rapier physics and WebAssembly. But a really fun thing is that you
+can just do freeform scripting of any kind. So one example could be this silly, silly, silly demo.
+Which hopefully will load up rapidly. Oh, that's what happens if you, this is a bug where you
+have your worlds overlaying on one another. I'm going to keep it like this, because this is pretty
+cool. So we've got the construct room from the matrix. I'm now superimposed on top of Mars down
+here. And if I go over to the TV and I click on it, predictably enough, the entire world goes matrix.
+So the script for that is literally just sitting there as a bunch of JavaScript uploaded into the
+media repository. And it's compiled down to Wasm in real time by the engine by QuickJS, thanks to
+Fabrice Ballard. And it's like four lines of code. You use WebSG, which is our new API called WebScene
+Graph that we're going to propose to W3C as a 3D API for manipulating JLTF scene graphs. Now you
+make it intractable, and then every tick, every frame, you see if it's being pressed, and then you
+toggle the state and you enable the matrix material on the room. It's slightly cheated by
+hardcoding it in the engine for now like this. Something that we haven't hardcoded, though, is this
+guy, which is really exciting. I'm going to refresh his time. And here you can see a big scary black blob
+of pollen noise, which is pulsating, according to my voice as I bellow at it. And this thing is
+actually a huge chunk of sea, which is compiled down to Wasm and is going and programmatically
+changing in real time the JLTF scene. So this is like the first proper, more advanced capabilities on
+top of third room. The whole idea is you can build any old app on top of this. You could build Figma on
+this. You could do multiplayer Blender. In fact, we have an in-world editor in here where I can go and
+select this guy at the bottom, and it will have a big white and burglar around it. We don't yet have
+the property editor, but you should be able to go in and directly manipulate it, change the
+opacity, the transformations, et cetera, and all that sort of thing. And it really ends up feeling
+a lot like the web. Rather than a DOM, you've got JLTF, rather than the DOM API, you've got the WebSG
+API, rather than JavaScript, you've got Wasm, Sandblocks, Blobs, with Rust, and Zig, and C, and
+JavaScript within it. And there is one final thing I'm going to try to show you, which is probably
+going to go horribly wrong, which is that we've just added WebXR into third room. So if I go and put
+on my Facebook device, and, oh, there we go. And I back away a bit. Probably unplug it. You'll see
+hopefully, in fact, I need to go full screen on that, I guess I do. There we go. Is that coming
+through? You can see that here I am wandering around third room, probably going to fall off the
+stage and break my neck. And I can go and, like, spawn object. So you can have big crate, I can throw
+the crate away, I can spawn some other big crate, and let's run away from that one, go and pick this
+guy up, and throw it away, go and pick that one up, and it's over here, and throw it away, et cetera.
+And I mean, this is running at 90 frames a second. 90 frames a second, so, that's a bit weird. It is
+as least as good as the native MetaHorizon stuff, the Facebook of ships, except it's running within
+WebXR in a browser in a completely open environment. So we're kind of hoping this provides a really
+viable platform to build a genuine open spatial collaboration plane for the web. I've already
+spoken about that. Coming up next is persistence. So we don't yet persist the changes into the
+matrix room, but we will by uploading little bits of JLTF files so you can even have bots which
+go into there. Another thing I should have shown you, but forgot, was this guy somewhere. I've
+lost it already. Never mind. Well, I was going to show you, this guy here, that if in this room I go in,
+and I think this is going to be a comedy, that's what happens if London and Mars get mixed together
+for everybody. If I go and say hi, because look, it's matrix room, then if I do slash echo something, I
+get an echo back. That echo has come from a widget in WASM running inside the world. So you can
+program matrix now from within WASM blobs sitting within the room. Nothing to do with third room. You
+could use this in clients, et cetera, to start doing client-side widgets. So what's next? Loads of
+stuff. One big PSA is that Gitter is going native matrix roughly next week. We basically can't afford
+to run both the Gitter infrastructure and a bunch of matrix infrastructure, so Gitter will become a
+branded element instance. The API will go away. Please use matrix instead. And finally, we need
+help. So don't let friends use proprietary chat services. Please use matrix, and critically, and this
+is new, and it's really important, if you're benefiting commercially from matrix, please
+financially support the foundation, because it's stuck in this horrible feedback loop at the moment
+where the better we make matrix, the less inclined it seems that people want to, like, pay for
+support or pay for things if they can just grab it on GitHub. This can end up being a disaster
+where we run out of cash. So please, please, please contribute back, particularly if you're a
+government. You've got loads of money. Also, run a server, run bridges bots, fill out matrix, follow
+us on Mastodon. Thank you very much. Thanks for listening. Sorry for ever running on time, as always.
+Thank you.

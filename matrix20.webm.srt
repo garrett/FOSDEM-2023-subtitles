@@ -1,0 +1,1956 @@
+1
+00:00:00,000 --> 00:00:14,160
+Okay, hello everybody. Can you hear me? Yes, I see thumbs up at the back. Please come in,
+
+2
+00:00:14,160 --> 00:00:20,240
+come in, roll up, roll up for the Matrix show or introducing Matrix 2.0 or how we are going
+
+3
+00:00:20,240 --> 00:00:26,320
+to make or how we have made Matrix go boom, very technical term. Please take your seats,
+
+4
+00:00:26,320 --> 00:00:33,760
+ladies and gentlemen. Right, so hi everybody. I'm Matthew. I'm the project lead and co-founder
+
+5
+00:00:33,760 --> 00:00:39,280
+of Matrix and I'm here to tell you all about the work we've been doing to fix Matrix's performance
+
+6
+00:00:39,280 --> 00:00:45,520
+problems and a few other things as well. So I'm guessing that a bunch of people know what Matrix
+
+7
+00:00:45,520 --> 00:00:50,000
+is, given that Vostem has been running on Matrix during the pandemic and we're doing
+
+8
+00:00:50,000 --> 00:00:55,200
+four hard to lead doing a hybrid Matrix version of Vostem right now as we speak. So hello to
+
+9
+00:00:55,200 --> 00:01:01,280
+everybody following along on the HLS stream by Matrix. You probably know that Matrix is an open
+
+10
+00:01:01,280 --> 00:01:06,800
+network for secure decentralized real-time communication. We have to say this because
+
+11
+00:01:06,800 --> 00:01:11,120
+people watching the video might not know later on. You can use it for interoperable chats,
+
+12
+00:01:11,120 --> 00:01:16,240
+so following along on Vostem, bridge through to ILC or X and PP, etc. You can use it for
+
+13
+00:01:16,240 --> 00:01:22,240
+interoperable VoIP, but Matrix at its core is a real-time communication fabric for any kind
+
+14
+00:01:22,240 --> 00:01:27,120
+of real-time comms. So you could use it for communication within VR or AR. You could use it
+
+15
+00:01:27,120 --> 00:01:32,960
+to synchronize world data within VR and AR. You could use it for IoT. It is basically meant to be
+
+16
+00:01:32,960 --> 00:01:40,800
+the missing communication layer of the open web. So no single party in Matrix owns your conversations.
+
+17
+00:01:40,800 --> 00:01:45,040
+The second you talk to somebody on a different server, your conversations get replicated equally
+
+18
+00:01:45,040 --> 00:01:50,720
+between the different servers, so there cannot be a gatekeeper. There cannot be some big tech company
+
+19
+00:01:50,720 --> 00:01:55,600
+going and holding your conversations hostage. Instead, the conversations are shared between
+
+20
+00:01:55,600 --> 00:02:02,480
+all the participants. To apologize, the network is a mesh of servers like Vostem.org, say,
+
+21
+00:02:02,480 --> 00:02:07,200
+on the right, which might be talking to Mozilla.org, which might be talking to Matrix.org, or Nome.org,
+
+22
+00:02:07,200 --> 00:02:12,640
+KDE.org, or whatever it is, and you have native Matrix clients like Element, or Fluffy Chat,
+
+23
+00:02:12,640 --> 00:02:17,280
+or Mecca, or Katernion, or hundreds of others these days, which connect through to the Matrix
+
+24
+00:02:17,280 --> 00:02:23,200
+server. Then you have application services, which glue additional things onto the Matrix server,
+
+25
+00:02:23,200 --> 00:02:27,920
+like bridges, or bots. You have identity servers, which we don't talk about because they're a mess
+
+26
+00:02:27,920 --> 00:02:32,800
+and we need to get rid of them. And then you've got application services that bridge through to
+
+27
+00:02:32,800 --> 00:02:38,800
+things like Slack, or Teams, or Telegram, or ILC, or XMPP, et cetera. And that is a schematic view
+
+28
+00:02:38,800 --> 00:02:44,480
+of the public Matrix network. Now, the Matrix ecosystem, as it sits today, looks something
+
+29
+00:02:44,480 --> 00:02:50,640
+like this. You've got the Matrix spec still being the kind of one true commonality across the whole
+
+30
+00:02:50,640 --> 00:02:57,200
+ecosystem, spec.matrix.org, a whole bunch of markdown, and swagger, or open API, I should say,
+
+31
+00:02:57,200 --> 00:03:01,280
+that defines how the server is on the bottom, talks to the clients on the top. So you've got
+
+32
+00:03:01,280 --> 00:03:06,240
+Synapse as our first-gen Python server, which has been proving to be a bit more than first
+
+33
+00:03:06,240 --> 00:03:11,680
+generation, as we've invested a lot of time making it fast and generally performant. So
+
+34
+00:03:11,680 --> 00:03:17,120
+Synapse is not going away any time soon. If anything, it is corroding into Rust as the Python
+
+35
+00:03:17,120 --> 00:03:24,640
+is augmented cybernetically with a bunch of Rust. Then we have Dendrite in Go, which is also doing
+
+36
+00:03:24,640 --> 00:03:29,600
+very well and is ending up focusing more on embedded use cases. So you use Synapse for massive
+
+37
+00:03:29,600 --> 00:03:34,800
+servers and use Dendrite for ones you embed into an app. Then we have application services and
+
+38
+00:03:34,800 --> 00:03:41,200
+bridges for things like IRC bridging, et cetera. And then many other servers and bots and bridges
+
+39
+00:03:41,200 --> 00:03:46,960
+from the wider community. The green stuff is stuff that we published as the matrix.org foundation,
+
+40
+00:03:46,960 --> 00:03:52,880
+all Apache licensed for people to build on top of. We have then the clients on the far left,
+
+41
+00:03:52,880 --> 00:03:59,520
+we have our original SDKs of matrix JS SDK, React SDK on top of it, and then iOS SDK and
+
+42
+00:03:59,520 --> 00:04:06,480
+Android SDK too. These are relatively venerable SDKs now. JS SDK is eight years old, which is,
+
+43
+00:04:06,480 --> 00:04:12,160
+you know, enough to probably get a degree or something. iOS SDK is about the same age. Android
+
+44
+00:04:12,160 --> 00:04:17,200
+SDK is a little bit younger, but this is what the current generations of element use today.
+
+45
+00:04:18,000 --> 00:04:24,000
+Then we have Hydrogen, which is a relative newcomer. This is a progressive web app SDK,
+
+46
+00:04:24,000 --> 00:04:29,360
+super small. It's about 70, 80 kilobytes in total for the whole thing, including all end-to-end
+
+47
+00:04:29,360 --> 00:04:35,360
+encryption. And it's designed for embedded web matrix instances. So we have Hydrogen itself,
+
+48
+00:04:35,360 --> 00:04:42,000
+hydrogen.element.io as a very lightweight PWA for playing around with matrix. We have chatterbox
+
+49
+00:04:42,000 --> 00:04:48,240
+as intercom style embeds a matrix chatbox into your website. We have Surderoom, which is our
+
+50
+00:04:48,240 --> 00:04:54,640
+crazy science fiction spatial collaboration on top of matrix platform, where you want to have
+
+51
+00:04:54,640 --> 00:04:58,880
+matrix bit as lightweight as possible, which is why we use Hydrogen, the lightest element to make
+
+52
+00:04:58,880 --> 00:05:04,800
+it happen. And then the thing we'll be talking about a lot today is element X. So this is a
+
+53
+00:05:04,800 --> 00:05:11,680
+total rewrite of element mobile on iOS and Android. And for maximum cliche, we have rewritten it in
+
+54
+00:05:11,680 --> 00:05:20,720
+Rust using the matrix Rust SDK. I hear we have Rust fans in the audience. So we'll be talking a
+
+55
+00:05:20,720 --> 00:05:24,880
+lot about that. Meanwhile, on the community side, there are just more and more clients all over
+
+56
+00:05:24,880 --> 00:05:30,800
+the place, like Thunderbird released its native matrix implementation. We've got Watch the Matrix,
+
+57
+00:05:30,800 --> 00:05:36,160
+which is an excellent Apple Watch matrix client, which doesn't tether to your phone. It's actually
+
+58
+00:05:36,160 --> 00:05:44,320
+running on the watch itself. Neo chats and KDE and QTE and C++. I wish I could name them all.
+
+59
+00:05:44,320 --> 00:05:50,480
+I can't. I don't have time. So help for the network. Here is the total number of users we've
+
+60
+00:05:50,480 --> 00:05:55,040
+ever seen on matrix, which is looked as if it was going to hit 90 million and then somebody turned
+
+61
+00:05:55,040 --> 00:05:59,840
+off a server. Kids, this is what happens if you turn off the server because it means the graph
+
+62
+00:05:59,840 --> 00:06:05,680
+goes down. So please never, ever turn off your matrix servers ever again. This is literally
+
+63
+00:06:05,680 --> 00:06:10,320
+in phone home stats that Synapse reports. So it doesn't include Android. It doesn't include
+
+64
+00:06:10,320 --> 00:06:16,400
+and conduit or other servers. It also doesn't include all of the paranoid people, which is quite
+
+65
+00:06:16,400 --> 00:06:20,560
+a lot of people running matrix who obviously aren't going to phone home their usage stats to us.
+
+66
+00:06:20,560 --> 00:06:25,840
+It does include guest users and bridge users. So it's a little bit of an overestimate. But the
+
+67
+00:06:25,840 --> 00:06:30,560
+important thing is the shape of the graph, which as you can see is continuing to go well, apart
+
+68
+00:06:30,560 --> 00:06:36,880
+from that guy who turned off his server. In terms of the spec, we have fallen into this cadence of
+
+69
+00:06:36,880 --> 00:06:46,080
+quarterly releases of matrix since the big 1.0 back in 2020. And then particularly in 2022,
+
+70
+00:06:46,080 --> 00:06:53,520
+we've managed to crank out a point release every quarter. Just in, I think the day before last
+
+71
+00:06:53,520 --> 00:06:58,000
+Fosden, we had spaces, restricted joins, and actually the matrix ERI scheme, which is now
+
+72
+00:06:58,000 --> 00:07:03,120
+being implemented all over the place. And then a few months later, we added aggregations and
+
+73
+00:07:03,120 --> 00:07:07,360
+restricted knocking. Now, these features have often been around for years, but this is actually
+
+74
+00:07:07,360 --> 00:07:14,720
+formalizing them into the proper long term supported spec. 1.4 added threads, massive feature that has
+
+75
+00:07:14,720 --> 00:07:21,360
+been an epic to get done, but it landed edits and private read receipts. A very long time
+
+76
+00:07:21,360 --> 00:07:26,080
+complaint about matrix being that you couldn't turn off read receipts, turns out it's surprisingly
+
+77
+00:07:26,080 --> 00:07:33,120
+hard to do, but we now have it spec and implemented. Then 1.5 in November, we added in formalized
+
+78
+00:07:33,120 --> 00:07:38,800
+references, we fixed up some things in the ASAPI, and I think we have basically maintenance release
+
+79
+00:07:38,800 --> 00:07:44,960
+on 1.6 any day now. So nothing too exciting in the next release, mainly because we're building up
+
+80
+00:07:44,960 --> 00:07:55,040
+to the big 2.0. Nice step is that there were 120 MSCs in 2022, of which 39 came from the community,
+
+81
+00:07:55,040 --> 00:08:01,440
+27 from new contributors, 30 from the gray beards of the spec core team, and then 51 from the folks
+
+82
+00:08:01,440 --> 00:08:07,920
+who are paid to work on matrix.org, mainly by element. So it's a reasonable mix of community
+
+83
+00:08:07,920 --> 00:08:14,400
+and core project work. In terms of uptake, other than that, we obviously helped the world's best
+
+84
+00:08:14,400 --> 00:08:19,040
+open source conference, dodge COVID. Hopefully, apologies if matrix was painful over the last
+
+85
+00:08:19,040 --> 00:08:24,320
+couple of years, but it's probably better than forced them at all. Lots of government uptake.
+
+86
+00:08:24,960 --> 00:08:30,400
+New news is Germany, we have bundles messenger rolling out matrix across the whole German government
+
+87
+00:08:30,400 --> 00:08:35,120
+in November. Also good martyred the German healthcare agency, proposing it as a neutral
+
+88
+00:08:35,120 --> 00:08:40,720
+standard for secure messaging in healthcare. Lots and lots of associated deployments in healthcare,
+
+89
+00:08:40,720 --> 00:08:46,880
+education, utilities, manufacturing. Basically, if you are an organization who cannot put their
+
+90
+00:08:46,880 --> 00:08:53,360
+data unencrypted into some proprietary silo, like teams or Slack, I think matrix hopefully provides
+
+91
+00:08:53,360 --> 00:09:00,000
+a good alternative. Moodle is busy integrating matrix into the learning management system.
+
+92
+00:09:00,000 --> 00:09:04,800
+Automatic have got a project called chat tricks, which embeds matrix into WordPress so you can
+
+93
+00:09:04,800 --> 00:09:10,080
+literally dump your little chat console based on hydrogen into your WordPress blog.
+
+94
+00:09:10,080 --> 00:09:14,320
+Reddit is rumored to be building chat capability powered by matrix,
+
+95
+00:09:14,320 --> 00:09:17,760
+mainly because I think they had public who signed up, enabled and somebody logged in and
+
+96
+00:09:17,760 --> 00:09:22,960
+discovered a matrix over there. There's a lot of interest over matrix being potentially the
+
+97
+00:09:22,960 --> 00:09:29,760
+communication there for the digital market sites. Last year, we put out this slide to
+
+98
+00:09:29,760 --> 00:09:34,960
+basically say the plan for 2022. In the early days of matrix, we were just trying to make it work,
+
+99
+00:09:34,960 --> 00:09:41,280
+then we tried to make it work right and managed to exit beta and launch the 1.0. The last year
+
+100
+00:09:41,280 --> 00:09:47,360
+particularly has been trying to make it work fast and I hope we have now made it work fast and I
+
+101
+00:09:47,360 --> 00:09:57,920
+will attempt to prove this to you with a demo. Well, you haven't seen anything yet. So there is
+
+102
+00:09:57,920 --> 00:10:06,720
+one of my cats helping me as a kid. On the bottom here, you might see three, four icons in fact,
+
+103
+00:10:06,720 --> 00:10:12,480
+element X, element R, element X itself, so that's element X nightly and then element normal.
+
+104
+00:10:13,360 --> 00:10:17,840
+We're going to talk about element X here. So I've got the nightly here and I'm going on the ship.
+
+105
+00:10:18,720 --> 00:10:24,480
+This is what you see as a little splash screen. I'm going to hit continue on that and hope that
+
+106
+00:10:24,480 --> 00:10:30,480
+I've got enough connectivity to connect to the server. That's a good start. If it takes that long
+
+107
+00:10:30,480 --> 00:10:34,640
+to discover that there's a server out there, then this demo might not go so smoothly. I'm going to
+
+108
+00:10:34,640 --> 00:10:39,760
+log in as my actual main real matrix account. I'm not going to type in my password in front of you,
+
+109
+00:10:39,760 --> 00:10:48,960
+but I'm going to pull it out of my password manager and hit continue. And if the server is there,
+
+110
+00:10:48,960 --> 00:10:55,280
+there's too many people in the room. It hasn't even started talking to the server yet. Okay. And
+
+111
+00:10:55,280 --> 00:11:06,240
+that's it. I'm in. So my account. So if I was going to try to log in on my normal element
+
+112
+00:11:06,240 --> 00:11:12,240
+account, it would take 20 minutes because I'm in 4,000 rooms a day back to literally day one,
+
+113
+00:11:12,240 --> 00:11:17,840
+or actually day minus two weeks or something of matrix. And I can go and scrub through all of these
+
+114
+00:11:17,840 --> 00:11:22,800
+gazillion rooms there. And they are all actually there. I can go and find somewhere. I know,
+
+115
+00:11:22,800 --> 00:11:27,360
+try not to expose anything too sensitive. But you can see it's actually already pulled in
+
+116
+00:11:27,360 --> 00:11:32,720
+room previews on all of these things. Going to, I know, this week in matrix. And there is the chat.
+
+117
+00:11:32,720 --> 00:11:36,880
+There is just no spinner here other than the slow network at the beginning, which really was the
+
+118
+00:11:36,880 --> 00:11:43,920
+slow network. And you can see we've got reactions in here. We've got some nice bubbles. We've got
+
+119
+00:11:43,920 --> 00:11:50,400
+replies. We've got joins and parts and day markers, read markers. We've got Matt Markdown.
+
+120
+00:11:51,120 --> 00:11:58,080
+This is the SwiftUI incarnation of element X, but all of the heavy lifting here is done by Rust.
+
+121
+00:11:58,080 --> 00:12:03,200
+And it is transformative. The whole point here was to be faster than Telegram. And I think that
+
+122
+00:12:03,200 --> 00:12:09,120
+we might have got it. Although if anybody's in a Telegram account with 4,000 rooms, please tell me
+
+123
+00:12:09,120 --> 00:12:13,920
+how long it takes to log into it afresh and how long it takes to launch. So talking about how long
+
+124
+00:12:13,920 --> 00:12:21,040
+it takes to launch, if I go and quit the app like that and relaunch it, we're in. That was it.
+
+125
+00:12:26,640 --> 00:12:32,800
+And I'm going to risk doing one other thing, which is to launch my non-nightly, which I haven't
+
+126
+00:12:32,800 --> 00:12:37,920
+actually used for a couple of hours. And again, it's synced almost instantly. And what I'm going to
+
+127
+00:12:37,920 --> 00:12:46,000
+do is that this is on a custom build, which is hooked up to Yeager. And if I go over to Yeager,
+
+128
+00:12:46,000 --> 00:12:50,880
+and if I have enough internet connection to even load the Yeager UI, this is going to be really
+
+129
+00:12:50,880 --> 00:12:55,600
+fun for demoing later if this is how bad the connectivity is. And I search for the well-known
+
+130
+00:12:55,600 --> 00:13:00,880
+element X Matthew app in the last, actually, let's do the last 15 minutes or five minutes even,
+
+131
+00:13:00,880 --> 00:13:08,640
+then we've actually hooked up Rust SDK so that all of the logging is structured and all of the
+
+132
+00:13:08,640 --> 00:13:17,200
+logging gets uploaded via LTP to Yeager. And if I had internet access, I should start tethering,
+
+133
+00:13:17,200 --> 00:13:23,280
+I would be able to show you a blow-by-blow account of what happened when I launched the app
+
+134
+00:13:23,280 --> 00:13:27,760
+then a minute ago. So what we're going to see when it finally loads, hopefully,
+
+135
+00:13:27,760 --> 00:13:33,120
+is first of all, it has to pull up a local cache of my messages if you're already logged in from
+
+136
+00:13:33,120 --> 00:13:40,000
+disk. For this, we currently use Sled, which is a key value database native to Rust. It hasn't
+
+137
+00:13:40,000 --> 00:13:45,920
+been going amazingly well for us, and let's hope that's the right one. And as you can see here,
+
+138
+00:13:45,920 --> 00:13:50,800
+at the top, we've got the build operation and the 410 milliseconds there, frankly,
+
+139
+00:13:50,800 --> 00:13:56,960
+should be more like 40, because all it's doing is loading up 20 rooms also out of Sled. We're
+
+140
+00:13:56,960 --> 00:14:02,400
+going to move to SQLite because if nothing else, Sled spends its entire life rebuilding itself
+
+141
+00:14:02,400 --> 00:14:06,000
+and defragmenting itself when you launch it, which is a bit unfortunate when you're trying to launch
+
+142
+00:14:06,000 --> 00:14:10,560
+an app quickly. Then it restores your session and gets a whole bunch of events out of it,
+
+143
+00:14:10,560 --> 00:14:15,120
+which is the first couple of events on the page. And if we scroll past those, the really interesting
+
+144
+00:14:15,120 --> 00:14:22,960
+one here is doing the sync. So this on the server is 90 milliseconds to calculate your sync response.
+
+145
+00:14:22,960 --> 00:14:27,600
+It's ended up being 900 over the wire because of all you people with your electronic magnetic
+
+146
+00:14:27,600 --> 00:14:32,720
+interference and your mobile phones. But still, you saw that it was very usable. It's like a
+
+147
+00:14:32,720 --> 00:14:38,240
+second to get to the point that you're viewing stuff. And in fact, we already are interactive
+
+148
+00:14:38,240 --> 00:14:44,400
+before the sync response returns, thanks to the local store having been resumed. So we have gone
+
+149
+00:14:44,400 --> 00:14:50,160
+deep down the rabbit hole, so the saying goes, to try to optimize the performance on element X.
+
+150
+00:14:50,160 --> 00:14:55,600
+So it is as snappy as iMessage, or WhatsApp, or Telegram, rather than the slightly clunky beast
+
+151
+00:14:55,600 --> 00:15:03,360
+that we've had historically. So before it looked like this, you got a synapse on the right with
+
+152
+00:15:03,360 --> 00:15:09,600
+all sorts of fun workers to do the various bits and bobs. And then we had element iOS with iOS SDK,
+
+153
+00:15:09,600 --> 00:15:14,880
+mainly written in Objective-C, matrix kit in the UI layer with more Swift in it.
+
+154
+00:15:14,880 --> 00:15:20,240
+We had MXCrypto, again written, I think, in Objective-C, and LibOm as the encryption library in
+
+155
+00:15:20,240 --> 00:15:26,880
+C++ and C sitting below it. And then the database layer was horrific with a mix of flat files,
+
+156
+00:15:26,880 --> 00:15:35,040
+realm, core data, carrier pigeon. Element iOS has some issues. In our brave new sliding sync world,
+
+157
+00:15:35,760 --> 00:15:40,880
+everything has changed. On the left-hand side, we now have on iOS SwiftUI for the funky app I
+
+158
+00:15:40,880 --> 00:15:47,760
+just showed you. On Android, we have Jetpack Compose. Then we have Unify bindings to the Rust SDK,
+
+159
+00:15:47,760 --> 00:15:53,280
+which has been a lot of fun, even on our Rust team has been hacking way, contributing async
+
+160
+00:15:54,240 --> 00:16:03,440
+bindings through to Unify so that we could expose Rust SDK, complete with nice features and async
+
+161
+00:16:03,440 --> 00:16:08,320
+through to Swift and Kotlin. And then you've got Rust SDK itself, which is doing all the heavy
+
+162
+00:16:08,320 --> 00:16:13,920
+lifting. It's got the crypto crate within it, and within that is Vdozomats, which is our native
+
+163
+00:16:13,920 --> 00:16:19,280
+Rust encryption implementation for Matrix. Below that, you've got sled and in-future SQLite.
+
+164
+00:16:19,280 --> 00:16:24,320
+This then talks through to a sliding sync proxy. And this is written in Go, and it implements MSC
+
+165
+00:16:24,320 --> 00:16:30,560
+3575, which is sliding sync. And this is the magic for how this works so quickly. It's basically
+
+166
+00:16:30,560 --> 00:16:35,440
+storing, well, it's going and talking normal sync to normal Synapse. So this could be Synapse or
+
+167
+00:16:35,440 --> 00:16:41,120
+Dendrite or Conduit or anything on the right-hand side. The go lang thing is an intermediary that
+
+168
+00:16:41,120 --> 00:16:46,160
+is going and sucking up the state of your account, storing it in a local Postgres, and then talking
+
+169
+00:16:46,160 --> 00:16:53,520
+the very, very responsive API in order to pull that data into Element X itself. It does it by
+
+170
+00:16:53,520 --> 00:16:57,840
+looking like this. Sliding sync lets the clients request the bare minimum of data that they need
+
+171
+00:16:57,840 --> 00:17:02,400
+to render the UI. So here's an almost real request where we say, I want to see the currently
+
+172
+00:17:02,400 --> 00:17:07,280
+visible rooms. I want to see the first page to preload it. So I want 20 rooms, 0 to 20. I want
+
+173
+00:17:07,280 --> 00:17:12,400
+it sorted by recency and then name. I only want the avatar and whether it's encrypted. I'm going
+
+174
+00:17:12,400 --> 00:17:16,480
+to get the calculated name, whatever. I don't want any messages, because we've done a waste time
+
+175
+00:17:16,480 --> 00:17:22,320
+actually downloading scroll back. And we're going to filter it to not have invites, not have old
+
+176
+00:17:22,320 --> 00:17:26,880
+rooms, and not have those pesky space rooms. And whilst we're at it, we want to have end-to-end
+
+177
+00:17:26,880 --> 00:17:31,040
+encryption. We want to have two device messages, and we want account data. And the third of it,
+
+178
+00:17:31,040 --> 00:17:37,120
+or the sliding sync proxy, will literally just return about 10K of data, which is those 20 rooms
+
+179
+00:17:37,120 --> 00:17:42,960
+with the bare data, bare essentials that you requested. The key design criteria for sliding
+
+180
+00:17:42,960 --> 00:17:49,600
+sync is the performance is constant with the number of rooms. And this was the horrible mistake
+
+181
+00:17:49,600 --> 00:17:55,280
+with the old API, and frankly the whole design of matrix historically, that as you join more rooms,
+
+182
+00:17:55,280 --> 00:17:59,840
+it gets linearly slow for basically everything. And that was fine for the first few years when
+
+183
+00:17:59,840 --> 00:18:03,920
+people are in a couple of hundred rooms, but obviously we don't want to predicate the success
+
+184
+00:18:03,920 --> 00:18:08,160
+of the protocol on, yeah, it's fine as long as you're not a power user, or it's fine as long as
+
+185
+00:18:08,160 --> 00:18:14,160
+you don't actually use it. And if you think of matrix being a bit like a file system, imagine
+
+186
+00:18:14,160 --> 00:18:18,960
+how awful, and I'm looking at you, EXT2, a file system would be if it just slowed down linearly
+
+187
+00:18:18,960 --> 00:18:24,000
+with the number of files that you put in a directory or some other characteristic. And
+
+188
+00:18:24,000 --> 00:18:30,240
+as more and more rooms pop up in matrix, it's not just chat rooms, it could be spaces. Now imagine
+
+189
+00:18:30,240 --> 00:18:36,320
+that you go and join the EU, and you're working in the EU government, and the EU has got a massive
+
+190
+00:18:36,320 --> 00:18:41,600
+space of hierarchy over all of the countries and all of their public sector bodies. Even before
+
+191
+00:18:41,600 --> 00:18:46,000
+you've talked to somebody, you might need to have visibility over this big hierarchy of
+
+192
+00:18:46,000 --> 00:18:51,840
+1,000 rooms. You do not want your matrix client to take 1,000 times longer to log in or sync.
+
+193
+00:18:51,840 --> 00:18:58,400
+So that's basically the entire idea here, that you can have an infinite number of rooms,
+
+194
+00:18:58,400 --> 00:19:02,720
+bit like IMAP, where you can have massive mail folders, and yet you're only going to care about
+
+195
+00:19:02,720 --> 00:19:08,080
+the subset that your client wants to actually manipulate. Having requested this range of 20
+
+196
+00:19:08,080 --> 00:19:13,120
+rooms, you then get updates from the server, and this is why it's called sliding sync, that you
+
+197
+00:19:13,120 --> 00:19:18,960
+basically have requested a window over these rooms, these 20 rooms, or whatever it might be,
+
+198
+00:19:18,960 --> 00:19:24,640
+and then as the state changes on the server, you get updates of inserts of room here,
+
+199
+00:19:24,640 --> 00:19:29,280
+delete one here, invalidate it here. It doesn't have to be rooms, in future it could be members or
+
+200
+00:19:29,280 --> 00:19:35,200
+other sort of characteristics. This has been shamelessly stolen from Discord, so apologies
+
+201
+00:19:35,200 --> 00:19:38,880
+to Discord folks if you're listening, but thank you also for coming up with this nice approach
+
+202
+00:19:38,880 --> 00:19:45,600
+for how to maintain performance and scrolling on apps. And the end result is, it just made
+
+203
+00:19:45,600 --> 00:19:50,000
+a lot more. It makes login instant, sync instant, and also time-to-view rooms instant.
+
+204
+00:19:50,640 --> 00:19:55,440
+Element X is only going to talk sliding sync. There is no point in us wasting time
+
+205
+00:19:55,440 --> 00:19:59,280
+implementing both approaches, because they're really quite different, and we want everybody
+
+206
+00:19:59,280 --> 00:20:05,440
+using Element X to have a snappy snappy snappy experience. We've done a lot of iterations.
+
+207
+00:20:05,440 --> 00:20:10,960
+I've been driving the poor Rust team and sliding sync team and Element X team mad by constantly
+
+208
+00:20:10,960 --> 00:20:16,320
+demanding us to try to get the launch time down to 100 mils or something. And there's gone through
+
+209
+00:20:16,320 --> 00:20:21,920
+probably 10 iterations to see how we actually drive the API. And it's been really interesting.
+
+210
+00:20:21,920 --> 00:20:26,720
+The end conclusion is, first of all, when you launch the app, you sync that first
+
+211
+00:20:26,720 --> 00:20:30,560
+screen's worth of rooms, but without any timeline. Literally the request I just showed you.
+
+212
+00:20:31,280 --> 00:20:36,880
+Next, you immediately increase the timeline limit on that window to one. So you'll fill in the
+
+213
+00:20:36,880 --> 00:20:41,120
+room previews, and it was happening so fast earlier that we didn't even have time to spot it
+
+214
+00:20:41,120 --> 00:20:46,880
+happening. And then you pre-cache a page's worth of history of the visible rooms. So when I jumped
+
+215
+00:20:46,880 --> 00:20:53,200
+into TWIM, and the history was already all loaded there, it's because the background
+
+216
+00:20:53,200 --> 00:20:57,440
+and pre-cache had already happened, because I'd stopped scrolling the room list and immediately
+
+217
+00:20:57,440 --> 00:21:04,240
+jumped in to pre-populate the history for those pages. Then you also incrementally build the big
+
+218
+00:21:04,240 --> 00:21:09,360
+list of all your rooms in the background, which I guess technically is on with a number of rooms,
+
+219
+00:21:09,360 --> 00:21:12,960
+but because it's happening in the background, it's not on the critical path. It means you can do
+
+220
+00:21:12,960 --> 00:21:18,000
+the scroll for all your rooms, or search for a room by name instantly, and be able to find them.
+
+221
+00:21:18,000 --> 00:21:24,000
+And finally, you cache it in Sled or SQLite. Rust SDK is doing all the heavy lifting here.
+
+222
+00:21:24,640 --> 00:21:30,640
+The code base is maturing really well. We got it audited at the Vdozomat Slare last year, thanks
+
+223
+00:21:30,640 --> 00:21:37,520
+to Least Authority, funded by Gamartic. And we have, I think, three other audits planned this year.
+
+224
+00:21:37,520 --> 00:21:45,680
+They were meant to happen last year, but we had disruption along the way. Then high-quality bindings
+
+225
+00:21:45,680 --> 00:21:50,720
+are critical for this. I mentioned that we've added AsyncFuture to UniFFI. I think this stack
+
+226
+00:21:50,720 --> 00:21:55,040
+could be the ultimate stack for building cross-platform mobile apps going forwards.
+
+227
+00:21:55,040 --> 00:22:01,200
+I mean, you can use Rust for the heavy lifting, and then you hook up at the top, a very thin,
+
+228
+00:22:01,200 --> 00:22:06,720
+but very native, performant layer based on whatever the OS gives you. And at the beginning,
+
+229
+00:22:06,720 --> 00:22:13,760
+UniFFI was a little bit, it didn't have everything we needed, and so we invested to go,
+
+230
+00:22:13,760 --> 00:22:18,240
+and particularly, hook up the future support. And the end result, I think, is quite transformational.
+
+231
+00:22:18,240 --> 00:22:25,680
+So that's Rust SDK. Meanwhile, whilst element X is maturing, we need to keep the existing client
+
+232
+00:22:25,680 --> 00:22:30,240
+secured to. But it's going to take us a while to get to parity between element and element X.
+
+233
+00:22:31,040 --> 00:22:37,120
+And the project for this, for crypto, is called element R, confusingly. So this replaces the old
+
+234
+00:22:38,400 --> 00:22:43,600
+cryptography implementations in JS, iOS, and Android SDK with the same Rust
+
+235
+00:22:43,600 --> 00:22:49,920
+create that powers Rust SDK. So it's just the crypto create that is providing a consistent
+
+236
+00:22:49,920 --> 00:22:56,000
+encryption implementation across all the platforms. So this means that if we have hypothetically
+
+237
+00:22:56,000 --> 00:23:02,320
+horrible CVEs popping up, we only have to fix them in one place in the Rust SDK, rather than
+
+238
+00:23:02,320 --> 00:23:07,840
+having to do it four times over between where by West Android and Rust. And you can use this today.
+
+239
+00:23:07,840 --> 00:23:14,400
+It is still beta, so it may kill your cat and flood your house. I've been using it,
+
+240
+00:23:14,400 --> 00:23:19,040
+occasionally logs me out, which is a bit frustrating because initial sync on V2 takes 20
+
+241
+00:23:19,040 --> 00:23:24,240
+minutes. But I recommend having a play if you're interested. Enable Rusty end-to-end encryption
+
+242
+00:23:24,240 --> 00:23:30,400
+in labs on element iOS. Androids will be coming fairly soon, and web started working on Friday.
+
+243
+00:23:30,400 --> 00:23:35,120
+We sent the first and received the first encrypted messages by Rust, crypto,
+
+244
+00:23:35,120 --> 00:23:40,960
+in a wasm blob inside element web then. Rather anti-climatically, it looks and feels
+
+245
+00:23:40,960 --> 00:23:46,480
+identical to the current crypto, except it's written in Rust. Then another big thing we've
+
+246
+00:23:46,480 --> 00:23:52,320
+done to speed things up is faster remote room joins. So this is a huge internal change to Synapse.
+
+247
+00:23:52,320 --> 00:23:56,960
+So again, you only receive the subset of state you need to participate in a room.
+
+248
+00:23:56,960 --> 00:24:00,960
+Breaks all the assumptions that Synapse has. The rooms are typically atomic.
+
+249
+00:24:00,960 --> 00:24:04,960
+Instead, you basically trickle in the membership of the room in the background after having
+
+250
+00:24:04,960 --> 00:24:12,240
+got the minimum subset to join the room. So for instance, matrix HQ right now, there are 92,948
+
+251
+00:24:12,240 --> 00:24:17,280
+state events for every user who has ever joined or changed their name or left and a whole bunch
+
+252
+00:24:17,280 --> 00:24:20,960
+of other things. If you actually look at the subset you need to participate in the room,
+
+253
+00:24:20,960 --> 00:24:28,240
+it's 152. So this speeds up the room join time from 15 minutes to 14 seconds. So finally,
+
+254
+00:24:28,240 --> 00:24:33,040
+we will hopefully have fixed the problem where somebody gets and stalls matrix Synapse,
+
+255
+00:24:33,040 --> 00:24:38,160
+immediately tries to join matrix HQ, sits there for 15 minutes looking at errors as their computer
+
+256
+00:24:38,160 --> 00:24:44,160
+explodes and wonders why everybody thinks matrix is as amazing as it is. So, I mean,
+
+257
+00:24:44,160 --> 00:24:47,600
+the computer will still explode because they're still having to talk to all of the servers in
+
+258
+00:24:47,600 --> 00:24:52,080
+the room, but at least they will be responsive in 14 seconds. And we hope that the Synthelating
+
+259
+00:24:52,080 --> 00:24:57,120
+conversation in matrix HQ will be such that it distracts them from the smoke coming out to their
+
+260
+00:24:57,120 --> 00:25:02,160
+server. There is still a lot of room for improvement here. We shouldn't be hammering dead servers,
+
+261
+00:25:02,160 --> 00:25:06,640
+which is where a lot of that time is going. And also, we should be caching the partial state.
+
+262
+00:25:06,640 --> 00:25:11,280
+So, you know, if I want to join matrix HQ, the server can just go and hand me the events I need
+
+263
+00:25:11,280 --> 00:25:19,760
+to do that. Another big thing is matrix RTC. So this is the name we're referring to MSC3401
+
+264
+00:25:19,760 --> 00:25:27,280
+and 3898 as many because those were awful names, whereas matrix RTC is a bit more snappy. And this
+
+265
+00:25:27,280 --> 00:25:33,680
+is a multi-party native VoIP. We've always had one-to-one VoIP. Here, we are standardizing
+
+266
+00:25:33,680 --> 00:25:40,960
+the multi-party Zoom teams, JTC style experience, but in a heterogeneous way. So you can use
+
+267
+00:25:40,960 --> 00:25:45,680
+different clients. This is in lamps and element web. Video rooms looks like this on the right-hand
+
+268
+00:25:45,680 --> 00:25:50,720
+side, powered by element cool. And it works as what we call a matroshka widget, where you embed
+
+269
+00:25:50,720 --> 00:25:55,440
+element cool here as a widget. So this is an iframe on the left-hand side. But even though element
+
+270
+00:25:55,440 --> 00:26:01,360
+cool itself is a matrix client, it is piggybacking on the host's matrix client. So it shares the
+
+271
+00:26:01,360 --> 00:26:05,840
+encryption and the identity. You don't have two long-term sessions. And really excitingly,
+
+272
+00:26:05,840 --> 00:26:10,720
+we have multiple independent implementations of this in element cool, hydrogen, third room,
+
+273
+00:26:10,720 --> 00:26:14,480
+and also, I believe, famously, it has an independent implementation in their healthcare
+
+274
+00:26:14,480 --> 00:26:21,680
+product for Germany. And I'll very quickly try to show you a demo of this. And I'm going to show
+
+275
+00:26:21,680 --> 00:26:29,680
+you. That's good. If anybody wants to heckle along on this, then feel free.
+
+276
+00:26:31,040 --> 00:26:35,760
+Oh, I didn't have any internet access, do I? Video conferencing demo, so when you don't have
+
+277
+00:26:35,760 --> 00:26:41,040
+any Wi-Fi, it's always a good idea, right? Let's see how it does. So I'm going to pop into that
+
+278
+00:26:41,040 --> 00:26:48,240
+room there. And here is element cool. And then I'm also going to spin up a local hydrogen. Here's
+
+279
+00:26:48,240 --> 00:26:54,320
+what I made earlier. Oh, hello, Amundi. Thanks for meeting you here. This is Amundi and everybody.
+
+280
+00:26:54,320 --> 00:27:01,920
+She co-founded matrix. And I'm going to wish that this thing was telling me that a video
+
+281
+00:27:01,920 --> 00:27:05,760
+call was happening in the room. And still being one that's ended, but in practice,
+
+282
+00:27:05,760 --> 00:27:12,720
+there's one happening right now. I wonder if this is... I wonder why? Okay. And perhaps we'll use a
+
+283
+00:27:12,720 --> 00:27:21,840
+different room. Let's go to Fozdom 2024. Back to the future, everybody. And go over to hydrogen
+
+284
+00:27:21,840 --> 00:27:27,600
+here. And I think I should be able to just be able to join Fozdom 2024 on cool.ams.host.
+
+285
+00:27:28,480 --> 00:27:33,920
+Yeah. Okay. Here, I can actually join it. And, hey, presto, you've got me staring at myself
+
+286
+00:27:33,920 --> 00:27:39,520
+like a muppet because nobody else is responding to my comedy joke of moving to 2024. So everybody,
+
+287
+00:27:39,520 --> 00:27:44,960
+oh, hello. Perfect. Somebody at the back. Thank you. Oh, and there's Amundi.
+
+288
+00:27:49,680 --> 00:27:56,240
+So this thing is really cool because it is completely standardized multi-party void signaling.
+
+289
+00:27:56,240 --> 00:28:00,080
+We have two entirely different code bases. There is not a line of codes in common between hydrogen
+
+290
+00:28:00,080 --> 00:28:05,120
+here on the left and element core here on the right. And just like back in the day on the phone
+
+291
+00:28:05,120 --> 00:28:08,800
+network, we could call each other on different things or have different set clients or whatever
+
+292
+00:28:08,800 --> 00:28:15,200
+it might happen to be. Oh, we've got somebody remote. That's awesome. Then here we actually
+
+293
+00:28:15,200 --> 00:28:20,480
+have a proper heterogeneous thing. So unlike JETC or some other conferencing system where
+
+294
+00:28:20,480 --> 00:28:28,720
+everybody has to end up using the same system to work, this is, you know, providing an interoperable
+
+295
+00:28:28,720 --> 00:28:33,840
+thing. And crap out on this one because I've got something better. I've got something better.
+
+296
+00:28:33,840 --> 00:28:40,880
+So one of the other projects we have, which we're just releasing now is called Waterfall. Now,
+
+297
+00:28:41,600 --> 00:28:45,120
+what we just did then was full match. All the clients were talking to one another. I'm amazed
+
+298
+00:28:45,120 --> 00:28:49,920
+that it worked as well as it did. What you want to do, though, is to have what's called an SFU.
+
+299
+00:28:50,720 --> 00:28:58,000
+So these guys, which go and mix together the local video calls. And Sean Dubois, who's the
+
+300
+00:28:58,000 --> 00:29:04,080
+project lead at Pion, the Golang WebRTC, wrote one of these called SFU to SFU based on reading
+
+301
+00:29:04,080 --> 00:29:09,600
+MSC3401. And we renamed it Waterfall. We've fleshed it out. And we've hooked it up to Element
+
+302
+00:29:09,600 --> 00:29:15,600
+Cool. And I will endeavor to show you what that looks like. And it's going to be quite similar
+
+303
+00:29:15,600 --> 00:29:24,160
+in some ways. Let me actually try a demo, demo room in here. Again, if someone is already in
+
+304
+00:29:24,160 --> 00:29:28,320
+there, I'm going to try a fresh one. Let's call it fresh demo. Again, if anybody wants to try
+
+305
+00:29:28,320 --> 00:29:35,200
+following along on this URL, if you can see it, please do so. Now, this looks a little bit different
+
+306
+00:29:35,200 --> 00:29:40,960
+because it's connecting to the SFU instead. Oh, hello and hello. And hopefully we will get some
+
+307
+00:29:40,960 --> 00:29:47,440
+video off and on. So this is being bounced off the go SFU. But perhaps I'll distract everybody
+
+308
+00:29:47,440 --> 00:29:54,560
+by zooming. So this has got a completely different layout on it. And it thinks it's connected. Oh,
+
+309
+00:29:54,560 --> 00:29:59,520
+there's Shimon. Well, I'm glad that Shimon of all people is able to connect because he has written
+
+310
+00:29:59,520 --> 00:30:05,760
+the vast majority of Waterfall. So thanks for demoing Shimon. And I suspect it is not like in
+
+311
+00:30:05,760 --> 00:30:11,360
+the packet loss here on my side. People are trying to connect in there. But it's working for some
+
+312
+00:30:11,360 --> 00:30:17,680
+folks. It's very, very new, very alpha. But it's exciting to actually see this thing working.
+
+313
+00:30:17,680 --> 00:30:23,440
+And if I quickly turn on debug here in developer mode, you'll see that it actually supports
+
+314
+00:30:23,440 --> 00:30:31,760
+simulcast. So here you can see that Shimon is 640 by 360 pixels. Whereas this guy here in dandelion,
+
+315
+00:30:31,760 --> 00:30:38,800
+oh, hello dandelion, is 320 by 240. And if I go and zoom embarrassingly, then it should catch up.
+
+316
+00:30:38,800 --> 00:30:44,400
+There we go. 640 by 480. And it's gone and renegotiated the higher resolution stream through.
+
+317
+00:30:44,400 --> 00:30:48,640
+And all the people are going and actually uploading multiple low resolution and higher
+
+318
+00:30:48,640 --> 00:30:53,920
+resolution ones. So this is very early, but it's the shape of the future for doing proper massive
+
+319
+00:30:53,920 --> 00:30:59,440
+scalable SFU based conferences. And that's actually looking good. I'm going to take a quick selfie.
+
+320
+00:30:59,440 --> 00:31:04,720
+There we go. Right. Next demo or next stuff. I'm running out of time. I've got a lot of demos.
+
+321
+00:31:04,720 --> 00:31:12,320
+OpenID Connect. Matrix is subject to MSE approval. Moving over to OpenID Connect. It rocks and gives
+
+322
+00:31:12,320 --> 00:31:17,680
+us 2FA, multi-factor auth, pass keys, QR code login. You don't have to implement the weird
+
+323
+00:31:17,680 --> 00:31:23,120
+matrix auth APIs on the server or the clients anymore. Element X has native OIDC on iOS already
+
+324
+00:31:23,120 --> 00:31:30,560
+and will be OIDC first. First Room is the first OIDC-only matrix client. Go to our OIDC yet.com
+
+325
+00:31:30,560 --> 00:31:38,480
+for the gory details. Signing sync, first adjoins, native VoIP and OIDC is a big change. This is
+
+326
+00:31:38,480 --> 00:31:43,360
+fundamentally changing how federation works, how VoIP works, and critically how servers sync data
+
+327
+00:31:43,360 --> 00:31:48,880
+to clients and how you log in. Couldn't be a bigger change. So we are taking the liberty of
+
+328
+00:31:48,880 --> 00:31:54,880
+declaring it matrix 2.0 when we finally release it. So this is not a breaking change. This is pure
+
+329
+00:31:54,880 --> 00:31:59,360
+enthusiasm basically on my behalf because I think it's worth saying, hey guys, come back to matrix,
+
+330
+00:31:59,360 --> 00:32:03,120
+give it another go because we fixed all the crap stuff and we're calling it matrix 2.0.
+
+331
+00:32:13,440 --> 00:32:18,000
+Okay, I'm not doing well on time. We're halfway through in theory. We're going to go now to the
+
+332
+00:32:18,000 --> 00:32:22,880
+future. Flying cars and jet packs and all that good stuff. First of all, digital markets act.
+
+333
+00:32:22,880 --> 00:32:27,440
+Where we're going, we do not need gatekeepers. If you haven't heard about the DMA, it is a
+
+334
+00:32:27,440 --> 00:32:32,400
+fascinating piece of legislation that mandates the big tech companies must interoperate together,
+
+335
+00:32:32,400 --> 00:32:36,880
+particularly for their communication services. The whole idea is that it empowers users to pick
+
+336
+00:32:36,880 --> 00:32:42,000
+the services they want to use and trust without sacrificing the ability to talk to other people.
+
+337
+00:32:42,000 --> 00:32:46,000
+That frankly forces the gatekeepers to differentiate based on quality and features
+
+338
+00:32:46,000 --> 00:32:50,400
+rather than relying on a monopolistic situation where all of their users happen to be trapped
+
+339
+00:32:50,400 --> 00:32:56,480
+in the silo. This is happening right now. The rules came into force in November. The rules start
+
+340
+00:32:56,480 --> 00:33:03,280
+to apply in May and then gatekeepers get designated and it will start getting enforced,
+
+341
+00:33:03,280 --> 00:33:08,880
+which is chunky GDPR style fines in March 2024 if the gatekeepers have not gone and
+
+342
+00:33:08,880 --> 00:33:13,680
+interoperated things together. Turns out the matrix already provides a secure interoperable
+
+343
+00:33:13,680 --> 00:33:20,320
+communication protocol. Who knows? The DMA requires the gatekeepers to maintain end-to-end
+
+344
+00:33:20,320 --> 00:33:24,960
+encryption, which is good news. There's been a lot of paranoia that DMA is a secret attack on
+
+345
+00:33:24,960 --> 00:33:29,840
+end-to-end encryption. It really isn't. Having spoken to the folks responsible, they really want
+
+346
+00:33:29,840 --> 00:33:35,600
+to make sure that if WhatsApp does E2E today, then an interoperable at WhatsApp also needs to do
+
+347
+00:33:35,600 --> 00:33:41,040
+E2E. They don't want to be responsible for destroying privacy. To re-encrypt, you need to
+
+348
+00:33:41,040 --> 00:33:44,960
+either do it on the client side, so you would install something like a WhatsApp to Matrix app
+
+349
+00:33:44,960 --> 00:33:49,760
+if you want to link your WhatsApp account into Matrix, or you could do a multi-head approach
+
+350
+00:33:49,760 --> 00:33:55,600
+effectively, open APIs and have your app talk to WhatsApp as well as Matrix or whatever, or
+
+351
+00:33:55,600 --> 00:33:59,360
+everybody ends up talking the same protocol, which means on the server side, the gatekeepers would
+
+352
+00:33:59,360 --> 00:34:05,120
+have to add support for Matrix or XMPP or RCS or whatever it might be alongside their somewhat
+
+353
+00:34:05,120 --> 00:34:10,800
+legacy proprietary protocol. ITF is established a working group called MIMI, more instant messaging
+
+354
+00:34:10,800 --> 00:34:15,600
+interoperability targeting the everybody talks the same protocol approach. We've proposed Matrix
+
+355
+00:34:15,600 --> 00:34:21,040
+as an ITF draft for content and transport layers. We're trying to work with them to make the most
+
+356
+00:34:21,040 --> 00:34:27,520
+of the mix. Decentralized MLS. This is another big thing where we're going, we don't need salamanders
+
+357
+00:34:27,520 --> 00:34:32,800
+because if you haven't noticed, all of the encryption historically have been called axolotl
+
+358
+00:34:32,800 --> 00:34:39,840
+or ohm or proteus, all of which are species of salamander. MLS is another ITF working group,
+
+359
+00:34:39,840 --> 00:34:44,240
+in fact the one from which MIMI has emerged for next generation end-to-end encryption.
+
+360
+00:34:44,240 --> 00:34:49,920
+We have figured out how to make MLS work in a decentralized model. We've implemented it
+
+361
+00:34:49,920 --> 00:34:54,640
+in a toy type script stack called MLS TS. It is currently being re-implemented on top of
+
+362
+00:34:54,640 --> 00:34:59,600
+open MLS and Rust at which point when it works, we'll integrate it into Rust SDK and build it
+
+363
+00:34:59,600 --> 00:35:05,120
+into real clients and write an MSE. Are we MLS yet dot com for all the gory details?
+
+364
+00:35:06,800 --> 00:35:11,760
+Here are some early performance testing, which is pretty interesting. Let me get the key right
+
+365
+00:35:11,760 --> 00:35:16,720
+for you here. If you look at MEGOM creating new sessions, this is obviously the log log scale
+
+366
+00:35:16,720 --> 00:35:22,640
+for all of you mathematicians. You can see this red dashed line here showing how MEGOM sessions
+
+367
+00:35:22,640 --> 00:35:29,040
+scale with a number of users. It's upper 100 seconds if you've got 100,000 users in the room,
+
+368
+00:35:29,040 --> 00:35:35,840
+which is pretty slow. However, if you look at an MLS, let me get it right, update or adding new
+
+369
+00:35:35,840 --> 00:35:41,920
+members, then they're down at 1,000 milliseconds, a couple of seconds. This is a major algorithmic
+
+370
+00:35:41,920 --> 00:35:46,880
+improvement for certain operations over even the dosimats. Support developed in the dosimats,
+
+371
+00:35:46,880 --> 00:35:54,000
+which feels relatively new, may get displaced by open MLS and DMLS when we get there, hopefully
+
+372
+00:35:54,000 --> 00:35:59,120
+later this year. Dendrite impairs peer matrix. Where we're going, we don't need servers.
+
+373
+00:35:59,120 --> 00:36:04,080
+Matrix is way too dependent on servers and the admins and the risks of internet shutdowns
+
+374
+00:36:04,080 --> 00:36:08,880
+and censorship. This is because home servers have to store their users' chat history and metadata.
+
+375
+00:36:08,880 --> 00:36:15,520
+Peer-to-peer matrix exists to fix this. This is a long-running blue sky project, so to speak,
+
+376
+00:36:16,240 --> 00:36:21,840
+where we go and embed your home server inside the app in order to not have a server running
+
+377
+00:36:21,840 --> 00:36:27,360
+in the cloud. Dendrite is the server we use. Big news on Dendrite is, as of a few weeks ago,
+
+378
+00:36:27,360 --> 00:36:36,720
+it passes 100% server API compliance. 93% client server API and the 7% is boring stuff we don't
+
+379
+00:36:36,720 --> 00:36:41,520
+really care about for this. Plankone, the peer-to-peer overlay network, is going really well as well.
+
+380
+00:36:42,160 --> 00:36:50,000
+We just switched to soft state routing for reliability. As of about 4am this morning,
+
+381
+00:36:50,000 --> 00:36:55,920
+not me. Initial store and forward relaying is here. I will very rapidly try to demo that.
+
+382
+00:36:55,920 --> 00:37:06,000
+That's still my phone there. If I go and launch peer-to-peer matrix, Dendrite is not running.
+
+383
+00:37:06,000 --> 00:37:12,880
+Now it is running. This has literally got a Dendrite running inside my phone here. If I go
+
+384
+00:37:12,880 --> 00:37:20,560
+over to Visor here, I should hopefully also be able to run it on my Android thing. Here it is.
+
+385
+00:37:20,560 --> 00:37:26,560
+There it is. Did it already crash? It is a bit crashy. It is still beta.
+
+386
+00:37:27,680 --> 00:37:36,400
+I have a FOSDEM demo here. I say hello there. You can see messages flowing back and forth,
+
+387
+00:37:36,400 --> 00:37:42,880
+peer-to-peer. If I take my phone and put it on to airplane mode and send some messages
+
+388
+00:37:42,880 --> 00:37:48,080
+through from Android, they still go. This is peer-to-peer matrix running over Bluetooth
+
+389
+00:37:48,080 --> 00:37:53,280
+flow energy. It silently felled over from running over IP into Bluetooth mode.
+
+390
+00:37:53,280 --> 00:37:56,480
+Now the exciting thing is that if I also run...
+
+391
+00:38:05,120 --> 00:38:09,920
+Well, it's going to be an interesting demo. Here is an element peer-to-peer running in iOS
+
+392
+00:38:09,920 --> 00:38:14,320
+or macOS because you can do that on an M1 Mac. Apparently there are five connected peers, which
+
+393
+00:38:14,320 --> 00:38:18,240
+is three more than I was expecting. Hello, everybody out there who is about to screw up my demo.
+
+394
+00:38:19,040 --> 00:38:24,160
+You can see the same history coming on here. I can send a message through. You can see both
+
+395
+00:38:24,160 --> 00:38:31,520
+on iOS. It came through on Android too. The really interesting thing is if I go and...
+
+396
+00:38:32,320 --> 00:38:38,400
+You are going to screw up my demo. If I go and kill the peer-to-peer app on Android,
+
+397
+00:38:38,400 --> 00:38:46,080
+I send a message here saying, hello, relaying. Actually, not in that room. I am going to do
+
+398
+00:38:46,080 --> 00:38:52,080
+it in my DM through to Android. I am going to say testing relays or very badly typed.
+
+399
+00:38:53,280 --> 00:39:00,160
+Critically, my... Where is it gone? Is it crashed? No, there it is. I am not actually in that room.
+
+400
+00:39:00,160 --> 00:39:07,120
+I am only in one room on my Mac here. However, this hopefully has gone and peered, relayed through
+
+401
+00:39:07,120 --> 00:39:15,760
+to my Android phone. If I now go and kill the app here on iOS and relaunch it here on Android,
+
+402
+00:39:17,120 --> 00:39:24,480
+if I knew how to use Android, come on. Is this going to work or is it going to search Google?
+
+403
+00:39:26,160 --> 00:39:32,000
+There it is. Perfect. Hopefully, the first thing this thing will do is to... I am in the wrong room.
+
+404
+00:39:32,000 --> 00:39:36,960
+If Dendrite launches, the red bar is telling me that it can't tell and talk to its own Dendrite.
+
+405
+00:39:38,080 --> 00:39:51,120
+You can do it. Yes, testing relaying. This is huge because historically,
+
+406
+00:39:51,120 --> 00:39:54,800
+peer-to-peer matrix has had a massive problem that the other guy has to be online running the app
+
+407
+00:39:54,800 --> 00:40:02,720
+at the same time. A long story, but I ended up on an aircraft carrier a couple of months ago
+
+408
+00:40:02,720 --> 00:40:06,400
+going and trying to explain a bunch of people how they could use matrix in that environment,
+
+409
+00:40:06,400 --> 00:40:10,080
+and there are a bunch of us on board this thing. It turns out that an aircraft carrier is a massive
+
+410
+00:40:10,080 --> 00:40:16,800
+floating Faraday cage. We went and fired up peer-to-peer matrix on it and were very
+
+411
+00:40:16,800 --> 00:40:21,120
+smug that we can talk to one another, but you had to physically wave at the other guy to get
+
+412
+00:40:21,120 --> 00:40:25,600
+them to launch the app so they could receive the message. Whereas with a relay, you can obviously
+
+413
+00:40:25,600 --> 00:40:29,920
+talk to them even if the app isn't running. So that's big. Right. Almost there.
+
+414
+00:40:32,320 --> 00:40:37,760
+Matrix is not just for chat and VoIP. This is the final thing. Third Room is a decentralized
+
+415
+00:40:39,520 --> 00:40:45,280
+matrix for any kind of real-time data. Third Room is this tiny project done by Robert and AJ
+
+416
+00:40:45,280 --> 00:40:50,160
+to provide an open decentralized platform for spatial collaboration of any kind built on matrix.
+
+417
+00:40:50,160 --> 00:40:55,280
+He uses hydrogen, 3JS, bit ECS, and rapier for a new engine called manifold. And the idea is you
+
+418
+00:40:55,280 --> 00:41:01,120
+take a matrix room, you upload some GLTF 3D assets to it, you upload some WASM or JavaScript scripts
+
+419
+00:41:01,120 --> 00:41:07,120
+to it, they use matrix RTC to spell up spatial VoIP and physics synchronization over WebRTC,
+
+420
+00:41:07,120 --> 00:41:11,600
+and you get web-first open decentralized virtual worlds and spatial apps without any of the
+
+421
+00:41:11,600 --> 00:41:17,760
+cryptocurrency or token or Facebook stuff, apart from possibly the hardware. And it looks like this.
+
+422
+00:41:17,760 --> 00:41:24,640
+So you can literally go to it right now, thirdroom.io, and I'm going to go to a world called
+
+423
+00:41:24,640 --> 00:41:30,720
+third room presentation here. And it's going to hopefully pull this up out of my index DB,
+
+424
+00:41:30,720 --> 00:41:35,520
+because I don't want to wait to download 50 megabytes over the network. And if the demo
+
+425
+00:41:35,520 --> 00:41:42,800
+gods are smiling, then you find yourself in this rather snazzy demo world. Now, this is running
+
+426
+00:41:42,800 --> 00:41:47,920
+in browser, no plug-ins or anything, and it's going at 60 frames a second. It does this with
+
+427
+00:41:47,920 --> 00:41:54,400
+proper multi-threading using shared array buffers and atomics to synchronize together the WebGL
+
+428
+00:41:54,400 --> 00:42:00,720
+thread and also the game thread and the main thread in the UI. You can see I'm indeed wandering
+
+429
+00:42:00,720 --> 00:42:06,720
+around there wearing a placeholder avatar. I can flip into third person view here, and you can see
+
+430
+00:42:06,720 --> 00:42:10,960
+I'm also wearing the same beautiful thing. We haven't got customizable avatars yet. Some of the
+
+431
+00:42:10,960 --> 00:42:16,240
+things I can show you here is that you can go and click on buttons, and this is actually a script
+
+432
+00:42:16,240 --> 00:42:20,000
+showing the layout of the different threads. I don't have time to show you that right now, but
+
+433
+00:42:20,000 --> 00:42:26,400
+the game thread has got, like, rapier physics and WebAssembly. But a really fun thing is that you
+
+434
+00:42:26,400 --> 00:42:32,240
+can just do freeform scripting of any kind. So one example could be this silly, silly, silly demo.
+
+435
+00:42:34,240 --> 00:42:38,960
+Which hopefully will load up rapidly. Oh, that's what happens if you, this is a bug where you
+
+436
+00:42:38,960 --> 00:42:42,160
+have your worlds overlaying on one another. I'm going to keep it like this, because this is pretty
+
+437
+00:42:42,160 --> 00:42:48,960
+cool. So we've got the construct room from the matrix. I'm now superimposed on top of Mars down
+
+438
+00:42:48,960 --> 00:42:54,960
+here. And if I go over to the TV and I click on it, predictably enough, the entire world goes matrix.
+
+439
+00:43:01,960 --> 00:43:06,960
+So the script for that is literally just sitting there as a bunch of JavaScript uploaded into the
+
+440
+00:43:06,960 --> 00:43:13,960
+media repository. And it's compiled down to Wasm in real time by the engine by QuickJS, thanks to
+
+441
+00:43:13,960 --> 00:43:19,960
+Fabrice Ballard. And it's like four lines of code. You use WebSG, which is our new API called WebScene
+
+442
+00:43:19,960 --> 00:43:25,960
+Graph that we're going to propose to W3C as a 3D API for manipulating JLTF scene graphs. Now you
+
+443
+00:43:25,960 --> 00:43:30,960
+make it intractable, and then every tick, every frame, you see if it's being pressed, and then you
+
+444
+00:43:30,960 --> 00:43:34,960
+toggle the state and you enable the matrix material on the room. It's slightly cheated by
+
+445
+00:43:34,960 --> 00:43:42,960
+hardcoding it in the engine for now like this. Something that we haven't hardcoded, though, is this
+
+446
+00:43:42,960 --> 00:43:51,960
+guy, which is really exciting. I'm going to refresh his time. And here you can see a big scary black blob
+
+447
+00:43:51,960 --> 00:43:57,960
+of pollen noise, which is pulsating, according to my voice as I bellow at it. And this thing is
+
+448
+00:43:57,960 --> 00:44:02,960
+actually a huge chunk of sea, which is compiled down to Wasm and is going and programmatically
+
+449
+00:44:02,960 --> 00:44:11,960
+changing in real time the JLTF scene. So this is like the first proper, more advanced capabilities on
+
+450
+00:44:11,960 --> 00:44:16,960
+top of third room. The whole idea is you can build any old app on top of this. You could build Figma on
+
+451
+00:44:16,960 --> 00:44:21,960
+this. You could do multiplayer Blender. In fact, we have an in-world editor in here where I can go and
+
+452
+00:44:21,960 --> 00:44:27,960
+select this guy at the bottom, and it will have a big white and burglar around it. We don't yet have
+
+453
+00:44:27,960 --> 00:44:30,960
+the property editor, but you should be able to go in and directly manipulate it, change the
+
+454
+00:44:30,960 --> 00:44:35,960
+opacity, the transformations, et cetera, and all that sort of thing. And it really ends up feeling
+
+455
+00:44:35,960 --> 00:44:43,960
+a lot like the web. Rather than a DOM, you've got JLTF, rather than the DOM API, you've got the WebSG
+
+456
+00:44:43,960 --> 00:44:48,960
+API, rather than JavaScript, you've got Wasm, Sandblocks, Blobs, with Rust, and Zig, and C, and
+
+457
+00:44:48,960 --> 00:44:53,960
+JavaScript within it. And there is one final thing I'm going to try to show you, which is probably
+
+458
+00:44:53,960 --> 00:44:59,960
+going to go horribly wrong, which is that we've just added WebXR into third room. So if I go and put
+
+459
+00:44:59,960 --> 00:45:09,960
+on my Facebook device, and, oh, there we go. And I back away a bit. Probably unplug it. You'll see
+
+460
+00:45:09,960 --> 00:45:17,960
+hopefully, in fact, I need to go full screen on that, I guess I do. There we go. Is that coming
+
+461
+00:45:17,960 --> 00:45:22,960
+through? You can see that here I am wandering around third room, probably going to fall off the
+
+462
+00:45:22,960 --> 00:45:32,960
+stage and break my neck. And I can go and, like, spawn object. So you can have big crate, I can throw
+
+463
+00:45:32,960 --> 00:45:37,960
+the crate away, I can spawn some other big crate, and let's run away from that one, go and pick this
+
+464
+00:45:37,960 --> 00:45:45,960
+guy up, and throw it away, go and pick that one up, and it's over here, and throw it away, et cetera.
+
+465
+00:45:45,960 --> 00:46:01,960
+And I mean, this is running at 90 frames a second. 90 frames a second, so, that's a bit weird. It is
+
+466
+00:46:01,960 --> 00:46:10,960
+as least as good as the native MetaHorizon stuff, the Facebook of ships, except it's running within
+
+467
+00:46:10,960 --> 00:46:15,960
+WebXR in a browser in a completely open environment. So we're kind of hoping this provides a really
+
+468
+00:46:15,960 --> 00:46:22,960
+viable platform to build a genuine open spatial collaboration plane for the web. I've already
+
+469
+00:46:22,960 --> 00:46:26,960
+spoken about that. Coming up next is persistence. So we don't yet persist the changes into the
+
+470
+00:46:26,960 --> 00:46:31,960
+matrix room, but we will by uploading little bits of JLTF files so you can even have bots which
+
+471
+00:46:31,960 --> 00:46:40,960
+go into there. Another thing I should have shown you, but forgot, was this guy somewhere. I've
+
+472
+00:46:40,960 --> 00:46:46,960
+lost it already. Never mind. Well, I was going to show you, this guy here, that if in this room I go in,
+
+473
+00:46:46,960 --> 00:46:51,960
+and I think this is going to be a comedy, that's what happens if London and Mars get mixed together
+
+474
+00:46:51,960 --> 00:46:59,960
+for everybody. If I go and say hi, because look, it's matrix room, then if I do slash echo something, I
+
+475
+00:46:59,960 --> 00:47:05,960
+get an echo back. That echo has come from a widget in WASM running inside the world. So you can
+
+476
+00:47:05,960 --> 00:47:10,960
+program matrix now from within WASM blobs sitting within the room. Nothing to do with third room. You
+
+477
+00:47:10,960 --> 00:47:17,960
+could use this in clients, et cetera, to start doing client-side widgets. So what's next? Loads of
+
+478
+00:47:17,960 --> 00:47:24,960
+stuff. One big PSA is that Gitter is going native matrix roughly next week. We basically can't afford
+
+479
+00:47:24,960 --> 00:47:29,960
+to run both the Gitter infrastructure and a bunch of matrix infrastructure, so Gitter will become a
+
+480
+00:47:29,960 --> 00:47:34,960
+branded element instance. The API will go away. Please use matrix instead. And finally, we need
+
+481
+00:47:34,960 --> 00:47:41,960
+help. So don't let friends use proprietary chat services. Please use matrix, and critically, and this
+
+482
+00:47:41,960 --> 00:47:46,960
+is new, and it's really important, if you're benefiting commercially from matrix, please
+
+483
+00:47:46,960 --> 00:47:52,960
+financially support the foundation, because it's stuck in this horrible feedback loop at the moment
+
+484
+00:47:52,960 --> 00:47:58,960
+where the better we make matrix, the less inclined it seems that people want to, like, pay for
+
+485
+00:47:58,960 --> 00:48:03,960
+support or pay for things if they can just grab it on GitHub. This can end up being a disaster
+
+486
+00:48:03,960 --> 00:48:08,960
+where we run out of cash. So please, please, please contribute back, particularly if you're a
+
+487
+00:48:08,960 --> 00:48:13,960
+government. You've got loads of money. Also, run a server, run bridges bots, fill out matrix, follow
+
+488
+00:48:13,960 --> 00:48:38,960
+us on Mastodon. Thank you very much. Thanks for listening. Sorry for ever running on time, as always.
+
+489
+00:48:43,960 --> 00:48:45,960
+Thank you.
+

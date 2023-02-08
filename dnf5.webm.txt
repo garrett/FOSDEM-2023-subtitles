@@ -1,0 +1,346 @@
+Okay. So, hello. Let me introduce us. Like you may have heard, we are from Redhead, from
+Bruno, actually, and we are going to talk about DNF, DNF5, a new generation as we have
+in the title. To introduce us and the talk, we have it split into three sections. The
+first one is covered by me. It will be a technical overview. Then there is a community history
+and action items by Nicola. And finally, a live demo from Jan. First, I would like to
+explain what are we actually talking about. I imagine you must have already noticed, but
+DNF is a package manager. Probably the easiest way to explain this to someone is to compare
+it to, like, an app store or command line app store. So, it installs, upgrades, removes
+packages and dependencies, and stuff like that. And there are many examples. You might
+be, and we are actually working on DNF and micro-DNF. To put this into some more context,
+we have this diagram that's actually describing Fedora. But I think many distributions have
+something, some similar setup like this. You can see that it's possible to interact with
+the package manager on, like, many ways or in many levels. But here we are talking about
+the high-level manager, and that is DNF or LibDNF. If we focus on that section, we could
+see a diagram of components that, for the current version, looks something like this.
+There are some problems with this, actually. And at first glance, I think it already looks
+more complicated than it needs to be. But mainly, you can see that the LibDNF, the library,
+is split into two sections. And DNF is actually just using the Hawkeye section, but not the
+Libheave one, while micro-DNF is using both. This would be fine if there was some extra
+functionality in micro-DNF, but it is actually the other way around. Micro-DNF does less
+than DNF, and this is because we have, like, duplicate code there. That's, of course, not
+good, so we should fix that. And the other big issues is with the extensions or plugins.
+Most of our plugins are for DNF, and they are in Python, but as you can see from the
+diagram, it's not possible to use the same extensions in micro-DNF. There's, like, simply
+no way how to get to them. And also, the other way around, if you have some extension for
+Libheave, it doesn't get used in DNF. This is, again, not good, because we already have
+some extensions that we want in both, and we have to duplicate them. Again, like, that's
+just a bad situation. And to resolve that, we are introducing or creating DNF5. I should
+mention that when I say DNF5 here, I mean, like, this whole part of the stack, so the
+library, the plugins, the actual command line DNF tool. But the new diagram looks like this.
+It is much simpler. We have merged the insights of the library into one piece, and we have
+also merged DNF and micro-DNF into just one tool, which is here called DNF5. There's also
+a new DNF demon. We still have to, like, to plug in two nodes here for plugins or extensions,
+but it is much more clearly separated. We have, for the library, we have more, like,
+a passive extensions that get used automatically. Every time you use the library, they get
+loaded and run. And for DNF5, there are some more, like, active plugins. So this is typically,
+like, a new command that you can add, and the user actually has to, like, type it and
+run it. Okay. Another big two features are that we actually are breaking API, and it's
+not backwards-comfortable. So, okay, these are not exactly features, and you might ask,
+why are we doing this? So let me try to explain that or justify it. First, for the library,
+we completely restructured the API and tried to make it better and most importantly unified
+and safer, because before, like I mentioned, it was merged together a bunch of things,
+and it wasn't that great. So hopefully, this time, we try to learn from our mistakes and
+make it better. And we are, another change we are also doing is inside of the library.
+For example, we are now loading and downloading the repositories at the same time. This is
+because typically downloading the repositories is network intensive, but loading them on
+the other end requires CPU, so they kind of nicely match together and can be done at the
+same time. Another change is no, we don't download the file list metadata by default.
+If you are not familiar, then the file list metadata contains a list of every file in
+all of the RPMs, so it is quite a big file, and we think it's possible to get by without
+it as other distributions do, so we don't download it by default, but of course, it's
+still possible if the user wants to download it or even configure it, so it's downloaded
+every time. Okay, then we are trying to make it, of course, in general faster, and I think
+we will see this in the demo later. And, yeah, we have bindings for the new library. We mainly
+focus on Python, because that's most of our users, but thanks to Sveak, it should be possible
+to generate also for other languages, like Ruby, and it will need some work to do that,
+but hopefully it wouldn't be too bad. Now I'm moving to the actual command line package
+manager, DNF, DNF5. Probably the biggest change or one of the biggest changes is that
+we dropped Python as a dependency, and this is actually what allowed us to merge micro
+DNF and DNF together, because before we needed micro DNF for containers on minimal environments
+where you need smaller footprints, but since now we don't need Python and everything is
+in C++, in C++, we have best of both worlds. Yeah, not everything has changed. Most of
+the commands are actually the same, except for a couple of differences that needed, like
+picking or fixing, but on the other hand, the outputs of the commands did change. In
+fact, we do run still the same CI test that we run for DNF4 as well as for DNF5, and usually
+you have to change the checking of the outputs to make it work. Not all of the tests work,
+but we are still developing it and working on that. Yeah, then there is the daemon, and
+just really quickly, it already is accessible by debas, and since it uses the whole library
+or the same library, it will have the same functions, so you can use it to work with
+groups or modules and stuff like that. Okay, last thing from me, I want to mention a couple
+of additional improvements. I'm not going to match too many details, but we have configurable
+aliases, fully integrated modularity, just single configuration for all the users of
+the library. We manage to separate system state from history database and module state,
+and for example, we have built in autocomplete. There is address, and if you have questions
+about this or anything else, you can of course ask us after the presentation. Okay, so that
+was everything from me, and let me now hand it over to Nicola and the community part.
+Thank you. So after the technical overview, let's focus more on who is actually contributing
+to DNF5 and how we are changing our idea of looking at the community, not just our idea
+of the code base, how we plan to change our approach with the community. So of course,
+DNF5 is an upstream project, so it all starts from upstream, and it was a, I would say quite
+a bit chaotic in the past because components were a bit separated, issues were not enabled
+for DNF, for example, for quite a while, now they are, but it wasn't super clear the path
+we were taking with the community, many issues stayed open for a while, poor requests are
+reviewed, we didn't do great, but we plan to change it. So let me give you an overview
+of what was the past of DNF contributions, then we will look of what we expect in the
+future, and then the action items that the team has to make everything more transparent
+and all the workflow much clearer. So first of all, the past of the projects. So I'm saying
+projects because here I graphed the weekly contributions by author of DNF, and DNF and
+DNF5, and what I want to pull out from this graph is that, well, first of all, now the
+effort of the team is all focused on DNF5, as you see, it's just all the contributions
+are on the green part, and one other interesting thing is that, yes, DNF5 efforts are higher,
+are more, compared to DNF or LibDNF alone, but actually the effort, if you sum, the highest
+points of DNF and LibDNF, the efforts of DNF5 is less, and that's because you have
+to maintain a unified code base, and that's much, much more easier to do, just one thing.
+Also I want to show you during the history of the project how many people actually contributed,
+so these are on the Y, the number of people that did some number of contributions on the
+X, so there is some exceptional guy, around 200, there is some others, there's just one
+guy, 150, 125, and I like, everyone is doing a very small number, so that's fact, and that's
+how upstream works, you have exceptional core team members that they will do all the job
+and they are carrying, they're pulling the efforts, but it's actually good to maybe improve
+the community a bit more, and well to give you maybe some more perspective, you can even
+see, like this is, every bar is a contribution, so it's a different person, and yet again
+there are just few people that did a huge amount, a huge number of contributions, sorry,
+and many, many people that did just a few, like one, which of course are important, but
+what it means to us when we, what it means for us having someone from outside contributing,
+so I had this idea of kind of splitting the contribution into groups, and here is my analysis,
+so there are of course the authors of the project, they are responsible of let's say
+the 10% of the total number of commits or contributions, right, and there are one, two, max five maybe
+in the project, those are like the key components, they are there from the beginning, I'm talking
+generally, but this applies for our components, and there are paid programmers, co-authors,
+exceptional contributors that are doing a hundred of commits, a hundred of commits, well
+it's quite a number, right, and then of course there are the one-liners, the people that
+come and they're like, hey there's a typo here, super important as well, but they are
+just, they come and go, you will never see them again, and well they might be not even
+interested, sometimes they just come and they are just doing one small fix and going away,
+and then there are who I call the people in the middle, so actually the people that can
+effectively contribute by following the project and by coming in more than once to just point
+out, hey, I am doing this request, maybe I am opening an issue, and then the contributor
+get interested in working into the project and does active commit, let's say, so brings
+in some code, or maybe deletes some code, deleting code is very important.
+So let's look at how we perceive contributions from inside a team.
+So for DNF, talking still about weekly contributors, we had a total of 225 contributors for authors,
+so four people that did more than 10% of the whole work, and 19 people, very good people
+that did 100 commits, and those people, they are regular, they are since forever, you kind
+of know that they are there helping you out, but let's focus on the others.
+So how many commits are in total, and how many have been without those people, and the number
+is actually roughly 10,000 total commits, oh, sorry, I am talking about contributions,
+so it's a little bit, so it's smaller numbers, but still, like the statistic applies.
+Roughly 4,000 commits without the authors, and roughly 1,000.
+So 1,000 commits are done just by those people that stay in the middle, more or less.
+And so what is your effort to be, let's say, active member of the community, so I said,
+okay, I want to do the 1% of this, that's pretty easy, you do roughly one, sorry, 11
+commits, 11 issues, 11 whatever, 11 comments, and you are actually 1%.
+If you know 100 people, you definitely remember if one person is missing or not, or like,
+hey, you, I don't know, you change your haircut to pink, and you remember because the 1% is
+quite a lot, so it's very easy, and I'm talking about 11 contributions in all the history
+of DNF, and DNF is being active for like 10 years, so it's like one contribution per
+year.
+It's quite easy, right?
+And now it's the time to jump into DNF 5, because if you look to DNF 5, same applies,
+it's basically just team effort, so 5 authors roughly, this number will decrease with time,
+and 6 very good contributors, and then those are the number of contributions, and again,
+if you do 1 to contributors, we value that kind of contribution, whatever it is, quite
+a lot, I mean, it's significant, this is what I'm trying to bring up.
+So what kind of contributions are we talking about?
+We have a transparent workflow, we have open issues now, we triage all the issues weekly,
+this is something that again, we were not doing for DNF for some time, we have public
+milestones in GitHub, so you can understand what our action plans are, and also we have
+discussions open that we use for announcement, that we use for, yeah, gathering opinions,
+like DNF 5 naming is discussed on GitHub, so you can go there and give your opinion,
+and questions of course, if you have a question now, you can ask it, if you have a question
+later, there will be the link to GitHub to just go there and ask something, and of course
+we have bugzilla for Fedora tracking, and I mean, downstream requests or specific Fedora
+things, but like, the upstream is where we start, and the upstream is where we are trying
+to improve to the community, a bit more to that, we have now a better documentation,
+the documentation is actually generated from the code base, it is tested, so everything,
+every snippet that's there gets compiled if it's C++, gets interpreted if it's in Python,
+and so it's much more, let's say, reliable documentation, so we expect to have, I'm not
+saying what we expect to have, you know what, because you'll never know, but then we have
+now tutorials, we have code in place, we have a lot more material that Newcomer could work
+on and start to contribute to DNF using that material, right, and then we are planning
+to also add contributing guides that now are missing, but we are planning to improve the
+contribution workflow on GitHub yet again, and also to open first-time issues which are
+missing, but we are targeting that, so just to conclude my part, who's the community?
+Actually the community for us is the people who create issues, I mean, not create problems,
+create GitHub issues, right, people who add or remove code, and people who take part in
+the discussions, even now, even just by coming to us and saying, hey, DNF, you know what,
+I tried it, it worked, or it broke my system, it happened, so I mean, it can happen, it's
+not perfect, or the people who raise questions, like now, or again, they are reaching back
+to us to the mailing list, the more questions we have, the more reliable we can provide
+a code that actually works for the most user cases, so, and just using DNF, you are part
+of the community, and most importantly, and I really feel this quite a lot, because when
+I started working on DNF, I actually needed help from the team, and I believe that many
+people didn't quite dive into the contribution system, because they didn't have help, so
+we are actually in the need of people that help, and ask for help, and that will bring
+to all the other points, so, well, I hope now it's much more clear how we intend to
+work in the future, and now, let's see how DNF 5 works in practice with the demo, so
+here you go, Jan will talk to you about the demo.
+Okay, so hopefully it will work, so, okay, let's try some hands-on UCGs, and what do
+we have here, so, we have two separate individual containers, both running Federal Unix, and
+on the, they have the same configuration, and on the left side, I will show you the
+examples using the original DNF command, and on the right side, I will show you the same
+examples running the DNF 5 command, so, let's start with something simple, just install
+a package, so, we will try to install this package, hopefully the Wi-Fi will work, and
+I will try the same on the right side, okay, and now, what's going on, we need to download
+the metadata about the packages, so, basically, what are the packages, what are their dependencies,
+the requirements, so, the definition of repositories is configured in the system, and now we need
+to just pull all the metadata from repositories, and now we can see the first difference between
+the DNF and DNF 5, what I was already talking about, and it's the size of the metadata,
+because in DNF, everything was hard-coded, and always, all metadata was downloaded,
+so there is, like, 64 megabytes for the Fedora 37 repository, and if we look into DNF 5,
+there is just 21 megabytes, and it's because of the file lists are not there by default,
+because usually we don't need them, okay, we can see some differences in the outputs,
+like, for the DNF 5, we have some more information there, like, what packages are being replaced,
+yes, but it's basically, it looks very similar, but the output should be a little bit more
+convenient for the user, so let's try to install the packages, and, yeah, that's it, basically.
+Another example, Alice was talking about the auto-completion, so this was also improved,
+we can see that for DNF, there was also some auto-completion, if we try, for example, the
+mark command, I will type the M, and now the double-tap, and we can see the DNF offers
+the commands for us, okay, that's fine, but the mark command has also the sub-commands,
+so if I type the double-tap again, oh, it shows me, like, the installed packages on the system,
+so these are the arguments I should use, but if we see the help, like, we need to use one
+of those three sub-commands, and these are not suggested by the DNF, so this was improved
+for DNF 5, we can look at this, if we put the M and double-tap, we can already see that
+there is some difference, there is also some brief description of the sub-commands that
+are all the commands that are offered for us, and if we now put the double-tap again,
+we can see also the sub-commands there, so, and, of course, there is also the auto-completion
+of the option, so we can use the double-tap again, and we can see all the parameters that
+are relevant to this command, and it's quite, it could be quite convenient, so now let's
+try some performance comparison, so, for example, the repo query command was quite improved,
+so it's basically the command for querying the packages based on some keywords, on filtering
+it, and so on, but for this example, we will use just the empty repo query, which basically
+lists all the available packages in repositories, so let's try that, running also for DNF 5,
+and we can see that the DNF 5 was a little bit faster, but let's measure it exactly,
+so let's use the time command, and the same for DNF 5, and we can see for DNF it was like
+almost three seconds, and for DNF 5 it was one second, so it's a little bit faster there,
+and we can also try some more advanced repo query, so we can list all the packages that
+depend on CuraLibrary, and we will see that there will be, oh, there should be quite a
+big difference, all right, so what depends on, right, so running it, I will try to run
+it parallel, and we will see, okay, so here is about six seconds for DNF 5, it's quite
+fast, and for DNF it will be like three times longer, I think, okay, twenty seconds, okay,
+so that's it from the CLI demo, and we can move to API, and you could ask why I should
+introduce the API, well, of course it depends on the use cases, but usually if your project
+has like support, one of our scripting languages we have the bindings for, like the Python,
+it could be much more convenient to use directly the API, and also it's more powerful than
+the CLI interface, but some common use cases are simpler to write through the command line,
+and so sometimes in the end the client chooses both approaches, right, okay, so let's see
+some simple API example, let's say we have some, our favorite package, and we want to
+know what are the latest available version of this package in different federal releases,
+could be useful, so let's see step by step what we need to do, so if we have installed
+the double packages and the API bindings following our tutorials on the GitHub pages, the importing
+of the Python module is super simple, then we need to set up the session for the DNF,
+and running some initialization method, then we need to override the release version variable,
+which is basically used in the repository URL, so we always look only for the packages
+of the respective federal release, then we need to prepare or load the repositories from
+the configuration and prepare like the objects for the Python, and then we need to prepare
+the query, what we will actually be querying, so this is also quite simple, there is a package
+query object, and we will just filter all the packages containing the kernel name, and
+we want to have the latest version always, that's simple, and if we found any of those
+packages containing kernel, we just print the name of the package, otherwise not available,
+okay let's try it, running this simple script, and for federal 35 there is this kernel version,
+for federal 36 there will be some probably newer one, it's taking long, and also should
+output for federal 37 something a little bit newer, okay, now we can try to edit our script,
+and show you if we have already some dnf5 package available, but yeah, we need to add
+here a raw height version, a development version of the Fedora, doesn't work, I don't know how
+to, does anyone know how to exit V? I couldn't resist, I need to escape, it's a different
+laptop, and the thing is that it's actually a different laptop, because the htmi wasn't
+working, so I don't know, escape is not working, thank you, if anyone has any questions we
+will try to move on, and maybe we can move on, okay so you will never know if dnf5 is
+actually in some fedora, well guess what we will say it anyways, but it's always exiting
+it, oh maybe I got it, so in federal 35 there is no dnf5, in federal 36 no dnf5, oh maybe
+for raw height, no, it's taking some time, I don't know, maybe just, oh it's there, okay,
+we can move to some more challenging example, but if we want to add some, our awesome new
+command to dnf5, so then the user will install it and just type dnf5, our command and it
+will do the magic, it's quite simple, we can show it to write some simple dnf5 plugin in
+like 5 minutes, so what do we need, okay we need devil and binding packages, that's no
+problem, we can install it following the tutorials, we need some template sources, okay you can
+steal our dnf5 plugin sources and use them, and you need some build tools and build script
+and you can also steal the cmake script we have for the dnf5 plugin, no problem, everything
+is in our dnf5 repository, and now how to write it, you can follow like our structure
+of dnf5 plugins, it's basically always some definition file like the header, what's there,
+the actual implementation, the cpp file and then there is like the adapter for the plugin
+API, but it's like boilerplate code, you just need to change few lines and it will work,
+so let's look at this c++ example, there is the implementation of really simple example
+command, and it's following like the command interface from the dnf5, so there is some
+methods for the setup of the command we need to follow, in this step we need to tell the
+dnf5 we have some new command, so we basically register our new command into the dnf5, this
+is super simple and it could be copied from other plugins, then there is setting the argument
+parser, basically parsing the arguments, what are the arguments for our new command, listing
+all the positional arguments and what we have, but in this simple example we don't have any,
+so we just set some simple description, in the configure section we can like modify the
+dnf5 session, change some configuration or request some optional method that we downloaded,
+here we just gonna be quiet, and there is the actual implementation of the command in the
+run method where we just, we will just output something on the terminal, and here I will
+show briefly the editor code, so this is the boilerplate one, you just copy it and change
+a couple of things, this is like the plugin name, the version like name your outer and
+name of the plugin, then there is long block of some boilerplate code that is same for
+all the plugins, each plugin consists of one or more commands, so we just put our new command
+into the list, and finally we need to return the instance of our new plugin class, and
+that's it, so let's try to build it and run it, at first I will show you that there is
+no, no example command for dnf5 right now, so I'm not cheating, right, and here are the
+sources, right, there is the cpp file I was, I was showing, then there is the header file
+which is basically just the definition, and the adapter code in the example plugin cpp,
+and then there is the build script for the cmake which is, which is stolen from the dnf5
+sources, okay, so we just need to create build folder, and then we will do everything to
+make it, woo, there is again some weird keyboard, wow, I need, this is not English, I need like
+the mperstand, English, no, this one, how to, where is it, there we are, nice, oh, it's,
+how did you, what happened, I don't know, this, show me again, what the shift and, oh, it's
+printed in Italian, sorry, so make it, make install, so basically just build the sources,
+and the installation is just the copying of the library into the correct place where the
+dnf looks for it, so building is done, and we can try running dnf5 example, and yes, we
+did it, let's see, okay, so when will dnf5 release, you discovered already, dnf5 is actually
+already in fedora row height, so 38, and there is a plan to, well, in a moment, so first
+of all, if you're running stable fedora 36 or 37, you can use a hopper to try it, and
+it will be parallel installation with dnf, and also here are all the sources that we
+have for whatever, you can find everything in the github repo, that's the only link you
+need, there's everything there, we have all the links copied in the talk information,
+if you run fedora row height, or if you're in a container of row height, you want to
+try it, it's there, so just dnf install dnf5, and you're good, and something more about
+it when it will actually land in fedora, so there is a plan to do a major upgrade of micro
+dnf that will actually sim link to dnf5, so it will be replaced in fedora 38, and in
+fedora 39, there's the plan to replace dnf with dnf5, so it's coming, and we hope to
+be ready for that, that's it, thank you, and if you have questions, you have time, so any
+question? Thank you so much for this presentation, my question is related to community, you demonstrated
+there is quite a few people that are not making more than like one, two, three, four commits,
+can you tell me what is your plan to help people contribute more, how are you going
+to improve the contributor experience? Thank you for the question, so the idea is to once
+again make it simpler and be more proactive to help people, so again in the past we weren't
+very responsive, and people got pissed because their code was just ignored, and their questions
+were not as important as maintaining dnf, or that was a perception from the outside,
+and now we try to, again, every week we go through all the discussions, all the new issues,
+all the new PRs from community, in all our components, and we set an action plan for
+that, so we set the milestones in every one of that, it's like we want to make this land
+in fedora 38, we want to make this land in fedora 39, so you know what is our priority,
+and we take seriously, in serious considerations, PRs, so if you just drop some code, it's very
+easy for us to review it and be proactive to that, and once again, it's done weekly
+and it's on our priority, our workflow has changed, hope you answered, thank you.
+Just a technical curiosity, is the new dnf5demon intended to replace the packagekitdemon?
+Is the dnf5demon intended to replace the packagekitdemon?
+So it can, we did start with that in mind, because packagekit was officially deprecated
+before, so that was one of the goals, but lately I've seen that packagekit is maintained,
+and there is even issue on our page that someone wants to create back end for dnf5 for the
+new IPI for packagekit, so I'm not sure how it will turn up, but we will see, it was the
+plan originally.
+So the thing is packagekit works, so it's not that easy to, I'm hearing, okay, well,
+I would say that for now gets the job done, but still, there's an alternative, actually
+the first enablement of dnfdemon on the system, they will be for other components that are
+less critical to probably to adapt to the new dnf, or actually the new IPI, we're looking
+at cockpit, for example, that could use the demon, or anaconda maybe could use it, so
+it's not just packagekit for which the demon would be relevant, let's say that.
+Just finally, we would like to do that because, like to replace it because it could provide,
+for example, like I mentioned, the module support, or group support, even to Grom Software,
+which is currently not possible, and that would be nice, yeah, so any other questions?
+Hello, I do also have a community participation question, are you talking, or have you considered
+reaching out to other RPM-based distributions beyond Fedora and the CentOS, like OpenMundry
+or our SUSE, perhaps, thank you. I mean, I'm not in contact because no one here is project
+manager or team lead, let's say that, I would let another team member of us answer into that,
+yes, of course, the RPM distributions are taken into account, and all the relatives
+to Fedora, they're of course taken into account. The thing is, for now, let's say it's a quite
+younger project, NFI, it's just two years since it has started the developing, and so
+I would say that this is the reason why we're just talking about Fedora, Fedora, Fedora,
+because this is our upstream where we do the testing, our CI runs on Fedora, and well,
+I think that we definitely would be porting, or we would be very happy to see the NF5 land
+in other RPM distributions. I think that's it.
+Okay, thank you again. Thank you. Thank you, everyone.
+Thank you.

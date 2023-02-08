@@ -1,0 +1,244 @@
+Hello. Welcome to my talk about building a web UI for the Fedora installer. So my name
+is Martin Coleman, and I work in the team that's building the Anaconda installer used
+by Fedora, REL, CentOS, and REL distributions. First, I would like to talk a bit about, like,
+why we decided to actually build a web UI for our installer. And, yeah, first, like,
+very, very shortly about, like, the Fedora installer project. Yeah, the name of it is
+Anaconda, which is very confusing for some people doing Python in the scientific domain,
+because there is a very similar project in that it's like a Python thing, but it's called
+the same SV, but I think we are older. So, anyway, right now we have a GTK3 UI for the
+installer. We have a text-based UI. It's also possible to fully automate the installation.
+We have things like add-on support, and, yeah, we are used, as I mentioned, by Fedora, REL,
+CentOS, and others. This talk is basically concerning only the graphical user interface.
+We don't expect to have any changes for the text-based interface and the kickstart-based
+automation in the context of the web UI. So, why did we actually choose to do something
+about the current graphical interface, and why did we choose to start working on a web
+UI? So, one of the points is that the current GTK interface comes from the year 2013. It
+kind of looks like early GNOME 3 by coincidence. Maybe it was built at the same time, basically.
+And over time, we added new features. We fixed bugs. We adapted to various Fedora changes,
+for example. And the stuff kind of got bolted on. Like, not always it was possible to change
+the UI. So, in some cases, it's getting a bit clunky already. Another issue is that
+some of the technology we built it on is getting a bit old right now. GTK 3 is not that old
+at the moment, but already you have GTK 4. Eventually, we would have to port it. One
+of the issues is, for example, that the Fedora installation image. The Fedora project tries
+to have minimal dependencies of applications. So, like, over time, we want to have, like,
+the minimal amount of libraries. So, we would have to quite possibly migrate to keep the
+image sizes small. That's one of the reasons. We also still run on top of X. There is even
+some hard dependency right now on keyboard switching during the installation. So, this
+is something we would have to address anyway. The remote access to a graphical installation
+right now is not the best. It's based on VNC. So, it's unsecure. It's not very efficient.
+It requires you to have a graphical system running on the host that you are installing.
+And you need a special application that might not be available that users might need to
+install. So, that's one of the issues. And also, I'm not saying it's not possible to
+test GTK 3 interfaces, but basically, it's not that simple. And we don't really have
+any unit test coverage. Like, there are people from, for example, the Fedora QA community
+that do test Anaconda. But what they are using is basically a screenshot or graphical bitmap
+based testing right now. So, this is something that could be improved. And also, what we
+have seen in the past years is that there seems to be a clear trend towards using Web
+UIs for system management. Some of you might still remember some of the system config tools
+used on Fedora and CentOS and Trell that used to be available to configure stuff like services,
+networking, firewalls. All of these, over time, effectively became cockpit plugins for
+the cockpit web console. So, this seems to be the trend overall for system management
+as far as we can tell. So, what we kind of found out, there are some benefits of doing
+something about the current UI situation and doing something about it with a web technology
+based UI. So, while we are at it, we can address some of the UX issues we have right now because
+it's effectively a fresh start right now. It's easier to achieve a consistency because,
+yeah, you are building the whole thing. So, you can make sure that it's, since it feels
+similar, it's using the same concepts, the same workflows for everything, hopefully.
+Also another thing is that given the proliferation of Web UIs everywhere, basically, there seems
+to be much bigger community of users, of developers of these technologies. And there is overall
+more documentation, there is even more resources for non-developer roles like UX designers
+or usability testing projects. And this seems to be, unfortunately, quite lacking in many
+native GUI libraries right now in comparison to the web technologies. And also, like one
+quite big point for it is that using a Web UI, just to be specific, we are going to use
+the Web UI both locally and remotely. So, we want to run it for the local graphical
+session, if any, but also it makes it much, much easier to access the installation remotely.
+So, for any headless installations, it should be much easier for the users using the installer
+to connect securely and much more efficiently to the host that is being installed. Also,
+the host doesn't have to contain any graphical dependencies, effectively, because all the
+rendering is happening on the client. So, the installation image could be much smaller.
+And also, the installation time resource requirements could be much, much smaller. That could be
+an issue for stuff like Raspberry Pis or some IoT SBCs, which are perfectly fine for the
+tasks you will be using them. But if you try to do a graphical installation on them, varying
+like possible issues with drivers, it might need much more resources to just install,
+to bring up the graphical interface, then it will be using for its lifetime of doing
+some useful work. So, let's talk a bit about the technical
+details of the tools that we are using to build the UI for the third-line installer
+right now. So, this is the overall architecture. The install is already modular. In that,
+it has a Python backend, which has a D-Bus interface. Then we are using Cockpit to provide
+us a bridge between D-Bus and the web application, which itself is then written with ReactJS
+for the logic and PatternFly for the web UI widgets. The current Anaconda with the GTK
+3UI with the text UI, and even with the Kickstart support, is actually using the same Python
+backend, and even the GTK 3UI already is communicating with the backend via D-Bus. So, this makes
+it possible for us to right now work in parallel, that we are building the web UI next to these
+other UI's right now. Just instead of, like, directly calling D-Bus, you have PatternFly
+widgets React talking via D-Bus, calling D-Bus calls from the backend. This is very similar
+to Cockpit plugins in general. Usually, you have the networking screen in Cockpit, for
+example, and what it does, it's talking to network manager via this bridge. It's doing
+D-Bus calls from D-Bus. That's basically the idea of Cockpit, and we are reusing this for
+our project. Yeah, so, as I've already mentioned, it's not about another UI that you can remotely
+access while keeping the current graphical interface next to this. Like, eventually,
+once we cover all the necessary functionality for the given project or product, it should
+replace the current graphical interface. But right now, it's being developed next to
+it, and thanks to the module backend, thanks to the D-Bus interface, it's not that hard
+to do it. Also, one more thing that we found very, very useful is the Cockpit test framework.
+This is addressing the issue I've mentioned previously about no unit tests for the graphical
+interface. This is something that has been developed for the Cockpit project itself,
+which directly maintains a lot of the screens you will see when you install Fedora or CentOS
+or some such distribution and enable Cockpit. But there are also many community maintained
+outside of the main community developing Cockpit, many other Cockpit plugins. So, that is very
+comprehensive and I would say very nice test suite, which makes it possible to essentially
+write Python unit tests that then manipulate your web UI or Cockpit plugin, in our case,
+the Anaconda Fedora installer web interface. And it also supports pixel testing, which
+we are thinking, yeah, this is nice. But then we actually thought about the other issue
+that most web applications have and that's dependencies. There are dependencies being
+pulled from NPM for pattern fly, for React.js, and the other libraries you might need to
+use. And the problem with this is that the release cadence is pretty fast. There are
+new versions of pattern fly all the time. And it would be very easy to get left behind
+basically to have very big difference in using some old version and being much harder to
+upgrade later on. And pixel tests make it much, much more easy to update this automatically
+or almost automatically because you can effectively compare if you see any graphical changes from
+the old to the new version. Same thing for any changes for the web UI. You can easily
+see what the new state looks like if you see some changes that are expected, if you change
+some label or add a button, or if the layout is totally wrong. So, yeah, this is something
+I can recommend for web applications. It seems to be very, not something we expected
+to be using, but it helps a lot. And it's a part of the cockpit test tooling. So, okay,
+so how far we got? This all started about a year ago in earnest. And right now we have
+a very simple but end-to-end installer images that can be used to demonstrate the web UI.
+And actually, you will end up with a functional, minimal but functional system. It's possible
+to select an installation language. We already support geolocation like with the current
+GTK3 interface. It's possible to select disks. It's possible to dynamically add disks. Again,
+this is kind of a demonstration of some dynamic behavior we wanted to have there. That's it
+right now for storage. Storage, I'll talk a bit more about it later on. But that's one
+of our main focus points because that's like 90% of everything in store. We have a review
+screen where you can see the settings. And where you are also told that, yeah, you shouldn't
+really run it right now on any production system that has any useful data because you
+select the disks and we will use them. We will wipe them and use them. So that's the
+minimal storage we have been able to come up with for now until we have some more comprehensive
+screen where you can actually keep partitions and stuff like that. And the last one is just
+a progress screen where you can see the installation happening, where you can see some errors if
+there are any, where you can kind of guess how long it will take because that's not always
+easy to tell the user correctly. So to have at least some pictures in the presentation,
+so this is in general how it looks like. If you've seen the current Anaconda, this is
+quite a departure from it. We decided to have flexible result layout. And if you've seen
+some pattern fly applications, this should look pretty familiar. And that's one of the
+aims as well, like people who use cockpit or some other applications using this tool
+kit could be quite more familiar than seeing some a bit outdated GTK3 interface in some
+unfamiliar theming. So as you can see, it's pretty similar. This is the installation destination
+screen. We already have some built-in help support. You can click on some of the information
+links. You will get a doc with help content. This is demonstrating just some simple disk
+selection. You can plug in an USB drive already to add more disks. We expect this to grow
+in functionality quite a lot for stuff like network attached storage and more complex
+disk layouts. And this is the review screen. Right now it looks very similar, but again
+we expect this to grow quite a bit because as we add more screens, this should directly
+proliferate here. And we are looking into ways how to, for example, visualize more complex
+storage layouts because that will be challenging, but it was one of the pain points we got from
+users so far. Yeah, this is the progress screen. This is basically the last thing you will
+see. Then it will just tell you, yeah, you are done. So that's it, like four screens
+right now. But it's already producing functional systems. One other outcome of this project
+so far is preview image. Sorry for the long links, but essentially the main information
+here, if you go to Fedora Magazine and type in Anaconda, you will get a bunch of articles
+about the WebUI because that's what we are writing about Anaconda right now. So there
+is a preview image. The idea is that we will refresh it once every time we add something
+visible. Right now it's about like a month old, but I would expect some new features
+landing in the next few weeks. So this will be updated regularly. And that's the best
+you can use right now to have a feel of how the WebUI looks like. It's a self-contained
+image that effectively dumps F37 user space into the machine that you run it on, and please
+don't run it on anything production resembling. So we found some challenges like working on
+this. We have a huge amount of functionality. The project is all the current UI has been
+used for like nine years. So we are really trying to kind of check what is being used
+and what not. So we don't go insane implementing it all. So that's ongoing. We try to identify
+and avoid some of the UX problems we have right now. Also, and keeping things consistent.
+Like that's one nice thing about Pattenfly. There are pretty nice UX guidelines that
+you can apply on many, many things. And that helps to keep the UI consistent. Yeah, another
+issue is how to run this locally. That's not that easy, actually, because the web engines
+are pretty monolithic, pretty big. And they come with some mainly RAM requirements, not
+to mention the image size requirements. And there are actually not that many usable web
+engines on federal. It's effectively a GDK WebKit or Firefox. And each one of them has
+some pluses, some minuses. So right now we are still comparing these two and deciding
+which one to use. For remote running, that's kind of not our problem that much. Even that's
+another issue with Pattenfly. Like if we see some corruption, some layout issues, it quite
+possibly would affect other Pattenfly users. And you might not need to do something about
+it unless, unlike if we used some very, very custom web UI stuff. For the remote running,
+another issue is how you actually authenticate the thing, how you encrypt in a useful manner.
+So this is still ongoing, how we solve that. It might not be pretty, but one way is to
+show some certificate fingerprints to the user to show some generated passwords or stuff
+like that. Another option is to use custom images. That might be perfect for some cases
+to bother some for others. So we will see right now. The web UI image you can use right
+now is, this is disabled right now. But if you use the inst.wepoi.remote option, you
+can actually access the web UI remotely. But you need to pass it because it's like totally
+unsecured right now. These mechanisms are not yet in place. So okay, this is really
+in planning stages and we don't have much time to talk about it. But the main focus
+is definitely storage. This will be big. We plan to have something that you can manually
+do, something that guides you. And so, yeah, it should start landing in the next few preview
+image releases, definitely. And yeah, more screens, definitely. The priority is driven
+by the next, the first image we could reply to, basically. So right now there is like
+some date and time work already running. We have some backups for user and through password
+configuration, we need to add the error reporting, definitely, and other stuff. It definitely
+add-ons. Already the UI supports them. We need to keep it. And yeah, I think this is
+actually, yeah. So this is, uh-huh. So this is the, this is the effect of the last slide.
+And it's, I think we can start with the questions just quickly. Like, storage is a big focus.
+This is a way you can provide feedback to us about it. And let's start with the questions.
+Thanks.
+Hey, Martin. I don't have a question per se. Oh, yeah. Right. Say, I really appreciate
+the stuff that you folks are doing. I tried doing this myself by wrapping kick-start with
+ViewJS, Flask. And I thought that it would be really feasible, really easy thing to do.
+But when I started implementing it, I came to know the kind of entry cases that I was
+to take care of. So I'm totally looking forward to what you folks end up doing. All the best.
+Thanks.
+Okay. Oh, Anaconda has now just nice features as escaping to a terminal, for instance, to
+bypass things Anaconda can't do at the moment. Do you retain that too? What plan do you do?
+So the current text interface, as well as, like, if you can access the machine locally,
+it should still be possible to do, like, anything in the terminal that you can do today. And
+you should be also able to use the existing text interface. We won't be changing that.
+Yes. But you can escape the web interface and get a terminal? Or what is the way to do
+that?
+This is not, like, yet settled, like, if you will include it. But the cockpit project
+has built in terminal emulated. I could imagine this to be included in the web UI. So we might
+be able to include it in our web UI, as well.
+Would be nice if you did.
+Yes. Thanks for the feedback.
+Thank you for the talk. I think this is very interesting. And I think it's a good idea.
+And, you know, certainly convenient to set up headless machines this way. But at the
+same time, I was wondering, I think it was Alex Larson who wrote this Broadway back end
+for GTK. So basically you could use GTK and it would output to what goes into a web browser.
+And I, you know, it just comes to my mind, why not use something like that instead? Because
+I think that if you, we want to continue to invest in GTK and technical technologies
+using GTK, because we need GTK for Fedora, we don't really need web for sure. And so
+if we can end up using GTK and investing more resources there, maybe this makes it just
+overall better for the whole health of the ecosystem. And we get our web UI, too.
+So thank you.
+Yeah. I must say I don't have, like, really, like, very recent information about it. But
+we looked at it a while ago, basically, to the, at the Broadway technology. It definitely
+looked interesting, but it didn't, it looked more like a Tehdemo back then. It could have
+progressed since then. But I think there have been some issues, like with authentication
+or possibly performance. So, yeah. That's a good point, but I don't have, like, latest
+information right now for it.
+I would check.
+Okay.
+I mean, then you can have all your, you can have the GTK and you have your web, everyone
+with one code base.
+Thank you.
+Well, that's another question. Before Fedora's 37, we had a discussion about soft rate installation
+using the BIOS boot machines and we found a good solution. But Anna Kodna is currently
+a bit strange installing software rate on e-fi systems because we don't use an e-fi system
+partition but a rate partition. Do we have a chance to get that fixed, too?
+I'm not sure. Like, I, like, I, it's not that many people actually in the installer team
+and have been very much concerned and concentrated on the, on the web UI right now for the couple,
+last couple months. But definitely if you reach out to us, like, we have a mailing list
+or we have a metrics channel, I think, right now already for Fedora. So please reach out
+using some of these channels and we can look at it.
+Yes. Oh, we can do that.
+Absolutely. Is it, is it possible to provision the machine from the cockpit because you can
+already create in cockpit virtual machines? So it would be nice to be integrated in one
+place in one console. Is it possible or do you have such plan?
+I think it's a, I don't think we have, like, integration for it right now. But that's an
+interesting idea and, like, we have been thinking for stuff like satellite and some other provisioning
+mechanisms that it would make sense to more closely integrate with the installer, with
+the web UI because you could avoid the certificate and authentication issues if you could, for
+example, inject something into the image. So that could, that could work. Like, you could
+have, like, create machine or provision, bare metal, whatever. And it could, like, include
+some, like, trust chain anchors, whatever, into the installation run. And then you could
+then directly connect to the machine. Yeah, we have been thinking about it. But we haven't
+yet implemented something like this. But it seems like obvious choice for some mechanisms.
+And yeah, with integrating it like this with cockpit machines, that could be a nice idea.
+So thanks for the suggestion. Okay, thanks. Okay. Thanks a lot.

@@ -1,0 +1,2416 @@
+1
+00:00:00,000 --> 00:00:05,920
+Good morning, wow.
+
+2
+00:00:05,920 --> 00:00:10,760
+I was not expecting this much of an audience at 9am on Sunday at a FOSSTEM, so thank you
+
+3
+00:00:10,760 --> 00:00:11,760
+all for coming.
+
+4
+00:00:11,760 --> 00:00:16,840
+Yeah, I'm here to talk about how I was at FOSSTEM five years ago.
+
+5
+00:00:16,840 --> 00:00:20,240
+I told you all a whole bunch of things, and I was utterly wrong.
+
+6
+00:00:20,240 --> 00:00:23,520
+So many ways, it's actually kind of amusing.
+
+7
+00:00:23,520 --> 00:00:25,160
+But who am I?
+
+8
+00:00:25,160 --> 00:00:26,160
+My name's Richard.
+
+9
+00:00:26,160 --> 00:00:29,840
+I've been working on OpenSUSA since it began.
+
+10
+00:00:29,840 --> 00:00:35,320
+I've been a customer of SUSAs, I've been a contributor, a bit of everything, Q&A engineer.
+
+11
+00:00:35,320 --> 00:00:39,240
+I've been working there for 10 years now, or almost 10 years.
+
+12
+00:00:39,240 --> 00:00:42,560
+These days I am a ridiculous advocate of rolling releases.
+
+13
+00:00:42,560 --> 00:00:45,280
+It's what everybody should be using.
+
+14
+00:00:45,280 --> 00:00:47,320
+I created the micro-S desktop.
+
+15
+00:00:47,320 --> 00:00:52,520
+My day job is being one of the release engineers for Tumbleweed and micro-OS.
+
+16
+00:00:52,520 --> 00:00:57,480
+I also do a bit of consulting, and I also do a bit of photography.
+
+17
+00:00:57,480 --> 00:01:02,360
+But a long time ago, in a room actually just on the other side of this campus, I was here
+
+18
+00:01:02,360 --> 00:01:11,080
+at FOSSTEM telling everybody that containerized applications, so things like flat-back, snap
+
+19
+00:01:11,080 --> 00:01:17,720
+app images, the idea that graphical apps in some portable format are absolutely utterly
+
+20
+00:01:17,720 --> 00:01:20,600
+terrible and nobody should be ever using them ever, and they were going to eat all
+
+21
+00:01:20,600 --> 00:01:26,400
+of our users, and yeah, it's just going to be horribly, horribly wrong.
+
+22
+00:01:26,400 --> 00:01:31,280
+I even started the presentation with quickie comments, like those who don't remember the
+
+23
+00:01:31,280 --> 00:01:39,280
+past that condemned to repeat it, and I even made really unflattering comparisons.
+
+24
+00:01:39,280 --> 00:01:45,160
+Doing diagrams from Windows architecture and pointing out Windows has all these wonderful
+
+25
+00:01:45,160 --> 00:01:50,160
+run times where you can have different environments and run your application on top, and it was
+
+26
+00:01:50,160 --> 00:01:51,720
+absolutely terrible in Windows.
+
+27
+00:01:51,720 --> 00:01:57,120
+It's going to be absolutely terrible when we do the same thing in Linux, giving the
+
+28
+00:01:57,120 --> 00:02:04,040
+examples of all of the security issues that you see in Windows in this kind of approach.
+
+29
+00:02:04,040 --> 00:02:11,280
+Things like security-relevant DLLs lurking in some folder in your Windows machine, being
+
+30
+00:02:11,280 --> 00:02:16,800
+an absolute nightmare to patch, an absolute nightmare to fix when it goes wrong.
+
+31
+00:02:16,800 --> 00:02:21,120
+All these horrible update issues, how do you end up getting an update on your Windows or
+
+32
+00:02:21,120 --> 00:02:22,120
+your Mac machine?
+
+33
+00:02:22,120 --> 00:02:26,920
+Well, you download some EXE or some bundle and then there's some updater in it, does
+
+34
+00:02:26,920 --> 00:02:30,600
+whatever the heck it wants on its machine.
+
+35
+00:02:30,600 --> 00:02:34,120
+Licensing issues, especially with open source, how do you mix and match all these different
+
+36
+00:02:34,120 --> 00:02:38,200
+licenses together in one cohesive thing?
+
+37
+00:02:38,200 --> 00:02:42,440
+It's just going to eat up all of your disk space.
+
+38
+00:02:42,440 --> 00:02:48,840
+Then I went back to this slide again and then started talking about the various technologies
+
+39
+00:02:48,840 --> 00:02:54,800
+at the time, 2017, were out there doing this containerized runtime stuff, and I would compare
+
+40
+00:02:54,800 --> 00:03:00,720
+this lovely Windows diagram to this lovely canonical diagram, which looks very, very
+
+41
+00:03:00,720 --> 00:03:02,800
+similar because, actually, it is.
+
+42
+00:03:02,800 --> 00:03:08,400
+The idea is similar, the concept is similar, but as you'll see, just because the concept
+
+43
+00:03:08,400 --> 00:03:13,800
+is similar doesn't necessarily mean the whole idea is bad, execution doesn't matter.
+
+44
+00:03:13,800 --> 00:03:19,320
+And it wasn't just Snap, I wasn't just shifting on Ubuntu because I don't like Ubuntu, I was
+
+45
+00:03:19,320 --> 00:03:22,760
+doing the same with Flatback.
+
+46
+00:03:22,760 --> 00:03:30,360
+And I was basically pointing out that this whole containerized application idea was repeating
+
+47
+00:03:30,360 --> 00:03:31,360
+the same issue.
+
+48
+00:03:31,360 --> 00:03:36,840
+We were going to be going down this road of security relevant libraries, lurking in all
+
+49
+00:03:36,840 --> 00:03:39,960
+of these snaps in Flatbacks.
+
+50
+00:03:39,960 --> 00:03:44,840
+Back then, we didn't necessarily have a good story about how are we going to update these
+
+51
+00:03:44,840 --> 00:03:49,200
+things, how are we going to keep them maintained, who was going to look after all of these base
+
+52
+00:03:49,200 --> 00:03:56,200
+snaps and run times in Flatback and the like, who was going to look at all of the legal
+
+53
+00:03:56,200 --> 00:04:00,960
+issues and review the possible licensing issues of bundling these things together, and who
+
+54
+00:04:00,960 --> 00:04:04,760
+was going to buy everybody bigger hard disks.
+
+55
+00:04:04,760 --> 00:04:09,280
+And the kind of main conclusion that I left with, which despite the fact you'll see I
+
+56
+00:04:09,280 --> 00:04:15,720
+was wrong about a lot of what I said, I still actually hold true, is at the heart of it,
+
+57
+00:04:15,720 --> 00:04:20,920
+when distributing software, doesn't matter if you're doing it as a container or as a
+
+58
+00:04:20,920 --> 00:04:27,960
+full-blown fat OS distributor or anything in between with any kind of fancy technology,
+
+59
+00:04:27,960 --> 00:04:30,760
+the responsibilities are the same.
+
+60
+00:04:30,760 --> 00:04:36,840
+App image, Flatback, Snap might make it easier to be the upstream than giving out your application
+
+61
+00:04:36,840 --> 00:04:41,480
+to the users, that's great, but the responsibilities are still the same that distributors have
+
+62
+00:04:41,480 --> 00:04:44,120
+been doing in distributions for years.
+
+63
+00:04:44,120 --> 00:04:48,880
+You have to worry about maintainability, you have to worry about the security, you have
+
+64
+00:04:48,880 --> 00:04:53,320
+to worry about licensing and all this wonderful stuff, so they're going to have to borrow all
+
+65
+00:04:53,320 --> 00:04:55,160
+of the same stuff.
+
+66
+00:04:55,160 --> 00:04:59,640
+So five years ago I gave this presentation, there was lots of people in the audience from
+
+67
+00:04:59,640 --> 00:05:04,080
+App Image, Snap and Flatback, some of them said very nice things to me, some of them
+
+68
+00:05:04,080 --> 00:05:08,040
+said very un-nice things to me.
+
+69
+00:05:08,040 --> 00:05:16,040
+Starting with App Image, they took a lot of what I said surprisingly on board and really
+
+70
+00:05:16,040 --> 00:05:18,280
+ran with it.
+
+71
+00:05:18,280 --> 00:05:27,080
+I said all this stuff in February 2017 and by June 2017 I was saying stuff like this
+
+72
+00:05:27,080 --> 00:05:32,080
+on stage, this was taken at the OpenSUSA conference, this was on the App Image website
+
+73
+00:05:32,080 --> 00:05:37,760
+for longer than I wish it was.
+
+74
+00:05:37,760 --> 00:05:44,800
+But the reason it was because in that short window, App Image is thought they could address
+
+75
+00:05:44,800 --> 00:05:51,280
+most of my concerns by actually obviously running to the OpenSUSA build service and
+
+76
+00:05:51,280 --> 00:05:56,560
+working with the OpenSUSA build service guys and integrating App Image really quite nicely
+
+77
+00:05:56,560 --> 00:05:58,240
+with it at the time.
+
+78
+00:05:58,240 --> 00:06:04,720
+So the idea being the App Image wasn't the problem, maybe the way you build App Image
+
+79
+00:06:04,720 --> 00:06:05,720
+is the problem.
+
+80
+00:06:05,720 --> 00:06:11,280
+If you build them in a nice auditing build system and have the whole thing tracked with
+
+81
+00:06:11,280 --> 00:06:15,840
+dependencies in a build system and you build it reproducibly and you do all the licensing
+
+82
+00:06:15,840 --> 00:06:23,720
+reviews there, then OBS could be the solution to all of the App Image's problem.
+
+83
+00:06:23,720 --> 00:06:28,360
+And they worked really nicely with it and they gave all these promises, they'd be encouraging
+
+84
+00:06:28,360 --> 00:06:35,480
+people to be using OBS as the main App Image building tool and we'd all move on happy in
+
+85
+00:06:35,480 --> 00:06:39,040
+a nice unified way forward.
+
+86
+00:06:39,040 --> 00:06:44,040
+And I even said things to Snappy and Flatback like you're falling behind App Image at this
+
+87
+00:06:44,040 --> 00:06:51,480
+point, saying App Image had a better build story and they were working with other people
+
+88
+00:06:51,480 --> 00:06:55,720
+and telling people to be more like App Image.
+
+89
+00:06:55,720 --> 00:06:59,440
+And I still was badgering on, by the way you can tell all my old slides because they have
+
+90
+00:06:59,440 --> 00:07:05,000
+this thing at the bottom so you can see old me compared to new me.
+
+91
+00:07:05,000 --> 00:07:09,440
+I was still worrying a little bit about dependencies because as you'll see App Image makes some
+
+92
+00:07:09,440 --> 00:07:12,280
+really interesting assumptions.
+
+93
+00:07:12,280 --> 00:07:19,720
+But I was in June 2017 kind of hopeful that we'd get to a point where everybody would
+
+94
+00:07:19,720 --> 00:07:25,880
+be working together and we'd have sort of maybe a new consistent run time and things
+
+95
+00:07:25,880 --> 00:07:27,600
+could move forward.
+
+96
+00:07:27,600 --> 00:07:33,200
+I was also hopeful that we might have sandboxing finally because Snapp kind of had some with
+
+97
+00:07:33,200 --> 00:07:40,120
+App Armor, Flatback has Bubblewrap, maybe App Armor would be the way forward.
+
+98
+00:07:40,120 --> 00:07:42,520
+How wrong I was.
+
+99
+00:07:42,520 --> 00:07:45,760
+So now five years later, where are we?
+
+100
+00:07:45,760 --> 00:07:51,800
+And I don't want to go deep down in technical issues too much because a lot of this isn't
+
+101
+00:07:51,800 --> 00:07:57,240
+just technical, we're an open source project, any technical issue can be fixed, right?
+
+102
+00:07:57,240 --> 00:08:01,240
+It is a lot about what are people actually doing, what do they actually care about, where
+
+103
+00:08:01,240 --> 00:08:05,440
+are they actually taking things, what are we actually doing?
+
+104
+00:08:05,440 --> 00:08:08,280
+So let's judge people by their own standards.
+
+105
+00:08:08,280 --> 00:08:13,680
+This is a screenshot from the current App Image website and it says use this to make
+
+106
+00:08:13,680 --> 00:08:15,720
+Linux apps that run everywhere.
+
+107
+00:08:15,720 --> 00:08:19,960
+But they don't run everywhere.
+
+108
+00:08:19,960 --> 00:08:25,120
+And they say as a user it should be as easy to install as it is on a Mac or Windows machine.
+
+109
+00:08:25,120 --> 00:08:29,760
+But they're not.
+
+110
+00:08:29,760 --> 00:08:33,240
+And they say you don't have to learn all these distributions with all these different distros
+
+111
+00:08:33,240 --> 00:08:36,160
+doing things different ways.
+
+112
+00:08:36,160 --> 00:08:37,400
+Technically that's true.
+
+113
+00:08:37,400 --> 00:08:41,160
+You just need to learn all these different distributions and doing all the different things
+
+114
+00:08:41,160 --> 00:08:45,600
+and you have to build your own to put in your App Image.
+
+115
+00:08:45,600 --> 00:08:52,120
+And I'm not just saying this to core shade on them.
+
+116
+00:08:52,120 --> 00:08:56,920
+I have users on microOS who are trying to run App Images.
+
+117
+00:08:56,920 --> 00:09:00,640
+And they can't because App Images require Fuse 2.
+
+118
+00:09:00,640 --> 00:09:01,640
+I'm a rolling release.
+
+119
+00:09:01,640 --> 00:09:03,880
+I haven't shipped Fuse 2 for like a year.
+
+120
+00:09:03,880 --> 00:09:09,320
+I've been using Fuse 3 and you can't get an App Image to work with Fuse 3.
+
+121
+00:09:09,320 --> 00:09:11,240
+It has to be Fuse 2.
+
+122
+00:09:11,240 --> 00:09:15,880
+The portable image format that isn't portable because it makes assumptions about stuff that's
+
+123
+00:09:15,880 --> 00:09:18,160
+on the base OS.
+
+124
+00:09:18,160 --> 00:09:26,200
+And not just weird stuff like Fuse but even down and dirty in the kernel.
+
+125
+00:09:26,200 --> 00:09:29,760
+If you're running Debian and you're trying on an electron app it's not going to work
+
+126
+00:09:29,760 --> 00:09:34,880
+properly because the kernel in Debian isn't built the way that App Image is expecting
+
+127
+00:09:34,880 --> 00:09:38,280
+the kernel to be running.
+
+128
+00:09:38,280 --> 00:09:43,160
+So this is great promise and it's going to work in some places but only if you're lucky
+
+129
+00:09:43,160 --> 00:09:48,880
+enough that your distro has the same assumptions baked into it that App Image has.
+
+130
+00:09:48,880 --> 00:09:54,040
+And this is a recurring issue even reading the app image documentation for building App
+
+131
+00:09:54,040 --> 00:09:55,040
+Images.
+
+132
+00:09:55,040 --> 00:10:01,480
+It tells you as a developer think about all of the distros where you want your app image
+
+133
+00:10:01,480 --> 00:10:02,480
+to run on.
+
+134
+00:10:02,480 --> 00:10:05,320
+So the whole promise of not worrying about distros goes away.
+
+135
+00:10:05,320 --> 00:10:10,000
+You have to worry about more of them than you normally would and put every single dependency
+
+136
+00:10:10,000 --> 00:10:14,000
+which might not be fulfilled by that distro in your App Image.
+
+137
+00:10:14,000 --> 00:10:21,200
+So yeah, avoid distros by building a huge one and putting it in a big table.
+
+138
+00:10:21,200 --> 00:10:22,280
+It's a lot of work.
+
+139
+00:10:22,280 --> 00:10:23,280
+It's way too much work.
+
+140
+00:10:23,280 --> 00:10:27,840
+I utterly respect anybody using it because they're probably doing more work than I am
+
+141
+00:10:27,840 --> 00:10:31,320
+doing a rolling release.
+
+142
+00:10:31,320 --> 00:10:37,000
+Really when the recommendations for what you put in that giant App Image is the oldest
+
+143
+00:10:37,000 --> 00:10:40,120
+crustiest stuff you can find.
+
+144
+00:10:40,120 --> 00:10:45,920
+They recommend avoiding using anything new because anything new is more likely to have
+
+145
+00:10:45,920 --> 00:10:48,560
+compatibility issues with older distros.
+
+146
+00:10:48,560 --> 00:10:51,960
+So literally find the oldest distro that's still supported and use that as your base
+
+147
+00:10:51,960 --> 00:10:53,920
+for building App Image.
+
+148
+00:10:53,920 --> 00:10:59,040
+Which also seems a bit of a problem to me because if you're always picking the oldest,
+
+149
+00:10:59,040 --> 00:11:03,080
+the oldest is always the first one to not get maintenance updates.
+
+150
+00:11:03,080 --> 00:11:08,800
+So you're always going to be rebasing on some crusty old almost out of day LTS to do what
+
+151
+00:11:08,800 --> 00:11:10,320
+you want to do with App Image.
+
+152
+00:11:10,320 --> 00:11:15,440
+It doesn't make any sense by their own standards.
+
+153
+00:11:15,440 --> 00:11:18,840
+And they tell everybody that it's installing just like on a Mac.
+
+154
+00:11:18,840 --> 00:11:26,280
+Just download the binary, put it on your desktop, right click it, make it executable and it'll
+
+155
+00:11:26,280 --> 00:11:32,720
+run, which 15 years ago, that's true, that's how you run something on a Mac.
+
+156
+00:11:32,720 --> 00:11:34,400
+I own a Mac now.
+
+157
+00:11:34,400 --> 00:11:36,440
+That's not how you run stuff on a Mac.
+
+158
+00:11:36,440 --> 00:11:41,800
+There's not a single Mac application I've ever installed that works that way.
+
+159
+00:11:41,800 --> 00:11:45,800
+Even the Apple documentation makes it very, very clear that if you're downloading something
+
+160
+00:11:45,800 --> 00:11:50,440
+from the Internet and you're double clicking it on a Mac, it's going to run an installer,
+
+161
+00:11:50,440 --> 00:11:52,240
+which is a terrible thing anyway.
+
+162
+00:11:52,240 --> 00:11:54,280
+But it needs to run an installer.
+
+163
+00:11:54,280 --> 00:11:57,800
+When you're downloading random stuff from the Internet, it needs to be checks for dependencies.
+
+164
+00:11:57,800 --> 00:12:02,760
+There needs to be some modification to what's on the host.
+
+165
+00:12:02,760 --> 00:12:08,880
+So every random downloaded Mac application has an installer, just like Windows, or it's
+
+166
+00:12:08,880 --> 00:12:15,680
+done in an App Store where Apple are controlling all that kind of things and helping that along.
+
+167
+00:12:15,680 --> 00:12:22,480
+So yes, I was wrong about App Image, first thing it was terrible because they did try
+
+168
+00:12:22,480 --> 00:12:23,840
+and make an effort.
+
+169
+00:12:23,840 --> 00:12:30,080
+But then I was wrong again because it's actually even worse than I said five years ago.
+
+170
+00:12:30,080 --> 00:12:34,280
+They failed to do everything that they set out to do.
+
+171
+00:12:34,280 --> 00:12:40,480
+They don't do anything to address the actual problems with software releasing.
+
+172
+00:12:40,480 --> 00:12:46,280
+Dependency problems are just hand-waved worse than anyone else could possibly do.
+
+173
+00:12:46,280 --> 00:12:49,200
+Licensing issues, security, maintenance, good luck.
+
+174
+00:12:49,200 --> 00:12:53,160
+Just build a new distro and ship it again.
+
+175
+00:12:53,160 --> 00:12:57,920
+This is worse than we do in distros with all of the faults I will admit distros have on
+
+176
+00:12:57,920 --> 00:12:58,920
+this.
+
+177
+00:12:58,920 --> 00:13:01,800
+So please do not use App Images.
+
+178
+00:13:01,800 --> 00:13:05,920
+And also they're not nice people because they kept publishing this for four years after
+
+179
+00:13:05,920 --> 00:13:08,320
+I told them to take it down and I had to threaten to sue them.
+
+180
+00:13:08,320 --> 00:13:12,960
+So they're just not nice.
+
+181
+00:13:12,960 --> 00:13:20,480
+Now Snap, despite my reservations back in 2017, actually Snap was at the time the one
+
+182
+00:13:20,480 --> 00:13:26,520
+I was most optimistic about, you know, at the time Canonical were actively collaborating
+
+183
+00:13:26,520 --> 00:13:27,520
+with other distributions.
+
+184
+00:13:27,520 --> 00:13:33,960
+They even invited me to a Snap workshop trying to get Snap supported in as many Linux distributions
+
+185
+00:13:33,960 --> 00:13:36,040
+as possible.
+
+186
+00:13:36,040 --> 00:13:37,880
+They had an approach of upstream first.
+
+187
+00:13:37,880 --> 00:13:41,360
+They were promising that all of their app armor patches and all of the enablement they
+
+188
+00:13:41,360 --> 00:13:45,800
+had to do was going to end up in the kernel and going to end up being upstream.
+
+189
+00:13:45,800 --> 00:13:50,120
+At the time in 2017 you could run your own Snap store so you could have your own repository
+
+190
+00:13:50,120 --> 00:13:53,440
+for downloading Snaps.
+
+191
+00:13:53,440 --> 00:14:00,560
+And unlike Flatpak where it's much more just graphical, they also had a story for non-graphical
+
+192
+00:14:00,560 --> 00:14:01,560
+apps.
+
+193
+00:14:01,560 --> 00:14:06,480
+It's only five years ago but back then everybody wasn't necessarily using containers for server
+
+194
+00:14:06,480 --> 00:14:08,760
+stuff the way we are now.
+
+195
+00:14:08,760 --> 00:14:13,520
+So it was interesting on all those levels.
+
+196
+00:14:13,520 --> 00:14:18,160
+But it's five years later.
+
+197
+00:14:18,160 --> 00:14:23,000
+And all of the promises of Snap confinement working everywhere so you can have your nice
+
+198
+00:14:23,000 --> 00:14:27,400
+sandboxed Snap application hasn't come true.
+
+199
+00:14:27,400 --> 00:14:32,920
+Snap D does not support confinement on most non-Obuntu distributions and even some Ubuntu
+
+200
+00:14:32,920 --> 00:14:35,840
+distributions.
+
+201
+00:14:35,840 --> 00:14:41,120
+And this was posted on their forums three years ago now.
+
+202
+00:14:41,120 --> 00:14:44,640
+That was the case three years ago.
+
+203
+00:14:44,640 --> 00:14:51,000
+I was still waiting to get any kind of proper sandboxing insecurity with Snaps.
+
+204
+00:14:51,000 --> 00:14:52,520
+Still not there.
+
+205
+00:14:52,520 --> 00:14:56,040
+And then this was posted this month.
+
+206
+00:14:56,040 --> 00:14:57,040
+Still promising.
+
+207
+00:14:57,040 --> 00:14:58,040
+It might happen.
+
+208
+00:14:58,040 --> 00:14:59,920
+But it's been five years.
+
+209
+00:14:59,920 --> 00:15:02,000
+None of the app armor stuff is in the kernel yet.
+
+210
+00:15:02,000 --> 00:15:04,160
+None of the enablement we need is in the kernel yet.
+
+211
+00:15:04,160 --> 00:15:13,720
+Distros can't easily or really at all keep with an upstream kernel and get Snap running
+
+212
+00:15:13,720 --> 00:15:17,440
+in the way Snap should be running.
+
+213
+00:15:17,440 --> 00:15:22,480
+So if you run a Snap on a non-Obuntu distribution, you're probably running it in an incredibly
+
+214
+00:15:22,480 --> 00:15:23,480
+insecure way.
+
+215
+00:15:23,480 --> 00:15:29,520
+Do you trust that random software delivery with access to everything on your machine?
+
+216
+00:15:29,520 --> 00:15:32,320
+Probably not.
+
+217
+00:15:32,320 --> 00:15:37,880
+At least that random software developer using Snap isn't using their own Snap store because
+
+218
+00:15:37,880 --> 00:15:39,280
+they can't anymore.
+
+219
+00:15:39,280 --> 00:15:43,720
+In 2017 you could, then they released a new version of SnapD.
+
+220
+00:15:43,720 --> 00:15:50,120
+So now the only version of the Snap store that works with SnapD is Canonicals.
+
+221
+00:15:50,120 --> 00:15:55,560
+So it's an open source package format, but it's a closed source delivery format.
+
+222
+00:15:55,560 --> 00:15:59,040
+You're only going to get that software from Canonical.
+
+223
+00:15:59,040 --> 00:16:03,520
+And if you read up on it, there's lots of examples where Canonical have done the right
+
+224
+00:16:03,520 --> 00:16:08,520
+thing and handled Snaps that were malicious and got them off quickly.
+
+225
+00:16:08,520 --> 00:16:10,920
+But it's like, how do you know?
+
+226
+00:16:10,920 --> 00:16:14,680
+You're just trusting Canonical that they're always doing the right thing because you can't
+
+227
+00:16:14,680 --> 00:16:15,680
+see.
+
+228
+00:16:15,680 --> 00:16:17,200
+You can't see what they're putting on there.
+
+229
+00:16:17,200 --> 00:16:19,120
+You can't see how they get there.
+
+230
+00:16:19,120 --> 00:16:21,760
+You can't do it yourself.
+
+231
+00:16:21,760 --> 00:16:30,120
+If you trust Canonical, that's fine, but I'm much more open source orientated myself.
+
+232
+00:16:30,120 --> 00:16:33,360
+Even if I am trusting somebody else, I'd rather be able to have a look and see what's going
+
+233
+00:16:33,360 --> 00:16:34,680
+on in there.
+
+234
+00:16:34,680 --> 00:16:38,960
+Maybe run my own, maybe compare something alongside.
+
+235
+00:16:38,960 --> 00:16:43,240
+And yes, for most developers, or at least most small developers, this is free.
+
+236
+00:16:43,240 --> 00:16:50,400
+So you can build your Snap and publish it to the Canonical Snap store with no effort.
+
+237
+00:16:50,400 --> 00:16:53,760
+But as soon as you start getting bigger, as soon as you start becoming a bit of an ISV
+
+238
+00:16:53,760 --> 00:17:00,480
+or doing stuff with IoT with lots of devices, then Canonical want you to have a brand store.
+
+239
+00:17:00,480 --> 00:17:03,880
+And this isn't a documentation for Snapcraft where it comes to building.
+
+240
+00:17:03,880 --> 00:17:08,760
+When you actually have a look at the price list for having a Snap store, the price list
+
+241
+00:17:08,760 --> 00:17:10,680
+is kind of dear.
+
+242
+00:17:10,680 --> 00:17:17,040
+Do you really want to be spending at least 5,000 euros just to be able to publish your
+
+243
+00:17:17,040 --> 00:17:22,200
+application on somebody else's server under your name?
+
+244
+00:17:22,200 --> 00:17:24,880
+But I can understand if people are buying into this.
+
+245
+00:17:24,880 --> 00:17:27,440
+I can definitely understand why Canonical aren't in a rush to change it.
+
+246
+00:17:27,440 --> 00:17:31,560
+It's probably making them a good bit of money.
+
+247
+00:17:31,560 --> 00:17:36,640
+Canon OpenSuser, like I said, at the time in 2017, they were working with us.
+
+248
+00:17:36,640 --> 00:17:40,560
+Now, not going so well.
+
+249
+00:17:40,560 --> 00:17:44,520
+Snap is the only bit of software in all of my years doing anything, police, managerial,
+
+250
+00:17:44,520 --> 00:17:48,040
+OpenSuser, where it's felt more than one security order.
+
+251
+00:17:48,040 --> 00:17:52,960
+It's the only bit of software where I've had to project it multiple times.
+
+252
+00:17:52,960 --> 00:17:57,800
+And there was good collaboration going on to get those issues fixed.
+
+253
+00:17:57,800 --> 00:18:01,840
+But since 2019, that's kind of fizzled out.
+
+254
+00:18:01,840 --> 00:18:04,880
+Haven't seen anything since.
+
+255
+00:18:04,880 --> 00:18:08,280
+So when it comes to Snap, I was wrong.
+
+256
+00:18:08,280 --> 00:18:13,160
+I was really kind of keen on Snap back in 2017.
+
+257
+00:18:13,160 --> 00:18:17,360
+And these days, I can't really say that much nice about it.
+
+258
+00:18:17,360 --> 00:18:21,240
+The upstream first promises have all stored.
+
+259
+00:18:21,240 --> 00:18:25,520
+It doesn't seem to be an effort to get it really moving again on other distributions.
+
+260
+00:18:25,520 --> 00:18:30,240
+So it's not a portable format by any stretch of any imagination.
+
+261
+00:18:30,240 --> 00:18:36,000
+There's no open source delivery option, even if the Snap store may always be the best way
+
+262
+00:18:36,000 --> 00:18:37,000
+of doing it anyway.
+
+263
+00:18:37,000 --> 00:18:43,280
+This is a case to be made for that, even if there was an open source way.
+
+264
+00:18:43,280 --> 00:18:48,080
+And it's not really a viable alternative for something like Flatback until unless you use
+
+265
+00:18:48,080 --> 00:18:51,960
+Ubuntu, unless you trust Canonical, and unless you're willing to give them money to distribute
+
+266
+00:18:51,960 --> 00:18:56,720
+your stuff.
+
+267
+00:18:56,720 --> 00:18:59,360
+And so Flatback.
+
+268
+00:18:59,360 --> 00:19:05,800
+Now I need to kind of do a little bit of a detour on this, because when I was talking
+
+269
+00:19:05,800 --> 00:19:12,680
+five years ago about all of this stuff, one of the things that I was trying to pitch in
+
+270
+00:19:12,680 --> 00:19:17,840
+the side thing there was this idea that, well, everybody should be using rolling releases.
+
+271
+00:19:17,840 --> 00:19:21,400
+I really, really believe that, and I still believe that now.
+
+272
+00:19:21,400 --> 00:19:31,600
+And I really think in this modern age, to get applications in the hands of users, a
+
+273
+00:19:31,600 --> 00:19:35,760
+rolling base operating system is the absolute key.
+
+274
+00:19:35,760 --> 00:19:42,760
+You need to have it all built together, need to have everything integrated, built consistently,
+
+275
+00:19:42,760 --> 00:19:47,400
+tested consistently, and taking the fair share of the maintenance and security burden, and
+
+276
+00:19:47,400 --> 00:19:50,680
+then shipping it all in a way that the users don't really care that everything's churning
+
+277
+00:19:50,680 --> 00:19:54,160
+around underneath, you know, it just works.
+
+278
+00:19:54,160 --> 00:19:57,600
+And at SUSE, we've still been working on this.
+
+279
+00:19:57,600 --> 00:20:02,240
+We have an operating system called Open SUSE MicroOS.
+
+280
+00:20:02,240 --> 00:20:05,600
+Vanilla MicroOS is much more server-orientated.
+
+281
+00:20:05,600 --> 00:20:11,240
+It's immutable, like CoreOS and other similar immutable platforms.
+
+282
+00:20:11,240 --> 00:20:14,480
+Can't be modified during runtime at all.
+
+283
+00:20:14,480 --> 00:20:19,040
+It's rolling, so changing snapshots, it's actually using the same code base as Tumbleweed, so
+
+284
+00:20:19,040 --> 00:20:21,600
+every day, almost.
+
+285
+00:20:21,600 --> 00:20:26,520
+It's small, but small enough to do the job that it's meant to do.
+
+286
+00:20:26,520 --> 00:20:31,160
+And the assumption is, you know, that server is going to do just one job in a data center,
+
+287
+00:20:31,160 --> 00:20:36,360
+so, you know, a VM running one RPM or a VM running containers, and then, you know, as
+
+288
+00:20:36,360 --> 00:20:41,440
+many containers on top, but, you know, the job is a container from the operating system
+
+289
+00:20:41,440 --> 00:20:43,360
+point of view.
+
+290
+00:20:43,360 --> 00:20:45,280
+And this is working really, really quite well.
+
+291
+00:20:45,280 --> 00:20:49,720
+In fact, SUSE also has commercial products based on this, Slea Micro is based directly
+
+292
+00:20:49,720 --> 00:20:52,240
+off Open SUSE MicroOS.
+
+293
+00:20:52,240 --> 00:20:55,920
+The new SUSE Alp you might have heard of, where we're thinking of doing, like, a whole
+
+294
+00:20:55,920 --> 00:21:02,400
+new ecosystem of enterprise distros, you know, that's building off what we did with Slea
+
+295
+00:21:02,400 --> 00:21:05,320
+Micro and Open SUSE MicroOS.
+
+296
+00:21:05,320 --> 00:21:08,040
+But me, you know, I'm still a desktop guy.
+
+297
+00:21:08,040 --> 00:21:12,880
+So, you know, doing this with my day job, I found myself asking, yeah, I found myself
+
+298
+00:21:12,880 --> 00:21:19,080
+asking, okay, so I've got this nice small OS, and it can run just one thing, you know,
+
+299
+00:21:19,080 --> 00:21:23,960
+what if that just one thing was a desktop?
+
+300
+00:21:23,960 --> 00:21:29,960
+And so, I started the MicroS desktop project, sort of alongside regular MicroS.
+
+301
+00:21:29,960 --> 00:21:37,680
+And yeah, basically, it's a modern Chromebook-like, silver-blue-like environment where you have
+
+302
+00:21:37,680 --> 00:21:40,040
+a nice minimal base system.
+
+303
+00:21:40,040 --> 00:21:43,520
+My recommendation would be running the GNOME one, that's the one that's most maintained
+
+304
+00:21:43,520 --> 00:21:46,120
+with the desktop environment on top.
+
+305
+00:21:46,120 --> 00:21:51,920
+And the basic configuration tools are, yeah, the in there, but everything else is provided
+
+306
+00:21:51,920 --> 00:21:52,920
+by somewhere else.
+
+307
+00:21:52,920 --> 00:21:56,800
+In fact, everything else is provided by Flatpak.
+
+308
+00:21:56,800 --> 00:21:59,880
+So this is one of the reasons why I'm doing this presentation.
+
+309
+00:21:59,880 --> 00:22:04,520
+I kind of have to explain how in five years I went from Flatpak is the devil to Flatpak
+
+310
+00:22:04,520 --> 00:22:06,920
+is the only thing you should be running on your desktop.
+
+311
+00:22:06,920 --> 00:22:11,000
+Because I talked to some of the people that I was talking to back then, and this is kind
+
+312
+00:22:11,000 --> 00:22:14,400
+of their expression.
+
+313
+00:22:14,400 --> 00:22:22,200
+Because five years ago, when I was talking about this stuff, I was meanest about Flatpak
+
+314
+00:22:22,200 --> 00:22:23,720
+than all the other ones.
+
+315
+00:22:23,720 --> 00:22:28,360
+I was even invited to Gwadek, and I gave the meanest talk I have ever given to anybody
+
+316
+00:22:28,360 --> 00:22:32,640
+right to the people who were actually developing the thing.
+
+317
+00:22:32,640 --> 00:22:36,800
+And the guys from GNOME, they listened.
+
+318
+00:22:36,800 --> 00:22:42,760
+I wasn't right, I'm not right about everything, that's the recurring theme of this presentation.
+
+319
+00:22:42,760 --> 00:22:49,880
+But they challenged my opinions, but they accepted at least the cool ones that actually
+
+320
+00:22:49,880 --> 00:22:54,840
+mattered, and Flatpak has changed.
+
+321
+00:22:54,840 --> 00:22:59,400
+Like I was talking about earlier, responsibility is the key issue when you're talking about
+
+322
+00:22:59,400 --> 00:23:04,560
+delivering software, no matter how you're distributing it.
+
+323
+00:23:04,560 --> 00:23:10,320
+You need to be thinking about dependencies and licenses and maintenance and security,
+
+324
+00:23:10,320 --> 00:23:15,040
+and one thing that Flatpak does very, very well is basically take all of that away from
+
+325
+00:23:15,040 --> 00:23:20,440
+the distribution and make it the packages problem.
+
+326
+00:23:20,440 --> 00:23:23,680
+Not great if you're a package, but they do it in a way that actually probably lowers
+
+327
+00:23:23,680 --> 00:23:28,520
+the burden for everybody, so that's nice, automation and technology is great.
+
+328
+00:23:28,520 --> 00:23:32,320
+But really, dependencies become the issue of the person making the Flatpak, licenses
+
+329
+00:23:32,320 --> 00:23:36,040
+become the issue there, maintenance, security, et cetera.
+
+330
+00:23:36,040 --> 00:23:40,160
+So distros can stop worrying about it.
+
+331
+00:23:40,160 --> 00:23:45,520
+And Flatpak does this very well with their runtime concept, where if you're building
+
+332
+00:23:45,520 --> 00:23:48,880
+an application for GNOME, you have a GNOME runtime, if you're building an application
+
+333
+00:23:48,880 --> 00:23:55,440
+for KDE, you have a KDE runtime, elementary have their runtime as well, and then for everything
+
+334
+00:23:55,440 --> 00:24:01,400
+else there's the generic free desktop runtime, which is a little bit heavier and clunkier,
+
+335
+00:24:01,400 --> 00:24:04,120
+but gets the job done.
+
+336
+00:24:04,120 --> 00:24:07,440
+And back in 2017, this terrified me.
+
+337
+00:24:07,440 --> 00:24:12,000
+Not because there was competing distributions, because I'm used to competing distributions.
+
+338
+00:24:12,000 --> 00:24:19,040
+The question was really, are these mini-distributions going to be maintained, anything like every
+
+339
+00:24:19,040 --> 00:24:20,200
+other distro out there?
+
+340
+00:24:20,200 --> 00:24:23,560
+Are these going to handle CVEs well?
+
+341
+00:24:23,560 --> 00:24:28,600
+Are they going to not have horrific licensing issues, et cetera, et cetera?
+
+342
+00:24:28,600 --> 00:24:31,240
+Well, they've been doing this for five years now.
+
+343
+00:24:31,240 --> 00:24:35,080
+These runtimes are very well maintained.
+
+344
+00:24:35,080 --> 00:24:41,200
+These snapshots from their various git trees, they're all updating very, very quickly, keeping
+
+345
+00:24:41,200 --> 00:24:46,640
+up with their respected upstreams of GTK and QT and what have you.
+
+346
+00:24:46,640 --> 00:24:50,600
+Handling CVEs very, very well, I don't know more about that later.
+
+347
+00:24:50,600 --> 00:24:55,560
+So basically, they're handling this just as well as any other distribution does, maybe
+
+348
+00:24:55,560 --> 00:24:59,400
+even better in some cases, because they're narrow in scope, they've actually got less
+
+349
+00:24:59,400 --> 00:25:07,560
+work to do themselves than a full-blown distribution with tens of thousands of packages.
+
+350
+00:25:07,560 --> 00:25:11,960
+So you've got your runtimes, and you've got your Flatpak application on top of that, but
+
+351
+00:25:11,960 --> 00:25:15,040
+what about the Flatpak client, especially if you think about what I was just talking
+
+352
+00:25:15,040 --> 00:25:20,480
+about with Snap earlier, with all of the issues with app armor and custom patches and what
+
+353
+00:25:20,480 --> 00:25:21,480
+have you.
+
+354
+00:25:21,480 --> 00:25:28,120
+Well, as a distribution guy, getting Flatpak in my distribution is really not that hard
+
+355
+00:25:28,120 --> 00:25:29,120
+at all.
+
+356
+00:25:29,120 --> 00:25:33,900
+You need to have the client on that, but you're not having to worry about a huge chain of
+
+357
+00:25:33,900 --> 00:25:36,960
+dependencies and a whole bunch of plumbing to get it running.
+
+358
+00:25:36,960 --> 00:25:39,760
+I don't need to have Fuse2 on my distro.
+
+359
+00:25:39,760 --> 00:25:46,320
+All I need to have is bubble wrap, OS3, and a couple of XTG packages, and they themselves
+
+360
+00:25:46,320 --> 00:25:48,200
+don't really pull that much in as well.
+
+361
+00:25:48,200 --> 00:25:53,160
+So it's small, it's simple, it's relatively easy, self-contained.
+
+362
+00:25:53,160 --> 00:25:57,640
+Doesn't cause me huge build chains when I have to rebuild the whole thing in tumbleweed.
+
+363
+00:25:57,640 --> 00:26:04,200
+It's a really nice ecosystem to just plop on top of my distro and then all of the applications
+
+364
+00:26:04,200 --> 00:26:08,000
+come from Flatpak.
+
+365
+00:26:08,000 --> 00:26:12,960
+From a licensing perspective, all the Flatpaks on FlatHub are checked.
+
+366
+00:26:12,960 --> 00:26:20,760
+They all have to have some kind of license that allows open redistribution or legal redistribution,
+
+367
+00:26:20,760 --> 00:26:23,160
+or they do also support proprietary stuff.
+
+368
+00:26:23,160 --> 00:26:27,160
+You can get a Spotify Flatpak.
+
+369
+00:26:27,160 --> 00:26:34,320
+But obviously, you can't have the source code for the Spotify binary in their Git tree.
+
+370
+00:26:34,320 --> 00:26:41,920
+So all of the proprietary stuff has to be pulled through by discrete declared links.
+
+371
+00:26:41,920 --> 00:26:48,400
+And the Flatpak, specifically the FlatHub team, are checking that, verifying that things
+
+372
+00:26:48,400 --> 00:26:53,960
+aren't changing there, not letting nasty things happen and binaries flip around.
+
+373
+00:26:53,960 --> 00:27:00,400
+So at the very least, you may not know exactly what horrible thing is in this sandbox, but
+
+374
+00:27:00,400 --> 00:27:01,400
+it's sandboxed.
+
+375
+00:27:01,400 --> 00:27:05,560
+It's not much of a threat to your machine anyway, and it's the one that was sent at
+
+376
+00:27:05,560 --> 00:27:06,560
+the submission time.
+
+377
+00:27:06,560 --> 00:27:07,560
+You know it was the one that was reviewed.
+
+378
+00:27:07,560 --> 00:27:09,680
+You know it isn't changing unexpectedly.
+
+379
+00:27:09,680 --> 00:27:14,240
+So basically, it's as good or as better as any other distribution out there with their
+
+380
+00:27:14,240 --> 00:27:18,000
+native packages.
+
+381
+00:27:18,000 --> 00:27:22,000
+When it comes to maintenance, basically the same story.
+
+382
+00:27:22,000 --> 00:27:29,120
+Just like OpenSuser, FlatHub doesn't like Flatpaks to have distro-specific packages.
+
+383
+00:27:29,120 --> 00:27:32,320
+They want everything upstream as possible.
+
+384
+00:27:32,320 --> 00:27:37,520
+They have an incredibly robust build, test, publish workflow.
+
+385
+00:27:37,520 --> 00:27:39,800
+They're not using OBS, I wish there was.
+
+386
+00:27:39,800 --> 00:27:41,680
+They're not using OpenQA, I wish there were.
+
+387
+00:27:41,680 --> 00:27:46,720
+But what they're using is just as good, maybe in some ways it's better.
+
+388
+00:27:46,720 --> 00:27:50,560
+They can actually give everyone nice test channels for testing their application, which
+
+389
+00:27:50,560 --> 00:27:53,880
+I really think I want to copy sometime.
+
+390
+00:27:53,880 --> 00:27:55,760
+But yeah, it's maintained.
+
+391
+00:27:55,760 --> 00:28:03,920
+It's easy for maintainers to keep their app maintained, and that is all ticking over nicely.
+
+392
+00:28:03,920 --> 00:28:09,080
+From a security point of view, well, Flatpak is the only one that works everywhere.
+
+393
+00:28:09,080 --> 00:28:13,800
+It's the only one that those applications are sandboxed.
+
+394
+00:28:13,800 --> 00:28:21,560
+The portal concept where basically holes are pegged through the sandbox to give you things
+
+395
+00:28:21,560 --> 00:28:26,200
+like access to the file picker and other parts of the file system and the like has proven
+
+396
+00:28:26,200 --> 00:28:29,720
+to be secure enough and expandable enough.
+
+397
+00:28:29,720 --> 00:28:30,720
+It's not great.
+
+398
+00:28:30,720 --> 00:28:31,720
+It's not perfect.
+
+399
+00:28:31,720 --> 00:28:33,400
+Nothing ever is.
+
+400
+00:28:33,400 --> 00:28:36,400
+But it's doing the job, and it's doing the job well, and these applications are working
+
+401
+00:28:36,400 --> 00:28:43,720
+very well, and Flatpak CVEs happen very, very rarely.
+
+402
+00:28:43,720 --> 00:28:47,840
+When they do happen, they're not these terrifying, scary things, because the thing is architected
+
+403
+00:28:47,840 --> 00:28:50,040
+very, very well.
+
+404
+00:28:50,040 --> 00:28:54,080
+The last CVE that I could find was in February 2022.
+
+405
+00:28:54,080 --> 00:28:55,200
+It was a medium score.
+
+406
+00:28:55,200 --> 00:28:56,520
+It was fixed incredibly quickly.
+
+407
+00:28:56,520 --> 00:29:01,640
+I think every distribution had no problem adding that, because again, like I mentioned earlier,
+
+408
+00:29:01,640 --> 00:29:06,400
+given the client is very well structured, you don't have a huge dependency chain.
+
+409
+00:29:06,400 --> 00:29:14,080
+Even the most ancient of OTSS distros can then just happily get the patch in, get the
+
+410
+00:29:14,080 --> 00:29:15,080
+thing running.
+
+411
+00:29:15,080 --> 00:29:21,800
+When I started the microS desktop, I adopted Flatpak, actually November 2017, so if you
+
+412
+00:29:21,800 --> 00:29:25,800
+put the timeline in that, I did change my opinion quite a bit from the beginning of
+
+413
+00:29:25,800 --> 00:29:31,200
+February 2017 to the end, but I was using Flatpak as it was the one that I could work
+
+414
+00:29:31,200 --> 00:29:32,200
+with.
+
+415
+00:29:32,200 --> 00:29:33,200
+I couldn't use Snap.
+
+416
+00:29:33,200 --> 00:29:36,240
+I couldn't use App Image.
+
+417
+00:29:36,240 --> 00:29:38,240
+I didn't trust it that much at the time.
+
+418
+00:29:38,240 --> 00:29:42,760
+I was thinking like you've seen with other distributions of building my own Flatpaks
+
+419
+00:29:42,760 --> 00:29:47,280
+and using them rather than trusting FlatHub, or doing like Fedora does with, they build
+
+420
+00:29:47,280 --> 00:29:51,800
+their own and then they also give FlatHub with some kind of filtering, but I didn't
+
+421
+00:29:51,800 --> 00:29:56,120
+really want to mess with that at the beginning of my project doing all of this, so I just
+
+422
+00:29:56,120 --> 00:30:02,320
+opted for trusting FlatHub first, and then waiting for the problems to surface.
+
+423
+00:30:02,320 --> 00:30:05,480
+It's five years later, and I'm still waiting.
+
+424
+00:30:05,480 --> 00:30:11,000
+We haven't had a single issue with the microS desktop where a FlatHub application really
+
+425
+00:30:11,000 --> 00:30:15,320
+got in the way and needed us to think, okay, we can't trust these guys, we should start
+
+426
+00:30:15,320 --> 00:30:16,320
+doing what I want.
+
+427
+00:30:16,320 --> 00:30:17,680
+It just hasn't happened.
+
+428
+00:30:17,680 --> 00:30:21,720
+The few times an application hasn't worked right, well, we send a patch.
+
+429
+00:30:21,720 --> 00:30:28,000
+We work with them, because that's how open source is meant to work.
+
+430
+00:30:28,000 --> 00:30:35,280
+As a distribution guy, I've realized we don't need to be building these giant, humongous,
+
+431
+00:30:35,280 --> 00:30:40,760
+huge code bases, even though that's still what we do with Tumbleweed, I don't meet myself.
+
+432
+00:30:40,760 --> 00:30:42,600
+I'm purely a microS person now.
+
+433
+00:30:42,600 --> 00:30:44,120
+All of my servers are microS.
+
+434
+00:30:44,120 --> 00:30:46,240
+My desktop here is microS.
+
+435
+00:30:46,240 --> 00:30:52,960
+I'm using a tiny 1,000 package fraction of my Tumbleweed code base, and everything else
+
+436
+00:30:52,960 --> 00:30:57,440
+is coming from containers, some of which are built from that much bigger code base.
+
+437
+00:30:57,440 --> 00:31:04,680
+All my graphical stuff is coming from FlatHub, and my life is good, and I'm happy.
+
+438
+00:31:04,680 --> 00:31:09,880
+This presentation is Libre Office from FlatHub.
+
+439
+00:31:09,880 --> 00:31:12,840
+My final thoughts, which I've realized I've actually finished them a little bit early,
+
+440
+00:31:12,840 --> 00:31:15,840
+but that's good, more time for Q&A.
+
+441
+00:31:15,840 --> 00:31:17,400
+FlatPacks are ready for prime time.
+
+442
+00:31:17,400 --> 00:31:20,200
+The other ones aren't.
+
+443
+00:31:20,200 --> 00:31:26,160
+Don't use app image, only use Snap if you trust Canonical, but we're here at FOSTEM.
+
+444
+00:31:26,160 --> 00:31:32,600
+FlatPacks are the better way to go for people like you who are here at FOSTEM.
+
+445
+00:31:32,600 --> 00:31:38,560
+My system automatically updated in the background.
+
+446
+00:31:38,560 --> 00:31:40,760
+Desktop Linux distros do not need to package the whole world.
+
+447
+00:31:40,760 --> 00:31:45,040
+If you're a distro builder, think about following the model we are doing with microS desktop.
+
+448
+00:31:45,040 --> 00:31:48,520
+Think about, if not narrowing your scope because you're building the packages and you don't
+
+449
+00:31:48,520 --> 00:31:55,320
+want to tell maintainers to go away, then at least start drawing your focus more on just
+
+450
+00:31:55,320 --> 00:31:56,640
+what you need to be doing.
+
+451
+00:31:56,640 --> 00:31:58,960
+Start testing that part more.
+
+452
+00:31:58,960 --> 00:32:02,280
+Start telling your users, that's the bit you can really, really trust.
+
+453
+00:32:02,280 --> 00:32:09,400
+Give some secondary class to the old fashioned way of doing things.
+
+454
+00:32:09,400 --> 00:32:13,400
+Yes.
+
+455
+00:32:13,400 --> 00:32:17,080
+So you are telling us that FlatPacks run everywhere.
+
+456
+00:32:17,080 --> 00:32:20,080
+Is that also true for different architectures?
+
+457
+00:32:20,080 --> 00:32:25,400
+That is true at least for ARM, for Z probably not, but do you really have that many desktops
+
+458
+00:32:25,400 --> 00:32:27,400
+in the main frame?
+
+459
+00:32:27,400 --> 00:32:28,400
+Yes, of course.
+
+460
+00:32:28,400 --> 00:32:32,720
+Well, then that's something I'm sure the FlatHop team wouldn't mind, I'm sure we could
+
+461
+00:32:32,720 --> 00:32:37,840
+get that working on FlatPack, like if there's a need there, then also thinking about a risk
+
+462
+00:32:37,840 --> 00:32:40,560
+drive of course and stuff like that.
+
+463
+00:32:40,560 --> 00:32:47,640
+But then that kind of point, actually nicely draws me to my sort of finishing point really.
+
+464
+00:32:47,640 --> 00:32:50,120
+None of this stuff is ever going to be perfect.
+
+465
+00:32:50,120 --> 00:32:51,640
+No technology ever is.
+
+466
+00:32:51,640 --> 00:32:54,320
+That's why we do this stuff in the open.
+
+467
+00:32:54,320 --> 00:32:57,280
+That's why we do this stuff open source.
+
+468
+00:32:57,280 --> 00:33:01,640
+So when things aren't perfect and aren't the way they are, aren't covering a architecture
+
+469
+00:33:01,640 --> 00:33:07,920
+that you want or whatever, isn't it better to go to a project that is already going in
+
+470
+00:33:07,920 --> 00:33:13,800
+that direction, that is trying to be available to everybody, that is open to me yelling at
+
+471
+00:33:13,800 --> 00:33:20,520
+them for months about how terrible they are and then work with them to get it all done
+
+472
+00:33:20,520 --> 00:33:25,600
+rather than sticking in your own tiny little sandbox, doing it all on your own and then
+
+473
+00:33:25,600 --> 00:33:28,640
+being burdened with it for decades.
+
+474
+00:33:28,640 --> 00:33:32,000
+If you're doing graphical applications, this is the way we should be going.
+
+475
+00:33:32,000 --> 00:33:37,480
+It's easier for package maintainers, it's easier for distros, it's easier for everyone
+
+476
+00:33:37,480 --> 00:33:39,200
+to keep up, it's easier for users too.
+
+477
+00:33:39,200 --> 00:33:42,800
+I mean, you just, you know, nice little web store, they click on what they want, you know,
+
+478
+00:33:42,800 --> 00:33:46,960
+they can have the beta version if they publish in the beta version, it's a nice way of getting
+
+479
+00:33:46,960 --> 00:33:49,080
+stuff done.
+
+480
+00:33:49,080 --> 00:33:54,840
+So yeah, please, if you're doing anything with graphical apps, please get it on FlatHop,
+
+481
+00:33:54,840 --> 00:33:58,800
+please contribute to FlatHop, please put FlatHop in your distro.
+
+482
+00:33:58,800 --> 00:34:12,200
+And is there any other questions, because, yes, right at the back there.
+
+483
+00:34:12,200 --> 00:34:17,960
+You've addressed the outstanding question about CPU architecture, which is a great question.
+
+484
+00:34:17,960 --> 00:34:22,440
+How do you feel about the fact, and I realize I'm asking a Linux question of a Linux distro
+
+485
+00:34:22,440 --> 00:34:27,320
+maintainer, but how do you feel about the fact that containers tie everyone in the world
+
+486
+00:34:27,320 --> 00:34:34,720
+to the Linux kernel interface as their interface, shutting out other open kernel options like
+
+487
+00:34:34,720 --> 00:34:42,200
+the BSDs from participating in that ecosystem, and that the overall drive towards containers
+
+488
+00:34:42,200 --> 00:34:49,200
+is further orphaning these already minimally represented, but very, very strong options
+
+489
+00:34:49,200 --> 00:34:52,000
+in other kernels?
+
+490
+00:34:52,000 --> 00:35:00,960
+They're strong, but I mean, I guess the recurring point I get to with all of this kind of thing
+
+491
+00:35:00,960 --> 00:35:07,280
+is, you know, niche players are great for playing in niches, you know, when you're talking
+
+492
+00:35:07,280 --> 00:35:13,200
+about something that needs to have widespread adoption and or widespread contribution, you
+
+493
+00:35:13,200 --> 00:35:16,400
+know, some degree of centralization does make sense.
+
+494
+00:35:16,400 --> 00:35:19,240
+It doesn't make sense for everybody to go make their own kernel, it doesn't make sense
+
+495
+00:35:19,240 --> 00:35:24,560
+for everybody to make their own distribution, I would say it doesn't make sense for everybody
+
+496
+00:35:24,560 --> 00:35:29,960
+to go packaging their own graphical applications 20 times over, so as hard as it is to say
+
+497
+00:35:29,960 --> 00:35:35,920
+to somebody who's clearly passionate about other kernels and BSDs and what have you,
+
+498
+00:35:35,920 --> 00:35:42,240
+I'm fine with containerization and these technologies dragging everybody to the Linux kernel because
+
+499
+00:35:42,240 --> 00:35:48,840
+that's where the contributions are, so, you know, and as long as the Linux kernel is open
+
+500
+00:35:48,840 --> 00:35:52,880
+to contributions and everybody can steer it in, you know, a good direction, I'm kind
+
+501
+00:35:52,880 --> 00:36:01,960
+of okay with that.
+
+502
+00:36:01,960 --> 00:36:03,320
+Thank you for your talk.
+
+503
+00:36:03,320 --> 00:36:08,520
+I was with the presentation of 2017, so I think it's very nice that you changed the
+
+504
+00:36:08,520 --> 00:36:09,520
+views.
+
+505
+00:36:09,520 --> 00:36:14,800
+That year I also watched a presentation about Atomic from Fedora, so it was funny how those
+
+506
+00:36:14,800 --> 00:36:15,800
+things interlept.
+
+507
+00:36:15,800 --> 00:36:20,200
+I have a question about how you feel about the base system.
+
+508
+00:36:20,200 --> 00:36:27,920
+You see currently there are trends like NICs and like SteamOS which use like an immutable
+
+509
+00:36:27,920 --> 00:36:30,000
+image as a base.
+
+510
+00:36:30,000 --> 00:36:31,560
+How do you feel about that?
+
+511
+00:36:31,560 --> 00:36:34,360
+So I think immutable distributions are the way to go.
+
+512
+00:36:34,360 --> 00:36:37,640
+Like I think if you're running Linux, it should be immutable.
+
+513
+00:36:37,640 --> 00:36:44,600
+Immutability does bring with it a bunch of extra questions and, you know, and for us
+
+514
+00:36:44,600 --> 00:36:50,880
+as geeks, I think I can say that without insulting anybody in the room, you know, we are keen
+
+515
+00:36:50,880 --> 00:36:54,880
+to tinker with our machines and, of course, immutability quite often can get in the way
+
+516
+00:36:54,880 --> 00:36:55,880
+of that.
+
+517
+00:36:55,880 --> 00:36:58,600
+You know, if you can't change your running system, how are you going to install that
+
+518
+00:36:58,600 --> 00:37:01,280
+one little thing that you want?
+
+519
+00:37:01,280 --> 00:37:09,760
+I think there's a sweet spot and I don't think some of the other distributions get it.
+
+520
+00:37:09,760 --> 00:37:13,520
+You know, imaged-based deployments, you know, you've got a frozen image, you can't really
+
+521
+00:37:13,520 --> 00:37:16,920
+modify that image or you have to build a whole new one.
+
+522
+00:37:16,920 --> 00:37:17,920
+That's too much work.
+
+523
+00:37:17,920 --> 00:37:21,840
+I don't like imaged-based immutable systems that much.
+
+524
+00:37:21,840 --> 00:37:26,960
+NICs has an interesting way with everything being declarative, but it's a lot of hassle.
+
+525
+00:37:26,960 --> 00:37:30,080
+Declaring everything, it kind of swings the other way for me.
+
+526
+00:37:30,080 --> 00:37:33,160
+So I don't necessarily like the NICs way.
+
+527
+00:37:33,160 --> 00:37:39,160
+OS Tree has, you know, an interesting take on the whole thing where, you know, both from
+
+528
+00:37:39,160 --> 00:37:43,600
+a user's perspective and the fact it's immutable, like, it's nice, but then you end up with
+
+529
+00:37:43,600 --> 00:37:48,160
+a million different layers of OS Tree and that kind of just gets technically burdensome.
+
+530
+00:37:48,160 --> 00:37:50,160
+Obviously, I work on micro-OS.
+
+531
+00:37:50,160 --> 00:37:51,720
+I think we found that sweet spot.
+
+532
+00:37:51,720 --> 00:37:57,840
+You know, in our case, we're using BTFS snapshots to do all the magic underneath the hood where,
+
+533
+00:37:57,840 --> 00:38:03,080
+you know, your running system never gets touched, but you can still do traditional package management
+
+534
+00:38:03,080 --> 00:38:05,920
+against a new snapshot and that becomes your next boot target.
+
+535
+00:38:05,920 --> 00:38:09,080
+So you never affect in the running system, but you can do whatever the heck you want
+
+536
+00:38:09,080 --> 00:38:12,960
+with your next boot and then if that next boot goes horribly wrong, we just throw the
+
+537
+00:38:12,960 --> 00:38:13,960
+whole snapshot away.
+
+538
+00:38:13,960 --> 00:38:18,480
+So, you know, it's super fast, super easy, avoids all of that.
+
+539
+00:38:18,480 --> 00:38:22,560
+You can still tinker with it, but you're not, yeah, unfortunately, the downside of that
+
+540
+00:38:22,560 --> 00:38:26,240
+is I do sometimes have to tell people, like, don't tinker too much, like, the more you
+
+541
+00:38:26,240 --> 00:38:31,080
+do crazy stuff, the more likely you're going to throw that snapshot away, but I think that
+
+542
+00:38:31,080 --> 00:38:36,360
+sweet spot is better than super lockdown images or, like, complete freedom of having to declare
+
+543
+00:38:36,360 --> 00:38:39,360
+everything in conflict for.
+
+544
+00:38:39,360 --> 00:38:47,960
+Okay, thank you for your presentation.
+
+545
+00:38:47,960 --> 00:38:50,280
+I had never heard of Flatpak.
+
+546
+00:38:50,280 --> 00:38:57,160
+On my Ubuntu, I'm using a Snap to install application and on my Mac, I'm using Homebrew.
+
+547
+00:38:57,160 --> 00:39:00,800
+What do you think of Homebrew on Linux?
+
+548
+00:39:00,800 --> 00:39:04,680
+I don't see the point of Homebrew on Linux.
+
+549
+00:39:04,680 --> 00:39:10,800
+Yeah, it's, yeah, why, like, I get it on Mac, I've installed a few things on my Mac
+
+550
+00:39:10,800 --> 00:39:15,120
+that I desperately need there, but, you know, my Mac, I use for photography, I don't do
+
+551
+00:39:15,120 --> 00:39:22,040
+anything technical on it, so, yeah, I, yeah, don't see the point.
+
+552
+00:39:22,040 --> 00:39:25,520
+Okay, thank you.
+
+553
+00:39:25,520 --> 00:39:34,960
+How likely is it for the files stored in the home directory, especially the user files,
+
+554
+00:39:34,960 --> 00:39:39,040
+to be affected if I roll back a snapshot after a failed upgrade?
+
+555
+00:39:39,040 --> 00:39:45,440
+So, yeah, that's a really, like, micro-specific question, that's cool, though.
+
+556
+00:39:45,440 --> 00:39:50,040
+The way we do it on micro-OS is when we talk about the root file system, we're not talking
+
+557
+00:39:50,040 --> 00:39:54,240
+about the root partition because we're using BTIFS.
+
+558
+00:39:54,240 --> 00:39:59,920
+So BTIFS, you have this concept of sub-volumes, we have a sub-volume for literally everything
+
+559
+00:39:59,920 --> 00:40:06,600
+where the data should be changing, so Homeopt because that's third party, so it's not us,
+
+560
+00:40:06,600 --> 00:40:09,960
+you know, use a local because, again, that's not us.
+
+561
+00:40:09,960 --> 00:40:14,320
+You know, anything that isn't the distro is in a sub-volume, and then the distro's root
+
+562
+00:40:14,320 --> 00:40:17,160
+file system is just that last bit that's left.
+
+563
+00:40:17,160 --> 00:40:21,880
+So that bit's read-only, that's the bit that's managed by the package manager, all the sub-volumes
+
+564
+00:40:21,880 --> 00:40:24,840
+are freely available and read-write.
+
+565
+00:40:24,840 --> 00:40:28,120
+That doesn't make ETC a little bit interesting because that's like the one folder where it's
+
+566
+00:40:28,120 --> 00:40:32,820
+both, like, distro's put stuff in there, and that, in micro-OS we handle that with
+
+567
+00:40:32,820 --> 00:40:39,160
+overlayFS right now, where, yeah, we're basically taking copies of that, having, knowing what
+
+568
+00:40:39,160 --> 00:40:43,480
+we put there, knowing what the user put there, or at least trying to, and then merging everything
+
+569
+00:40:43,480 --> 00:40:45,280
+together so the thing works.
+
+570
+00:40:45,280 --> 00:40:52,600
+Ideally, what we would like is everybody to start using, like most people already are,
+
+571
+00:40:52,600 --> 00:40:57,560
+user for putting in distribution configs at USR, you know, it should be, you know, in
+
+572
+00:40:57,560 --> 00:41:01,800
+userlib or useretc or whatever, that's just like you see with systemd, right, where distros
+
+573
+00:41:01,800 --> 00:41:09,920
+put their distroconfig in userlib systemd, and then users put their localconfig in ETC
+
+574
+00:41:09,920 --> 00:41:13,480
+systemd, and that way works very, very nicely.
+
+575
+00:41:13,480 --> 00:41:28,360
+But meanwhile, ETC's a bit of a mess, but a mess that we can manage.
+
+576
+00:41:28,360 --> 00:41:30,160
+Thank you for the presentation.
+
+577
+00:41:30,160 --> 00:41:34,720
+Why isn't FlatBag suitable for CLIs?
+
+578
+00:41:34,720 --> 00:41:40,040
+Actually, it is suitable for CLIs.
+
+579
+00:41:40,040 --> 00:41:43,680
+It's actually guides now for how to do that.
+
+580
+00:41:43,680 --> 00:41:51,880
+I think the, so yeah, I know our examples of apps where they do that, where, you know,
+
+581
+00:41:51,880 --> 00:41:57,040
+the assumption is always probably going to be that it's graphical, but there's no reason
+
+582
+00:41:57,040 --> 00:42:01,640
+why a graphical application, you know, can't start an exterm and run a CLI app.
+
+583
+00:42:01,640 --> 00:42:07,200
+So there's actually examples in the FlatBag documentation of how to do that.
+
+584
+00:42:07,200 --> 00:42:11,160
+Maybe speaking though, like sort of, you know, for apps that, you know, might not fit that
+
+585
+00:42:11,160 --> 00:42:18,880
+kind of model, I think a lot of that kind of CLI or more sort of service-based command
+
+586
+00:42:18,880 --> 00:42:24,320
+line-y stuff, that's handled so well by OCI containers, you know, Podman, Docker and the
+
+587
+00:42:24,320 --> 00:42:25,320
+like.
+
+588
+00:42:25,320 --> 00:42:27,800
+Like, why mess with that?
+
+589
+00:42:27,800 --> 00:42:30,080
+Like, you know, you've got all those containers already out there.
+
+590
+00:42:30,080 --> 00:42:35,720
+You've got everyone building the, you know, command line tooling and server tooling in,
+
+591
+00:42:35,720 --> 00:42:40,040
+you know, in containers, you know, that does very, very well in that context.
+
+592
+00:42:40,040 --> 00:42:43,040
+It just sucks on the desktop.
+
+593
+00:42:43,040 --> 00:42:45,360
+Have FlatBag that just handles the desktop issue.
+
+594
+00:42:45,360 --> 00:42:48,560
+You don't necessarily have to have one thing to do everything.
+
+595
+00:42:48,560 --> 00:42:54,040
+So yeah, I think FlatBag draws that line quite nicely, where it just, it naturally starts
+
+596
+00:42:54,040 --> 00:43:02,080
+getting painful when you head down that road.
+
+597
+00:43:02,080 --> 00:43:05,880
+Any more questions?
+
+598
+00:43:05,880 --> 00:43:06,880
+No?
+
+599
+00:43:06,880 --> 00:43:10,520
+Well, hopefully I will see you in a couple of years when I'm long again.
+
+600
+00:43:10,520 --> 00:43:11,520
+Thank you very much.
+
+601
+00:43:11,520 --> 00:43:12,520
+Thank you.
+
+602
+00:43:12,520 --> 00:43:13,520
+Thank you.
+
+603
+00:43:13,520 --> 00:43:14,520
+Thank you.
+
+604
+00:43:14,520 --> 00:43:41,400
+Thank you very much.
+

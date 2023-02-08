@@ -1,0 +1,662 @@
+I'm here thanks yes hello good morning and nice day for foster them hope you
+had a nice evening yes let's start with the torque matrix RTC matrix beyond
+instant messaging let's get that so first of all what is matrix maybe we
+have some redundancy a little bit here but for the sake of the recording and
+I'll repeat some of what Matthew already showed us so basically the idea is an
+open and federated secure and decentralized real-time communication
+network and the use cases are many for it so the obvious one is of course the
+interoperable chat but we are also aiming for voice of IP applications or
+even VR applications but you can also think of something like IOT data and
+this is so most of those use cases you're quite familiar with and what's
+the well-known event layer so for a chat for instance you have a store and
+forward semantics however the cool thing about matrix is that it is yeah
+constructed such a way that it is de-central it is federated and what's
+for me pretty cool and important is this replicated and end-to-end encrypted so
+for instance if you're a client on one of those hosts here and you're attaching
+to one home server and you're joining a room from another home server at that
+moment the rooms replicated and everything is end-to-end encrypted it
+is pretty cool it's like like a git git clone something like that similar with
+an automatically your synchronization mechanism on top of it I'm quite sure
+that you're very familiar with it you could also summarize it matrix is a
+de-distributed real-time database and I can recommend this talk here from my
+colleague Andy it's a very nice overview of what the specifics here on the
+other side this talk today is about matrix RTC and now what is the
+definition of matrix RTC what it was it so there's basically it's the world
+first de-central federated real-time channel or communication platform and
+it's packed an msc341 and msc3898 and it's depicted here what basically the
+idea is from a client perspective you have a peer-to-peer semantics and we
+don't have a storage or persistency in it but you can exchange data with a low
+latency and a low jitter from one client to the other and another interesting
+thing here is that the business logic is owned by the clients though in most
+recent RTC platforms or video conferencing platforms you have in
+something like an SFU and an application server and here the idea really is the
+business logic is in the clients let's have a look at some use cases so the
+most obvious of course is video conferencing right that this is what
+everybody would you know assume when you talk about RTC but we can also have
+the embedded version here so let's just take a normal matrix client and put a
+widget into it and then have all your video conferencing or go to the VR world
+or the the the matrix interpretation of the meta-words which is called third
+room everything can be realized using matrix RTC and the cool thing here is
+that you can also think about a hybrid use case so for instance imagine we
+have a whiteboard like we have this here so we can use for fast UX the matrix
+RTC layer such when I make a stroke now that it's more or less immediately at the
+other whiteboards but for persistency we can just use the room the distributed
+database so what are the base building blocks which we use to create matrix
+RTC so first of all of course we need something like a real-time communication
+framework and the obvious choice at the current point in time is web RTC because
+it has a quite good adoption it's in all the web browsers and there are a lot of
+a lot of SDKs around we can use but going forward maybe you can also sing
+something like web transport or web codex to to replace it so we are not
+mandating web RTC but for the time being that is of course the framework to use
+then for the signaling that's quite obvious that we use matrix for it rates
+and then to make it scale you might optionally also want to use a back end
+component a focus this could either be an MCU or an SFU
+so now as I stated the back end component is optional let's have a look
+on start matrix RTC without and back end component so having a look at the
+connection models though the obvious and the simplest one to start with is peer
+to peer right that's just easier create a peer connection and then you have a
+they have a data layer and then you can play around with matrix RTC it's getting
+a little bit more complicated if you want to to have an RTC session with
+more than two people so then we spin up a full mesh and then it really depends on
+the use case how many people can join if you have a look maybe at the the use case
+of a video conference then you would need to distribute and minus one media
+up links and down links which is then limited by your internet connection and
+if you haven't had least in Germany in average DSL connection it would scale to
+up to five to eight participants and this is something we're currently using in
+an element call to element call at the current point in time is based on this
+full mesh setup or was we have some news today the the vision which also really
+scales and would allow a large scale RTC sessions is what we call cascaded
+selective forwarding units and it's depicted here so what you would have
+you would have an selective forwarding unit as long side with your home server
+it's optional but you can have it and by this we then would allow a further
+scaling and can really yeah using the cascading concept to dynamically crawl
+to any size we have to test it but that's the theory so far the signaling
+here of course is also carried out over matrix and for the for the specifics for
+the SFU we have this MSE 3898 which handles then all the the magic of the
+cascading and so on and so forth from a setup perspective if you want to scale
+large network and large RTC network the idea is that you place the SFU's as
+close as you can to your customers or to your clients and to ensure a proper
+internet so this ensures a proper internet connection with low jitter low
+packet loss and then you have the SFU's placed in a strong network center and
+have a good interconnection and by this setup you have yeah that's that's that's
+the best you can do in terms of media quality
+so what we did we started with an SFU which is capable to speak the matrix
+flavor of of RTC it's a prototype which was handed over from Sean from the
+inventor of the pine stack and it's a Golang based web RTC implementation we
+added the matrix bits to it we wrote a lot of it it's early stage but we have
+support for audio channels we have support for video channels and screen
+sharing and on top of that recently we also added so-called similar cast
+support similar cast is you can imagine that maybe have to go step back so in
+the full mesh mode you have a literally a peer-to-peer connection to each of
+those clients and by adding some signaling you can the receiver can tell
+the sender oh I'm struggling with a network connection can you please adapt
+your your network bandwidth from from the encoding site and this is a little
+bit harder if you're having a central point the SFU so here the trick is
+that the sender will provide several or media quality levels and then on the
+SFU the client can decide which one to choose low quality mid quality and high
+quality and this is called similar cast and we all already have basic support
+for similar cost in our selective forwarding unit matrix is known for
+privacy and end-to-end encryption and in the full mesh set up of matrix RTC
+that's quite easy because you have the transport layer which ensures end-to-end
+encryption but if you terminate a peer connection on an SFU the transport
+layer is of course terminated and hence we need media encryption and this is the
+missing part here so using insertable streams you need going forward to
+implement end-to-end encryption on the client side that such that the media is
+encrypted on the client send over and then it's not an issue on the SFU for
+this specific topic matrix RTC and cascaded foci or a selective forwarding
+units we have later a dedicated talk for my colleague Shimon it's the in-depth
+talk cascaded foci it will be in this no not in this room it will be online at 2
+p.m. this day
+so now we have an idea what the vision of matrix RTC is and what we can do with
+it we have seen so far the use cases let's come back to element call I think
+we demonstrated it last year right yes very early very early and after one year
+you could imagine something happened so first recap what's element call it so
+initially it was developed on the green field as a single page application in
+the cool story here it's just a matrix client right it's not for chat it's a
+matrix client and the implementation was using the full mesh so without a
+backend component what's new so after this year first of all in our site or not
+site project our partner project hydrogen we also have call support right
+now and it's also working interoperably so you can start with hydrogen the call
+and join with element call and the other way around we added the SFU bits to
+element call and we integrated it into element web so in element app we now
+have two flavors of element call we have a crew call experience we just press
+the crew call button and we have a dedicated video rooms which is pretty
+cool so the semantic of this room is that when you press or click on this
+room you're asked to join the conference immediately
+the question is how to embed element call into a matrix client in general so in
+theory you could just implement the msc's but that would be very expensive
+because then you need to implement in each platform expensive in terms of
+engineering bandwidth so all requirements are one implementation which fits
+all and the idea is yeah that we embedded element call or the embedded
+element call needs to share the same underlying matrix client and room in
+order to not waste resources or to have device proliferation so the idea is
+quite obvious let's use a widget for it also short recap on widgets what is a
+widget a widget is basically an application living in a matrix room
+it's simply an embedded iframe and it's yeah a small form factor web
+application html JavaScript the widget is embedded within a room and can
+communicate with matrix clients and therefore from the matrix client through
+the widget API and this widget API is a defined post message API basically a
+widget is able to request permissions and to perform on actions on the user's
+behalf something like posting into a room receiving specific event types and so
+on and so forth to have a more easy a way of approaching widgets we have also
+have a widget SDK which is written in JavaScript and TypeScript it's basically a
+web app and now here we have an overview a few about element call in the
+various flavors so in the single page application the mode it's just the
+matrix client using the client server API and in the widget mode here we are
+going through the widget API over the underlying matrix client and then to the
+home server the abstraction layer client server API versus widget is a really
+thin so from a development perspective that was really easy to implement yeah
+so the solution is it's just a widget it's web RTC in a web view and this is
+the nice thing so the the whole web RTC stack to implement on various
+platforms is quite painful but if you can just a web view where this is
+included for free that's that's a thing we needed to extend the widget API to
+add some missing bits specifically it where the 2d-wise messages and to
+access the turn server also spec in the msc's and this this whole concept we
+call matroshka embedding where we have a web view hosting widgets in the
+various clients and that could be a web client but it could also be the native
+clients like the IOS and the intro lines and hence we have the solution one
+implementation that fits all
+let's have a demo right
+so what you see here basically is just the desktop application of element
+element nightly on the left hand side you can see the various rooms with
+various flavors so here this is a general room and he has already a
+conference started so if you press it you will join it and at the top here we
+have a so-called video room and you know if you join it directly prompted to to
+join a conference and what you can also see here is a chat so let's join it hello
+I raised the volume here so hi Enrico hi Simon yeah welcome to foster them what
+we can do here right now is that we have various flavors so we have a new
+layout here which we call large crits design and you can yeah change the tile
+sizes and I also added here some debug information and you can see that the
+small video on the top left receives the low quality stream whereas the large
+screen or a large tile on the bottom receives the mid-quality stream hey Dave
+hello so ah and hi yeah so and now we want to carry out an experiment I have a
+QR code here hopefully I find it yeah and I encourage everybody to join the call
+and to crash our SFU let's low test it sorry it's chrome
+yeah yeah I will do a pet what is the resolution the projects are good enough
+so let's see so of course if it's not working then we can blame the wife I
+hear right
+four, five, six, seven, eight, nine, ten, eleven streams working for me at the moment.
+Uh-huh.
+Better than you.
+Ah, no, no, no, it's recovering, it's recovering.
+So we plan a second demo later the day with the talk from Simon.
+So, yeah, but so how many do we have?
+Is that as good?
+You've got aspergerosia, bugs all over the place.
+It depends.
+Yes.
+Okay, let's say I leave it in the background, play around with it,
+and we go back to the talk.
+Okay.
+So, what's next in the matrix RTC ecosystem?
+Of course, we want to implement the whiteboard, at least the hybrid version of the whiteboard.
+Then the very important thing really is to start with the insertable streams to also have the entrant encryption in case of using the SFU.
+With respect to the selective forwarding units, we need to implement the focus selection logic.
+So if you remember the graph where we had the, or the picture where we had the home servers alongside the SFUs alongside with the home servers,
+we sketched out a nice algorithm where you can automatically choose the right one.
+And this is something we need to implement right now.
+Yeah, and then obviously the cascading.
+This has not started the implementation, but yeah, we need to carry out.
+On the similar cost layer, we also have some optimizations in mind.
+For instance, I think it's only a good idea to upload your video to the SFU if on the other side someone consumes this video stream.
+So this is an optimization we can add.
+And I think also the switching point where when you change the layer from high quality to low quality, there's also some room for improvement.
+On top of that, we need to care a little bit more about network bandwidth rate control.
+This is an important thing we need here, such that the SFU also feeds back information back to the client,
+such that the client is then in a good position to adapt the local video or audio encoders.
+And finally, we want to extend the call support in Hydrogen and add the SFU bits to it.
+And now maybe some of you are wondering a little bit why Matthew is sitting here with his classes.
+Yeah, and now let's head over.
+I have some questions.
+So what we have so far seen was the obvious use case for MatrixRTC, which is a video conferencing solution.
+But I told you earlier that we also have something like the Metaverse interpretation of Matrix.
+We call it third room.
+Yeah, and in a half minute.
+Any questions, though, on Florian?
+Yeah, it's a hard Q&A part.
+Hopefully this thing is going to work.
+Apologies for being the idiot with a VR headset on.
+Hopefully this thing is going to start streaming in a second.
+So I wanted to talk about third room, which is the spatial collaboration platform that we have built on top of Matrix.
+And I'm going to slightly mess around with trying to get this to work at the right resolution,
+because it's going to look crap if it's not at the right res.
+How do we change the resolution these days in MacOS?
+Anybody know how to actually change as refresh rate advanced?
+That's not helpful.
+You can talk.
+Oh, really?
+Let me just check the stream itself, because if it's working alright, then we're all good.
+That's not me.
+Jan, is that your fault that it's live streaming here?
+Oh, it's the wrong one. Thank you.
+Too many dev rooms. You should probably be using the same one.
+Ah, 2001 online dev room.
+No, it's not the online dev room. The normal dev room.
+What is it?
+Matrix under real time.
+I can't spell Matrix. This is going well.
+That one. Right. Thank you.
+Are we sure? That looks totally squashed. That's literally what I'm trying to fix right now.
+How can it be to actually set a resolution on this thing these days?
+How about I press that button, where we're going to go to...
+Yeah, so it's gone to four by three, but it wants to do four by three everywhere,
+so it's not four by three, it's 16 by nine.
+Let's go to that. Will that work?
+Is that coming in on the stream already? Just check this.
+It'll be worth it, don't worry.
+On the plus side, the Oculus thing is on KXN, which is good.
+Right, yeah, this is looking good.
+So, let me actually bring up third room.
+So, the point of third room is that it's a tiny team.
+Sorry.
+Hi, everybody. Welcome to my talk on third room,
+which is a project, a tiny project done by three people,
+Robert and AJ, AJ also famous for doing Sydney as a Matrix client,
+which is trying to show people that Matrix is way more than chat and VoIP.
+I know that it's cool to look at 3D stuff these days and go,
+I don't like 3D, but honestly, I think this is incredibly interesting
+in showing the potential of what we have to build on top of Matrix today.
+Now, the way it works is that you've got Hydrogen SDK going
+and basically providing a plain old Matrix client.
+And if I jump into this room here, which is hash presentation
+on thirdroom.io, if people want to play along at home,
+feel free to come and jump in and heckle my presentation.
+And you can see that this is a virtual world going and sitting in browser.
+If I pull up the frame rate, which is obviously control shift S,
+you can see it's actually going at 60 frames a second, Amandino's stuck in the floor.
+It's running at 60 frames a second in browser at, well, 1080p, as we all just saw,
+which is pretty impressive for a fairly complicated scene that we have going on here.
+And the way that thirdroom works is quite unusual.
+And it's properly multi-freaded in browser.
+It's using an entirely new game engine that the team basically put together.
+And I should hasten to add, I've basically been encouraging people
+rather than actually working on this, but Robert's in San Fran.
+And so it'll be cruel and unusual to get him to do this and talk.
+And I've even got some slides here.
+And it's showing the scripting that is built in that I'll talk about in a minute.
+Now, the interesting thing is that we're using shared arrayed buffers to go
+and share data between the main thread and a bunch of worker threads
+using post-message between these and then the Atomics APIs in the browser
+so that you can actually have proper multiple threads in order to have the rendering thread
+running completely independently from the gaming thread that does physics
+and the main thread that does React and does Hydrogen
+because we've embedded Hydrogen in the React app here as well as Matrix.
+So, I'm going to go to the next slide.
+Here are some of the main threads.
+We've got React, Matrix and WebRTC happening.
+And we have spatial audio in here.
+So if I actually unmute myself.
+Ooh, I've got first for myself on my own talk.
+That's annoying. Let me pause that.
+Amandine, are you still out there somewhere?
+You want to come over and say something to me?
+Is anybody else?
+I'll go over to you, say something.
+Can you hear me? Yeah, I can.
+So if we had headphones on at this point and I turn this way and you say something.
+Hello.
+It's coming out the left speaker and you have to believe me.
+And look the other way and it's coming out.
+Honestly, it helps the immersive experience massively that we're going using spatial audio
+to go and position where things are here.
+Whilst we're wandering around here,
+you can see that we've got, at the moment, generic avatars.
+But if you walk around a bit,
+you can see her moon walking backwards for whatever reason.
+I'm sure you can also go forwards.
+There we go.
+And fly for that matter.
+And so the B button lets you fly in this so you can go and jump around like so.
+And so, ooh, you're spoiling my talk.
+So if we go down here, then on the game thread, we've got a bunch of rust.
+We have the ability to run arbitrary WebAssembly scripts,
+which is sitting in a sandbox,
+which allows you to basically add any arbitrary functionality into the world.
+From a pure matrix perspective, this is probably the most exciting thing here.
+Now, if you remember IRC and Merck scripting,
+the ability to run arbitrary scripts on your IRC client,
+this is effectively allowing you to define bots and arbitrary functionality in matrix,
+which run inside your client, inside the sandbox,
+and the actual data is stored in your room.
+Now, this whole thing is a matrix room.
+If I go and hit Enter, then you can see a bunch of users there.
+And I can say, hello, world.
+And if I go back to my element client,
+and if I literally join presentation on thirdroom.io for a matrix.org,
+then you can see I'm being saying, yeah.
+And I can say, yeah, to you too.
+And hopefully, hang on.
+Well, I've got traffic running one way.
+Interesting.
+Well, we should be seeing messages coming into the room as well,
+because it is, oh, there we go.
+It's just a plain old hydrogen overlay
+that is being rented in React for the contents of the room.
+Now, the actual geometry of the room,
+if we start flying around some more,
+looks like this is actually a big GLTF or a single GLTF asset.
+This thing is just sitting in the media repository in the room.
+It's just a file that is GLTF, the transfer format for OpenGL,
+that has been uploaded there, and also any scripts in the room,
+like the one which is executing the,
+letting me press on the buttons here.
+Again, there's a bit of, I think, JavaScript using the QuickJS engine
+that has gone and compiled down the JavaScript to WebAssembly in real time.
+It's pretty cool that you literally write it in JavaScript,
+and then the engine sucks it up, turns it into Wasm,
+and runs it within that sandbox.
+So you could argue it's a little bit perverse
+to be taking JavaScript, compiling it to WebAssembly,
+and then running it from within a JavaScript environment,
+but it gives you a hell of a lot more safety
+than you would if we were just, I know,
+having random blobs of JavaScript running here.
+On the render thread, we are using WebGL2,
+and we're using FreeJS to manage the actual driving of WebGL.
+But the scene itself is, the scene itself is
+managed using a really cool technology called BitECS,
+that was actually created by Nate,
+one of the developers before he started working on,
+before they started working on third room.
+And BitECS is an entity component system
+where you basically track the state of the world,
+the objects that exist within it, their transformations,
+and it's done with arrays in JavaScript,
+and it turns out that if you structure your arrays
+intelligently enough in JavaScript,
+you can get as good as WebAssembly performance,
+and it's one of the other secrets
+to the crazy performance that we have here.
+So this isn't a scene graph API under the hood,
+like A-frame, if anybody ever played with A-frame,
+instead it's using the BitECS.
+Then another thing which is interesting here
+is that everything is triple buffered.
+So in a kind of traditional game engine,
+you just have one sort of buffer that you write data into
+and the renderer reads it out,
+and you have some kind of locking system
+to make sure that it doesn't collide.
+Whereas here, we have lot free data structures,
+letting things go as rapidly as possible
+with the various different bits of the engine
+writing into this shared triple buffer,
+as is shared array buffer, which is then juggled
+effectively between the various different threads,
+and it means that the render thread can run at the native speed
+of whatever device, which is particularly useful
+if it's a less powered device than my MacBook Pro here,
+and then the game engine that is actually rendering
+what's going on can go at its own speed,
+so you totally decouple the two
+and you get as high a frame rate as you can.
+And I think that, oh yeah, and finally,
+lots of fun stuff going on with asset optimization pipeline.
+Particularly the textures have been highly compressed
+using these fun codecs.
+I think it's called universal basis format from binomial and KTX,
+and one of the things we've done to cheat to bootstrap
+third room is to build a pipeline from Unity
+where you can take existing Unity assets,
+like this scene here is one that we bought off a Unity asset store,
+and then export it as proper open standardized JLTF,
+somewhat liberating the contents
+from the slightly proprietary world of Unity
+in order to get content in more rapidly,
+and then compress it down,
+and there are lots of fun things,
+like it has instancing support built in,
+so if you start generating lots of objects,
+like the physics engine here,
+I know, go and create a whole bunch of objects
+and attack the various people who are wandering around in here,
+or they love me for it,
+then this is basically just the same JLTF asset.
+What are you doing?
+Going and being created multiple times.
+All the textures are sprighted,
+so there's just one great big thing.
+There's also some really interesting extensions to JL
+that we've contributed by the Kronos group,
+particularly if you look at,
+if we grab one of these Mirables,
+which are mainly used for debugging purposes,
+let's grab that one,
+and if I run around with it, or I fly around with it,
+you should see that the reflection changes,
+and there we go, like if I go between zones there,
+it needs to be tuned a bit,
+but basically rather than ray tracing,
+which would be incredibly time consuming,
+instead we have lots of different probes
+hanging around the scene that allow you to,
+so I'm hitting myself in the face with the ball,
+a common problem,
+that as you run around,
+you can see the reflection changes.
+It's pretty nasty if you do it rapidly,
+but if you're doing it more slowly like this,
+then it's quite a subtle but nice effect,
+and it's even better when it's on not perfect Mirables,
+if you look at, say, Dave,
+if you walk backwards, if you can hear me,
+or go into the light or out of the light,
+then you'll actually see a fairly subtle shadowing effect,
+as it's gone and figured out where the shadows are there.
+Right, God, it's cool to see all the people running around in here.
+So, what else can I show you?
+So we're going to launch TEP Preview 2 this next week,
+and this is the first time anybody has seen TEP Preview 2,
+and I have 10 minutes here, left hand,
+and TEP Preview 1 is sort of what we've been looking at here,
+except it didn't have scripting.
+We've already shown some of the scripting here,
+but one of the big things that have been added,
+and let's pray that this thing works,
+is WebVR.
+So, hopefully, if I go to the Oculus streaming thing,
+which I had a second ago,
+I should have possibly cleaned this up first.
+Of course, it stopped working.
+Whilst I get this thing back in again,
+and everything is going wrong,
+apparently I've got to recalibrate the entire thing.
+So I apologize for using proprietary technology,
+but unfortunately there aren't any open source headsets
+which do the trick yet.
+Let me go, and let me try to cast this up,
+and unfortunately it takes ages for the screen casting
+to kick in for some reason,
+but I'll go as quick as I can, bump,
+and cast, and computer go.
+WebXR is a really cool technology.
+It's been there for ages now, since about 2017,
+built into browsers like Firefox and Chrome, obviously,
+and also, interestingly, the browser that your Oculus Quest
+like this, or Quest Pro, has built into it,
+which is based on Chromium.
+It has awful screen casting support, as you can see,
+and I started at screen casting,
+and something is happening in the depths of Facebook,
+trying to figure out how to actually get this
+onto the screen here, but hopefully it will come through,
+assuming I've got internet connectivity.
+Here it is, thank God, and I can start talking,
+and I apologize for...
+I'm going to focus on...
+Oh, interesting.
+I'm going to focus on Florent rather than embarrassing everybody else,
+but let's just use a stationary boundary, confirm.
+Right, so the browser here sits there.
+I'm not going to update this right now,
+but here is some third room,
+and if I continue into third room as guest,
+you can see this is just a static,
+boring old web browser just sitting here.
+Worth noting that third room uses OIDC entirely,
+so this thing here is actually a skinned key cloak.
+I'm going to say I'm not a bot,
+I'm not going to bother giving myself a name,
+and then Captcha failed.
+Brilliant, thanks, Google.
+I'm going to have to type in third room,
+except caffeine and stress
+means my ability to use a stupid keyboard like this
+is going to be fun.
+Okay, back to third room here.
+There's a streaming, okay?
+Okay, brilliant.
+Let's go to login, go back to third room,
+continue as guest.
+This time, hope that it's not going to make me pick
+stupid things, right?
+Good, continue.
+Accept the T's and C's.
+Honestly, the using a key cloak for this
+is really, really fun.
+And very anticlimatically,
+we end up with eventually,
+once you load connectivity,
+a 2D version of third room
+just sitting right here.
+So isn't it amazing?
+By the way, that just loaded from
+indexedDB local storage.
+But the fun thing is hopefully,
+come on, you can do it.
+You can see it's actually struggling quite a lot
+in this, but if I press the old X button,
+there, that's why I have to close the
+welcome to third room dialogue, here it is.
+Come on.
+Enter XR, thank God for that.
+Then I can see Florian, hello Florian.
+But more excitingly, hopefully,
+if I stay in the right place,
+there we go, you can see that I'm actually
+in the third room environment right now.
+And this is genuinely cool.
+This is running at 90 frames a second for me,
+right now.
+And if I go and press some buttons to crates,
+and oh God, ow!
+Some crates, like that massive crate,
+let me get rid of that.
+You can see it's actually hooked up
+to the normal physics engine,
+so I can go and pull that,
+and throw it into the audience,
+which is no way surreal to be going
+and flipping back and forth.
+And then back in the normal world again.
+At the moment, we've just got basic things
+like the joystick and hung up,
+hooked up to it.
+It's got a kinematic controller,
+and am I running out of, oh no,
+thank you Florian.
+What else can I show you?
+We can jump, we can spawn more objects.
+I can go up to that glitter globe,
+and oh, sorry, mirrored ball.
+It's running faster than I can run after it.
+That's awkward.
+And theoretically, if I was a little bit close
+to the bloody thing, I'd be able to grab it
+and pick it up, et cetera.
+So this is pretty cool honestly.
+It's as good as the native non-WebVR
+closed stuff that Facebook,
+or MetaHorizons does.
+And the entire thing is open.
+And they built on the surgery engine.
+How am I doing for time? Three minutes.
+In which case, I'll very quickly go,
+and sorry, thanks for that.
+I will start looking at random emissaries,
+go back into this,
+and just look at some other things we've done.
+In fact, this one is really cool.
+Let's just flip into this one,
+because this is a really complicated bit of WASM.
+It's actually an audio-reactive widget,
+which is sitting here.
+As you can see, as I yell at it,
+it goes and changes size.
+There's a whole bunch of C code
+that has been compiled down to WASM
+to show how you can have interactive things
+sitting inside the scene.
+Another example is slightly less excitingly.
+A chatbot echo service.
+So if I go into here and say hello,
+and then do echo hello with a slash command,
+it says hello back to me.
+Now, the echo that's happening down there
+is actually being done from the widget API of Matrix,
+going into WebAssembly, talking to, I think,
+a JavaScript service, and then echoes back.
+You can see we have a slight bug sometimes
+with scripting where it loads two worlds at the same time,
+and that's pretty surreal.
+That's what happens if London got combined with Mars.
+Final thing here...
+What was I going to show you?
+Oh, yeah, is this guy,
+which is a bit silly, but fun anyway.
+This time I'll remember to refresh
+as fun as it is to have the scenes combined,
+so you might recognize this from a certain film.
+And if we actually look at the script
+for this particular room,
+if I can figure out how to get out of full screen mode,
+the script here is, again,
+just sitting in the media repository.
+It's a little bit of JavaScript
+to use the WebSceneGraph API,
+which is a new API that we've created.
+We hope it will become a W3 standard
+for manipulating scene graphs.
+If you click on the TV,
+you basically get a node by name to TV,
+and then every frame you'd see
+if the TV is being pressed,
+and if it is, then you enable the matrix material.
+And the end result is if I go here,
+and I click on the TV,
+then, predictably enough, you end up in a matrix-style world,
+and I've got it in third-person view,
+which is also new with Tet Preview 2
+and Clipback and forth.
+This is super early, but you can imagine
+this is basically a platform for doing
+any kind of real-time collaborative app.
+It could be digital twins,
+it could be smart cities,
+GIS applications.
+It's as powerful and as flexible as the Web,
+but for real-time.
+Thank you very much.
+APPLAUSE
+And we have no time for questions.
+Time for one question.
+Is there one question?
+Oh.
+I wanted to ask, where can we be
+in custom avatars support?
+It will be coming in the next release,
+after Tet Preview 2.
+I mean, the hard bit of actually rigging up the engine
+and doing all the inverse kinematics,
+and if you run around with the current avatars,
+you can now trip over things, which is very important.
+But suffice it to say,
+we're focusing on the engine rather than the assets.
+And also, this is at a point
+where people can start contributing things.
+So if you've got amazing assets,
+and you've caught the maximum rig,
+then they should just drop straight in.
+All right.
+Cool.
+APPLAUSE

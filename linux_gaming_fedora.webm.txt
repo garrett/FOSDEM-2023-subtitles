@@ -1,0 +1,260 @@
+Hello, folks. Welcome to my talk. I'm Akash Deep Dhar. Today I'm going to talk about Linux
+distribution state of gaming. I'll talk a little bit about myself first. Basically, I'm
+someone who has been contributing to Fedora project for around a couple of years before
+they thought the folks who actually help the Fedora distribution as a corporate entity,
+they thought that, well, I'm not going to leave anyway, so they might as well hire me.
+The next thing that I find myself doing is actually working as a software engineer for
+a team that manages infrastructure for Fedora as well as CentOS. It's called the community
+platform engineering team. As well as, you know, just because Fedora is kind of close
+to my heart, I mean, it's kind of CentOS at this point in time, but misappropriation.
+I work for Fedora council as well as being the objective representative for the Fedora
+website synapse team. Gaming has been a prime concern for me, especially having laptops
+that don't quite run games. So the thing that I used to do is have distributions that can
+actually have a greater headroom assigned to that game instead of running some fancy
+stuff in the background. So that is what has been the entry point for Linux distributions
+for me. So over the course of last five years, I have written and demonstrated multiple talks,
+multiple articles around how to be able to run video games on GNLinux distributions, how
+to be able to benchmark them, and while driver install is too while we're at it.
+Right. So I watched this movie called Zootopia and there's this Fox character that I can't
+remember the name of. So he tells that, you know, the best way of giving a talk is to
+ask a question to themselves first and then answering that question. So I guess I'll do
+that. So we can ask ourselves three questions about the state of gaming and Linux distributions.
+The first being, is it popular? The second being, is it convenient to make happen? And
+the third being, is it performant? Like why even consider gaming on Linux distributions
+when there is some other consoles? There are other platforms which are actually willing
+to do that. So it certainly is popular. I mean, we can totally thank our friends at
+Valve for the Steam Deck and for other people who run a lot of games on their Android iPhones.
+I mean, Android is Linux, all right. But then again, is it the way we kind of want it to
+be popular? So there's this small asterisk over there. We have things for emulation.
+We have things operating systems dedicated for running video games, like distributions
+like Battlesale Linux, Lacca, which runs retro arch and nothing else on the bottom of it.
+And there's this thing called Retropie, which runs emulation stations. So if you must have
+gotten yourself a Raspberry Pi and looked for something in the Internet, some DIY tutorial,
+it's probably one of the first five things you will end up seeing. And finally, consoles
+that actually use Linux on the top of them. Speaking of convenience, it is convenient.
+Is it convenient to run Linux distributions for gaming? And you most certainly will have
+different opinions regarding the kind of configurations that you want to do. If you want to tailor
+fit your stuff, get the frame rates that you want and the quality that you need, there
+are more configurations to like bare bones wine, retro arch so that you can tailor fit
+your stuff or something like Android phones or Steam Deck, which can do that for you.
+And finally, we have performance. Now, I have seen this over the course of years running
+video games on Linux, the things that are supposed to run on Windows, that if the games
+run, well, if they do, they usually end up being 15 to 30% more performant. You can totally
+find the references in the slide deck if the font's a bit too small, that, yeah, this
+thing is actually the case. But what exactly is the sacrifice here? Also, I mean, I can
+pass through a GPU. If I have this big GPU, I can pass it through virtual machines and
+have near native performances instead of doing, say, on a hardware that is totally not okay
+for a certain game to run. But, yeah, why exactly do I have those asterisks out there?
+If it's performant, if it's convenient, if it's popular, then what's with the terms
+and conditions, supply kind of thing that I have over there? And, well, there are things
+that we're missing out. So one of the first things that we do is it is popular, people
+are enthusiastic about it, but less people are enthusiastic about it. And it's usually
+the people who would like to spend their hours configuring things, writing config files, hacking
+stuff to be able to run some games on their desktop or their handheld devices that run
+Linux distributions. And that's barely around 1.38%. And that's the service about where
+I got that 1.38% from. It is something that has been going up since the last couple of
+years. Here again, we have the friends at work to thank for for the Steam Deck that
+we are getting increased usage. But a lot of these users are totally going unaccounted
+for because telemetry is a big no-no for us. And we definitely advertise telemetry as
+something that we should not do. And, well, when there are things like Lutris, things
+like RetroPy, RetroArch, then PlayOnLinux, Wine, these tools are doing the best that
+they can do. But guess what? We don't get to know how exactly are these being used.
+And as a result, the publishers, they think that, well, Linux distributions, who uses
+Linux distributions, why should we port our games in Linux distributions? We better not.
+We might as well create them for other platforms. Well, I won't name any, but with comparatively
+higher market share, right, of our consoles. Because guess what? Consoles are supposed
+to be for gaming, not for writing code. And then, you know, third-party developers, they
+don't bother. They don't really care. They are like, ah, fine. They'll use their stuff
+to emulate our games on their platform. They call Wine an emulator. We know the difference.
+They probably don't. So I go have my friends have a conversation
+with my friends that, yeah, you play this game on Windows. Here's how it can run on
+Linux. And they're like, oh, my God. That's too many configuration files. That's too many
+hours of work. And all my friends are on Windows. So sorry about that, brother. But I'm going
+to be at Windows as well. And the other person, they try installing games. But guess what?
+It's a multiplayer game. So, and it's like, oh, no. We don't recognize this platform.
+So you're cheating. That kind of stuff that totally puts people off. They don't want them
+to be here even though they totally are not. Talking about convenience, it's, well, it's
+convenient for some people. The some, you know, I kind of count myself in the minority
+because I can totally go behind the screen, do hours of stuff. But for what about others?
+You know, what about the folks who just want to spend some time playing games on a weekend?
+You know, someone who have a busy life. So you don't expect them to actually sit behind
+their computer screens for like five hours configuring stuff, right? You want them to
+actually be able to play games on the get go. It does not quite happen that way for the
+most parts. Few games work as it is. Some of them require minimal configuration, like
+some slides here, some slides there, maybe some versions of DXVK. But others, they don't
+work at all. And, you know, you don't get to know that they don't work unless you spend
+hours of it banging your head on the wall, trying to make them work. And then you realize
+that they really don't. So the convenience, like, they follow through steps. But just
+because the Linux distributions are so fragmented, we have a certain version of package manager
+in a certain distribution. There's a certain way, certain root FS are installed, stuff
+like that. So you can't quite expect a certain steps to actually work on one distributions
+and to be replicated on something else. There would be certain steps that would be required
+in between and it only comes with experience. But can we expect experience? Of course not.
+So people have difficulties with doing that. And then people don't really want to spend
+time. And it's all valid because guess what? People are there to play games, not to become
+contributors in an open source software, right? Finally about performance, right? Say, one
+of the things that happens with performance is the fact that there are games that run
+comfortably, right? All fine, good frame rates, good graphics whatsoever. At the very same
+time, if you use that same distribution, you thought, oh, this runs Final Fantasy. I might
+as well run Warframe with that. Then it won't happen. It won't even load up, let alone have
+good frame rates in that. So there is some Taylor fitting required, but that Taylor fitting
+is, you know, works for one thing, but it does not work for something else. So you don't
+have this one size fits all kind of a solution for gaming, which is sad. But then again,
+it is what it is right now. And well, there are some publishers who do not even support
+these environments. They're like, nope, not this, not that, nothing at all. We won't let
+Linux users play our games because that's not how we do things. And look, people are
+able to get frame rates. I was able to get a lot of frame rates, good performance, but
+there have been times when it has been all inconsistent since the such thing has happened
+with my friends as well using a variety of Linux distributions. So it's definitely not
+just for all Linux, but my friends who actually use Pop OS just because it allows for having
+NVIDIA drivers installed from a get go. So you don't really have to pop open a terminal
+and do some crazy voodoo according to my non-technical friends to be able to install drivers.
+It just works from the get go. But guess what? Even they have some inconsistent performances.
+And then there are ports that are for Linux, but just because they are not a lot of takers
+here again, telemetry, just because people don't get to know that there are actually
+people playing their games trying to work hard to actually make them compatible, people
+pull them out even if there was a version at some point in time. Right, so if all I
+have are complaints, is it all bad? Is it something that does not run at all? What is it like?
+You know, it's quite the opposite. It's not bad. The community has been doing a great
+job. If I were to look back 10 years ago, people had to use wine as it is. And it's
+a tool that gets things done, but then again, if you want things to be done, things need
+to be abstracted for you to be able to understand it. And if someone of a web developer is made
+to understand the things that go behind the scene, oh my God, then it's totally not worth
+of doing. So there are tools like Lutris, play on Linux that abstract the stuff that
+wine do. So it's a lot better right now than it has ever been before. But then again, there
+are things that we can totally do to make things a lot more better than they are right
+now. So there's a silver lining. It's a small market share. People can be unsatisfied with
+big config files and stuff like that. But here are six ways that I think it's all subjective.
+There can be other things that people can think as well that I can add in my list and
+make it 60 probably. But one of the things that people need to understand is if it were
+really a technical challenge, right? So we have a lot of people working hard to make
+these things work. Drivers, no matter how hard it can be for the proprietary drivers,
+the proprietary blocks, the kernel modules to be loaded up, people are working hard.
+But people are not understanding how exactly is it affecting or influencing the gamers,
+the folks who actually use GNU Linux distributions to be able to play these games. So there should
+be some way of open metrics, you know, some kind of telemetry that is not shady. It does
+not look through your context and understand, oh, this person needs to have this at a certain
+point in time. Not that kind of metrics, but rather what exactly is the tool, what exactly
+are the workflows that are used in order to make these video games work. So these reliable
+metrics should be implemented for the developers to understand that, yeah, their works are
+indeed worth it. And for the publishers, because, oh, boy, they think that the market
+share is small. So in order for the rise in market share, which has been, for the most
+parts, the ones that we get to see from Steam, we should have more than that. So I don't know
+if there are metrics in looters, bottles, or emulators. And I guess there is not, apart
+from the ones that they themselves collect, because guess what? They really want to see
+if their stuff works or not, and how exactly can they improve their own software. But does
+it add up to the entire GNU Linux gaming metrics and make people understand that, yeah, folks
+using looters, folks using bottles, folks using Steam Deck, folks using Android, they all
+combine together as being a market share for this entire gaming. I don't think so at this
+point in time, but this is something that we should definitely consider.
+The next thing, of course, is to account for feedback and promote participation. So I have
+seen in the course of the last many years that if you make people feel like they are
+being heard, no matter what kind of project it is, if it's just creating some websites
+or deploying things on the infrastructure, or be it about gaming. If people are heard,
+if the features that they suggest, if the bugs that they tell is, you know, is bothering
+them are implemented, chances are that they will tell their friends that this is something,
+this is some kind of tool that they make use of and they should make use of as well. And
+I like to think that reporting for bugs is also a very valuable contribution. So, you
+know, being empathetic to the users, understanding, you know, by putting themselves on their
+shoes, what kind of issues that they end up facing. And finally, understanding the tools
+that people make use of. If there are a lot of dials, if there are a lot of drop-downs,
+if there are a lot of things that people have to do before they are able to run their games,
+it's probably not the most convenient way of doing so. So you can't quite expect a
+person coming back home after a long day to be able to tweak those stuffs and make them
+work. So the usability of them, how do we make it more convenient, should be something
+that we should look into in these distributions, you know, kind of streamline the entire workflow
+in order to make sure that people know where exactly they need to go to, to get a certain
+function, to get a certain settings applied. And that's more about the convenience of,
+you know, so that people can focus solely on the video games and not around the operating
+system that's built for the sake of running games. Because trust me, if you have a PC,
+operating video games are the one thing out of a thousand things that you will do. So
+it just makes it a lot more easier to focus on what they want. For convenience, we totally
+should be able to abstract complex things when we need to. So customization is fine.
+It's one of the reasons why we are fragmented and I'm kind of thankful for it, so that I
+have a choice that I can customize a distribution of my own kind to be able to make something,
+to serve a certain purpose. But for the folks who don't need, it's going to be overwhelming.
+They're going to be really scared of all those options put out there in front of them and
+they'll be like, oh my God, no, definitely not. And they'll run back to the thing that
+they were playing games on. So it's definitely not something that we would want to do. Being
+able to provide a balance between the two of them and, you know, organically finding,
+oh, fine, this person is scrolling down the menu. So probably it's looking for something
+that's a lot more extensive than what we have provided for. Some kind of organic way to
+find it and to be able to demonstrate how they can do it is a way that would strike
+a good balance between the complicated looking stuff and the people who really want to get
+their job done as quick as possible. Finally, for distributions that actually prioritize
+these tools, these workflows, these applications, these should be available, like, natively
+in their own repositories or there should be a way to be able to install them and not,
+like, build from source or, like, dot-slashing them out of the blue because who runs shell
+script files anyway, right? You should definitely read them. Drivers, codecs, kernel modules
+and things like that, if you don't have a way to update them natively, trust me, it's
+really a bad choice to be able to using that distributions. Say, people are here to play
+games not to build software from source. Say, definitely we should consider having all of
+these things packaged natively. And finally, to build standard workflows to be able to
+test and quantify that, yeah, what is good performance, what is bad? Now, me, I can be
+really biased towards good performance even if I see 60 frames per second on a 165-hertz
+screen. I can tell that is good, but for someone else, it's like, oh, no, it's just like one
+third of that frame rate. How do you call it a good performance? In that very case,
+we need to understand and tell that, yeah, this is the criteria that was used to tell
+that, yeah, this video game actually runs and this video game does not and could use
+some more work before it's able to be, well, executing the way it should be. And when we
+have all of these things in place, probably the publishers of AAA titles, popular ones
+like that will be able to understand that, yeah, there is some kind of standards used
+in this fragmented world of distributions to be able to understand that, yeah, if we follow
+these rules to be able to create our games, it will have a compatibility with at least
+85 percent, 75 percent, I'm saying this on the top of my head, but at least majority
+of distributions will not have a problem and you won't be actually told to use a certain
+distribution just because, well, your friend uses it.
+So let's have a case study of Fedora Workstation in the end. So we have had distributions based
+on the top of Fedora Linux distribution, Nobara Workstation, they have added meaningful
+additions on the top, so to be able to make sure that people who really are willing to
+focus on video gaming, they don't have to install much stuff on the top of it. And you
+know, it's heavily popular with the folks who develop bottles and looters because they
+get the latest and greatest stuff in the official repository, so they don't really have to go
+out of their way to do so. And then the required tooling to be able to run these games, drivers,
+and the ability to install them from RPM Fusion just in case their proprietary in nature is
+totally possible. And the fact that the GNOME desktop, well, what can I say, it's just one
+of the great ones. I'm a bit biased. Say, you know, it totally keeps the workflows aligned
+and well, unintuitive. And finally, talking about the consistent performance, well, let's
+just say that the configurations should be done in a modular manner so as to make sure
+that if I do certain thing, I can copy that stuff and give it to my friend. Here's, you
+know, you don't have to spend many hours like I did, paste that stuff and this should
+be running. Or something a bit more polished than that, but basically, no more repeating
+of efforts. And, you know, customizable enough to be actually minimize the footprint of the
+operating system, the distribution itself, to be able to dedicate more of that performance
+over to the actual video games. And that's pretty much about it. I'm totally open to
+your questions.
+Thank you for your talk. I got the impression that you're pushing for telemetry to be used
+more. Would that be right?
+Well, let's just say I'm pushing for an open telemetry. So you get to see what kind of information
+is being shared with the folks and what folks are you sharing that with. So you don't think
+that, oh, it's the shady number of information and with the shady number of folks that it
+is shared with, right? So telemetry is important. There are software that have telemetry like
+pre-built and they have it natively done, but then again, it's just a limited set of telemetry
+people. Once we unify this and have a place where we can say that, yeah, it's coming from
+them, so there's something that we can improve upon in the distributions level so that we
+can understand that, yeah, a certain application or an emulator is acting up and there's something
+that we can act on. Any more questions?
+Hey, thank you very much. I think on the telemetry side, there is a fundamental metric that the
+developers look at which is sales. So I think the main thing is like there is a sort of
+1-2% audience on Linux that will buy games. I think that's pretty clear. I think there
+are other advantages for developers having Linux users in early. We tend to report bugs
+and if we do that in a helpful and non-annoying way, then we can be an asset particularly
+to the trend of people doing early access releases and wanting engaged users. So I think
+that's the thing that you can think about supporting early access games, supporting
+stuff on edge I think is helpful. The other side is like if you just want to play games,
+by far the easiest thing to do is ignore your distribution, install Steam, Proton handles
+the config wrapping around wine really conveniently and the best game of the last five years was
+released natively on Linux anyway, so play Slay the Spire. Thank you.
+Thank you so much. One of the things that you mentioned that probably we could have
+some kind of telemetry done in a central basis and the fact that early access can be something
+that we can provide to people using Linux. It's one of the things that we can totally
+use to actually increase our market share and make people feel like it's worth it if
+you give it a try and people might end up actually buying it. When it comes to Proton,
+I mean, jeez, they have done a marvelous job by abstracting what's not important or what's
+totally really, really scary. Might scare people away out of the room, leave their Steam
+decks that they have purchased with their hard earned money and to be able to play games
+while they're on the go. So it's some kind of abstraction that keeps things convenient
+that we are all looking for and there should be a balance so people should go and be like,
+jeez, it's so abstracted that I can't do anything anymore, right? So that should definitely
+not happen. All right, folks, I'm going to give way to the next talk. Please find me
+over here if you have more questions. Thank you so much again.

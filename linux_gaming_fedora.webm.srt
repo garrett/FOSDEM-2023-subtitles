@@ -1,0 +1,1040 @@
+1
+00:00:00,000 --> 00:00:10,440
+Hello, folks. Welcome to my talk. I'm Akash Deep Dhar. Today I'm going to talk about Linux
+
+2
+00:00:10,440 --> 00:00:17,360
+distribution state of gaming. I'll talk a little bit about myself first. Basically, I'm
+
+3
+00:00:17,360 --> 00:00:21,600
+someone who has been contributing to Fedora project for around a couple of years before
+
+4
+00:00:21,600 --> 00:00:27,200
+they thought the folks who actually help the Fedora distribution as a corporate entity,
+
+5
+00:00:27,200 --> 00:00:31,360
+they thought that, well, I'm not going to leave anyway, so they might as well hire me.
+
+6
+00:00:31,360 --> 00:00:35,560
+The next thing that I find myself doing is actually working as a software engineer for
+
+7
+00:00:35,560 --> 00:00:40,920
+a team that manages infrastructure for Fedora as well as CentOS. It's called the community
+
+8
+00:00:40,920 --> 00:00:45,320
+platform engineering team. As well as, you know, just because Fedora is kind of close
+
+9
+00:00:45,320 --> 00:00:50,720
+to my heart, I mean, it's kind of CentOS at this point in time, but misappropriation.
+
+10
+00:00:50,720 --> 00:00:55,000
+I work for Fedora council as well as being the objective representative for the Fedora
+
+11
+00:00:55,000 --> 00:01:01,360
+website synapse team. Gaming has been a prime concern for me, especially having laptops
+
+12
+00:01:01,360 --> 00:01:06,600
+that don't quite run games. So the thing that I used to do is have distributions that can
+
+13
+00:01:06,600 --> 00:01:12,680
+actually have a greater headroom assigned to that game instead of running some fancy
+
+14
+00:01:12,680 --> 00:01:17,560
+stuff in the background. So that is what has been the entry point for Linux distributions
+
+15
+00:01:17,560 --> 00:01:23,600
+for me. So over the course of last five years, I have written and demonstrated multiple talks,
+
+16
+00:01:23,600 --> 00:01:29,920
+multiple articles around how to be able to run video games on GNLinux distributions, how
+
+17
+00:01:29,920 --> 00:01:35,800
+to be able to benchmark them, and while driver install is too while we're at it.
+
+18
+00:01:35,800 --> 00:01:41,400
+Right. So I watched this movie called Zootopia and there's this Fox character that I can't
+
+19
+00:01:41,400 --> 00:01:46,560
+remember the name of. So he tells that, you know, the best way of giving a talk is to
+
+20
+00:01:46,560 --> 00:01:52,840
+ask a question to themselves first and then answering that question. So I guess I'll do
+
+21
+00:01:52,840 --> 00:01:59,360
+that. So we can ask ourselves three questions about the state of gaming and Linux distributions.
+
+22
+00:01:59,360 --> 00:02:05,080
+The first being, is it popular? The second being, is it convenient to make happen? And
+
+23
+00:02:05,080 --> 00:02:10,240
+the third being, is it performant? Like why even consider gaming on Linux distributions
+
+24
+00:02:10,240 --> 00:02:14,960
+when there is some other consoles? There are other platforms which are actually willing
+
+25
+00:02:14,960 --> 00:02:22,560
+to do that. So it certainly is popular. I mean, we can totally thank our friends at
+
+26
+00:02:22,560 --> 00:02:27,920
+Valve for the Steam Deck and for other people who run a lot of games on their Android iPhones.
+
+27
+00:02:27,920 --> 00:02:33,480
+I mean, Android is Linux, all right. But then again, is it the way we kind of want it to
+
+28
+00:02:33,480 --> 00:02:39,120
+be popular? So there's this small asterisk over there. We have things for emulation.
+
+29
+00:02:39,120 --> 00:02:44,240
+We have things operating systems dedicated for running video games, like distributions
+
+30
+00:02:44,240 --> 00:02:50,240
+like Battlesale Linux, Lacca, which runs retro arch and nothing else on the bottom of it.
+
+31
+00:02:50,240 --> 00:02:54,720
+And there's this thing called Retropie, which runs emulation stations. So if you must have
+
+32
+00:02:54,720 --> 00:02:59,760
+gotten yourself a Raspberry Pi and looked for something in the Internet, some DIY tutorial,
+
+33
+00:02:59,760 --> 00:03:04,000
+it's probably one of the first five things you will end up seeing. And finally, consoles
+
+34
+00:03:04,000 --> 00:03:12,400
+that actually use Linux on the top of them. Speaking of convenience, it is convenient.
+
+35
+00:03:12,400 --> 00:03:17,760
+Is it convenient to run Linux distributions for gaming? And you most certainly will have
+
+36
+00:03:17,760 --> 00:03:23,680
+different opinions regarding the kind of configurations that you want to do. If you want to tailor
+
+37
+00:03:23,680 --> 00:03:28,360
+fit your stuff, get the frame rates that you want and the quality that you need, there
+
+38
+00:03:28,360 --> 00:03:33,160
+are more configurations to like bare bones wine, retro arch so that you can tailor fit
+
+39
+00:03:33,160 --> 00:03:39,320
+your stuff or something like Android phones or Steam Deck, which can do that for you.
+
+40
+00:03:39,320 --> 00:03:45,200
+And finally, we have performance. Now, I have seen this over the course of years running
+
+41
+00:03:45,200 --> 00:03:50,020
+video games on Linux, the things that are supposed to run on Windows, that if the games
+
+42
+00:03:50,020 --> 00:03:56,720
+run, well, if they do, they usually end up being 15 to 30% more performant. You can totally
+
+43
+00:03:56,720 --> 00:04:01,440
+find the references in the slide deck if the font's a bit too small, that, yeah, this
+
+44
+00:04:01,440 --> 00:04:09,120
+thing is actually the case. But what exactly is the sacrifice here? Also, I mean, I can
+
+45
+00:04:09,120 --> 00:04:13,640
+pass through a GPU. If I have this big GPU, I can pass it through virtual machines and
+
+46
+00:04:13,640 --> 00:04:21,040
+have near native performances instead of doing, say, on a hardware that is totally not okay
+
+47
+00:04:21,040 --> 00:04:27,400
+for a certain game to run. But, yeah, why exactly do I have those asterisks out there?
+
+48
+00:04:27,400 --> 00:04:32,920
+If it's performant, if it's convenient, if it's popular, then what's with the terms
+
+49
+00:04:32,920 --> 00:04:39,520
+and conditions, supply kind of thing that I have over there? And, well, there are things
+
+50
+00:04:39,520 --> 00:04:44,600
+that we're missing out. So one of the first things that we do is it is popular, people
+
+51
+00:04:44,600 --> 00:04:50,400
+are enthusiastic about it, but less people are enthusiastic about it. And it's usually
+
+52
+00:04:50,400 --> 00:04:57,080
+the people who would like to spend their hours configuring things, writing config files, hacking
+
+53
+00:04:57,080 --> 00:05:02,600
+stuff to be able to run some games on their desktop or their handheld devices that run
+
+54
+00:05:02,600 --> 00:05:10,080
+Linux distributions. And that's barely around 1.38%. And that's the service about where
+
+55
+00:05:10,080 --> 00:05:15,400
+I got that 1.38% from. It is something that has been going up since the last couple of
+
+56
+00:05:15,400 --> 00:05:20,760
+years. Here again, we have the friends at work to thank for for the Steam Deck that
+
+57
+00:05:20,760 --> 00:05:26,120
+we are getting increased usage. But a lot of these users are totally going unaccounted
+
+58
+00:05:26,120 --> 00:05:31,160
+for because telemetry is a big no-no for us. And we definitely advertise telemetry as
+
+59
+00:05:31,160 --> 00:05:38,040
+something that we should not do. And, well, when there are things like Lutris, things
+
+60
+00:05:38,040 --> 00:05:46,200
+like RetroPy, RetroArch, then PlayOnLinux, Wine, these tools are doing the best that
+
+61
+00:05:46,200 --> 00:05:52,320
+they can do. But guess what? We don't get to know how exactly are these being used.
+
+62
+00:05:52,320 --> 00:05:57,760
+And as a result, the publishers, they think that, well, Linux distributions, who uses
+
+63
+00:05:57,760 --> 00:06:02,480
+Linux distributions, why should we port our games in Linux distributions? We better not.
+
+64
+00:06:02,480 --> 00:06:09,080
+We might as well create them for other platforms. Well, I won't name any, but with comparatively
+
+65
+00:06:09,080 --> 00:06:13,720
+higher market share, right, of our consoles. Because guess what? Consoles are supposed
+
+66
+00:06:13,720 --> 00:06:19,640
+to be for gaming, not for writing code. And then, you know, third-party developers, they
+
+67
+00:06:19,640 --> 00:06:24,720
+don't bother. They don't really care. They are like, ah, fine. They'll use their stuff
+
+68
+00:06:24,720 --> 00:06:31,600
+to emulate our games on their platform. They call Wine an emulator. We know the difference.
+
+69
+00:06:31,600 --> 00:06:38,240
+They probably don't. So I go have my friends have a conversation
+
+70
+00:06:38,240 --> 00:06:43,040
+with my friends that, yeah, you play this game on Windows. Here's how it can run on
+
+71
+00:06:43,040 --> 00:06:47,960
+Linux. And they're like, oh, my God. That's too many configuration files. That's too many
+
+72
+00:06:47,960 --> 00:06:53,440
+hours of work. And all my friends are on Windows. So sorry about that, brother. But I'm going
+
+73
+00:06:53,440 --> 00:06:59,880
+to be at Windows as well. And the other person, they try installing games. But guess what?
+
+74
+00:06:59,880 --> 00:07:05,160
+It's a multiplayer game. So, and it's like, oh, no. We don't recognize this platform.
+
+75
+00:07:05,160 --> 00:07:10,000
+So you're cheating. That kind of stuff that totally puts people off. They don't want them
+
+76
+00:07:10,000 --> 00:07:19,000
+to be here even though they totally are not. Talking about convenience, it's, well, it's
+
+77
+00:07:19,000 --> 00:07:23,720
+convenient for some people. The some, you know, I kind of count myself in the minority
+
+78
+00:07:23,720 --> 00:07:28,840
+because I can totally go behind the screen, do hours of stuff. But for what about others?
+
+79
+00:07:28,840 --> 00:07:33,720
+You know, what about the folks who just want to spend some time playing games on a weekend?
+
+80
+00:07:33,720 --> 00:07:38,520
+You know, someone who have a busy life. So you don't expect them to actually sit behind
+
+81
+00:07:38,520 --> 00:07:42,400
+their computer screens for like five hours configuring stuff, right? You want them to
+
+82
+00:07:42,400 --> 00:07:47,600
+actually be able to play games on the get go. It does not quite happen that way for the
+
+83
+00:07:47,600 --> 00:07:54,360
+most parts. Few games work as it is. Some of them require minimal configuration, like
+
+84
+00:07:54,360 --> 00:08:01,240
+some slides here, some slides there, maybe some versions of DXVK. But others, they don't
+
+85
+00:08:01,240 --> 00:08:06,080
+work at all. And, you know, you don't get to know that they don't work unless you spend
+
+86
+00:08:06,080 --> 00:08:10,720
+hours of it banging your head on the wall, trying to make them work. And then you realize
+
+87
+00:08:10,720 --> 00:08:19,440
+that they really don't. So the convenience, like, they follow through steps. But just
+
+88
+00:08:19,440 --> 00:08:25,400
+because the Linux distributions are so fragmented, we have a certain version of package manager
+
+89
+00:08:25,400 --> 00:08:30,680
+in a certain distribution. There's a certain way, certain root FS are installed, stuff
+
+90
+00:08:30,680 --> 00:08:36,360
+like that. So you can't quite expect a certain steps to actually work on one distributions
+
+91
+00:08:36,360 --> 00:08:41,640
+and to be replicated on something else. There would be certain steps that would be required
+
+92
+00:08:41,640 --> 00:08:47,800
+in between and it only comes with experience. But can we expect experience? Of course not.
+
+93
+00:08:47,800 --> 00:08:53,960
+So people have difficulties with doing that. And then people don't really want to spend
+
+94
+00:08:53,960 --> 00:08:58,760
+time. And it's all valid because guess what? People are there to play games, not to become
+
+95
+00:08:58,760 --> 00:09:07,000
+contributors in an open source software, right? Finally about performance, right? Say, one
+
+96
+00:09:07,000 --> 00:09:12,600
+of the things that happens with performance is the fact that there are games that run
+
+97
+00:09:12,600 --> 00:09:18,600
+comfortably, right? All fine, good frame rates, good graphics whatsoever. At the very same
+
+98
+00:09:18,600 --> 00:09:24,120
+time, if you use that same distribution, you thought, oh, this runs Final Fantasy. I might
+
+99
+00:09:24,120 --> 00:09:30,280
+as well run Warframe with that. Then it won't happen. It won't even load up, let alone have
+
+100
+00:09:30,280 --> 00:09:34,920
+good frame rates in that. So there is some Taylor fitting required, but that Taylor fitting
+
+101
+00:09:34,920 --> 00:09:40,080
+is, you know, works for one thing, but it does not work for something else. So you don't
+
+102
+00:09:40,080 --> 00:09:46,360
+have this one size fits all kind of a solution for gaming, which is sad. But then again,
+
+103
+00:09:46,360 --> 00:09:52,440
+it is what it is right now. And well, there are some publishers who do not even support
+
+104
+00:09:52,440 --> 00:09:58,040
+these environments. They're like, nope, not this, not that, nothing at all. We won't let
+
+105
+00:09:58,040 --> 00:10:06,240
+Linux users play our games because that's not how we do things. And look, people are
+
+106
+00:10:06,240 --> 00:10:11,680
+able to get frame rates. I was able to get a lot of frame rates, good performance, but
+
+107
+00:10:11,680 --> 00:10:17,360
+there have been times when it has been all inconsistent since the such thing has happened
+
+108
+00:10:17,360 --> 00:10:22,120
+with my friends as well using a variety of Linux distributions. So it's definitely not
+
+109
+00:10:22,120 --> 00:10:27,440
+just for all Linux, but my friends who actually use Pop OS just because it allows for having
+
+110
+00:10:27,440 --> 00:10:33,440
+NVIDIA drivers installed from a get go. So you don't really have to pop open a terminal
+
+111
+00:10:33,440 --> 00:10:40,080
+and do some crazy voodoo according to my non-technical friends to be able to install drivers.
+
+112
+00:10:40,080 --> 00:10:45,280
+It just works from the get go. But guess what? Even they have some inconsistent performances.
+
+113
+00:10:45,280 --> 00:10:51,480
+And then there are ports that are for Linux, but just because they are not a lot of takers
+
+114
+00:10:51,480 --> 00:10:56,640
+here again, telemetry, just because people don't get to know that there are actually
+
+115
+00:10:56,640 --> 00:11:02,120
+people playing their games trying to work hard to actually make them compatible, people
+
+116
+00:11:02,120 --> 00:11:09,480
+pull them out even if there was a version at some point in time. Right, so if all I
+
+117
+00:11:09,480 --> 00:11:18,040
+have are complaints, is it all bad? Is it something that does not run at all? What is it like?
+
+118
+00:11:18,040 --> 00:11:23,960
+You know, it's quite the opposite. It's not bad. The community has been doing a great
+
+119
+00:11:23,960 --> 00:11:31,960
+job. If I were to look back 10 years ago, people had to use wine as it is. And it's
+
+120
+00:11:31,960 --> 00:11:36,880
+a tool that gets things done, but then again, if you want things to be done, things need
+
+121
+00:11:36,880 --> 00:11:42,920
+to be abstracted for you to be able to understand it. And if someone of a web developer is made
+
+122
+00:11:42,920 --> 00:11:48,400
+to understand the things that go behind the scene, oh my God, then it's totally not worth
+
+123
+00:11:48,400 --> 00:11:53,160
+of doing. So there are tools like Lutris, play on Linux that abstract the stuff that
+
+124
+00:11:53,160 --> 00:11:59,680
+wine do. So it's a lot better right now than it has ever been before. But then again, there
+
+125
+00:11:59,680 --> 00:12:04,840
+are things that we can totally do to make things a lot more better than they are right
+
+126
+00:12:04,840 --> 00:12:10,840
+now. So there's a silver lining. It's a small market share. People can be unsatisfied with
+
+127
+00:12:10,840 --> 00:12:19,880
+big config files and stuff like that. But here are six ways that I think it's all subjective.
+
+128
+00:12:19,880 --> 00:12:23,040
+There can be other things that people can think as well that I can add in my list and
+
+129
+00:12:23,040 --> 00:12:29,840
+make it 60 probably. But one of the things that people need to understand is if it were
+
+130
+00:12:29,840 --> 00:12:36,280
+really a technical challenge, right? So we have a lot of people working hard to make
+
+131
+00:12:36,280 --> 00:12:43,440
+these things work. Drivers, no matter how hard it can be for the proprietary drivers,
+
+132
+00:12:43,440 --> 00:12:48,760
+the proprietary blocks, the kernel modules to be loaded up, people are working hard.
+
+133
+00:12:48,760 --> 00:12:54,920
+But people are not understanding how exactly is it affecting or influencing the gamers,
+
+134
+00:12:54,920 --> 00:13:00,720
+the folks who actually use GNU Linux distributions to be able to play these games. So there should
+
+135
+00:13:00,720 --> 00:13:06,840
+be some way of open metrics, you know, some kind of telemetry that is not shady. It does
+
+136
+00:13:06,840 --> 00:13:11,600
+not look through your context and understand, oh, this person needs to have this at a certain
+
+137
+00:13:11,600 --> 00:13:18,000
+point in time. Not that kind of metrics, but rather what exactly is the tool, what exactly
+
+138
+00:13:18,000 --> 00:13:23,880
+are the workflows that are used in order to make these video games work. So these reliable
+
+139
+00:13:23,880 --> 00:13:28,240
+metrics should be implemented for the developers to understand that, yeah, their works are
+
+140
+00:13:28,240 --> 00:13:33,360
+indeed worth it. And for the publishers, because, oh, boy, they think that the market
+
+141
+00:13:33,360 --> 00:13:38,000
+share is small. So in order for the rise in market share, which has been, for the most
+
+142
+00:13:38,000 --> 00:13:45,720
+parts, the ones that we get to see from Steam, we should have more than that. So I don't know
+
+143
+00:13:45,720 --> 00:13:52,600
+if there are metrics in looters, bottles, or emulators. And I guess there is not, apart
+
+144
+00:13:52,600 --> 00:13:55,960
+from the ones that they themselves collect, because guess what? They really want to see
+
+145
+00:13:55,960 --> 00:14:02,200
+if their stuff works or not, and how exactly can they improve their own software. But does
+
+146
+00:14:02,200 --> 00:14:09,000
+it add up to the entire GNU Linux gaming metrics and make people understand that, yeah, folks
+
+147
+00:14:09,000 --> 00:14:13,880
+using looters, folks using bottles, folks using Steam Deck, folks using Android, they all
+
+148
+00:14:13,880 --> 00:14:20,600
+combine together as being a market share for this entire gaming. I don't think so at this
+
+149
+00:14:20,600 --> 00:14:25,800
+point in time, but this is something that we should definitely consider.
+
+150
+00:14:25,800 --> 00:14:32,000
+The next thing, of course, is to account for feedback and promote participation. So I have
+
+151
+00:14:32,000 --> 00:14:36,840
+seen in the course of the last many years that if you make people feel like they are
+
+152
+00:14:36,840 --> 00:14:41,800
+being heard, no matter what kind of project it is, if it's just creating some websites
+
+153
+00:14:41,800 --> 00:14:47,440
+or deploying things on the infrastructure, or be it about gaming. If people are heard,
+
+154
+00:14:47,440 --> 00:14:52,560
+if the features that they suggest, if the bugs that they tell is, you know, is bothering
+
+155
+00:14:52,560 --> 00:14:58,160
+them are implemented, chances are that they will tell their friends that this is something,
+
+156
+00:14:58,160 --> 00:15:02,200
+this is some kind of tool that they make use of and they should make use of as well. And
+
+157
+00:15:02,200 --> 00:15:08,480
+I like to think that reporting for bugs is also a very valuable contribution. So, you
+
+158
+00:15:08,480 --> 00:15:12,640
+know, being empathetic to the users, understanding, you know, by putting themselves on their
+
+159
+00:15:12,640 --> 00:15:19,440
+shoes, what kind of issues that they end up facing. And finally, understanding the tools
+
+160
+00:15:19,440 --> 00:15:24,920
+that people make use of. If there are a lot of dials, if there are a lot of drop-downs,
+
+161
+00:15:24,920 --> 00:15:30,360
+if there are a lot of things that people have to do before they are able to run their games,
+
+162
+00:15:30,360 --> 00:15:34,640
+it's probably not the most convenient way of doing so. So you can't quite expect a
+
+163
+00:15:34,640 --> 00:15:38,800
+person coming back home after a long day to be able to tweak those stuffs and make them
+
+164
+00:15:38,800 --> 00:15:45,000
+work. So the usability of them, how do we make it more convenient, should be something
+
+165
+00:15:45,000 --> 00:15:50,440
+that we should look into in these distributions, you know, kind of streamline the entire workflow
+
+166
+00:15:50,440 --> 00:15:55,480
+in order to make sure that people know where exactly they need to go to, to get a certain
+
+167
+00:15:55,480 --> 00:16:02,640
+function, to get a certain settings applied. And that's more about the convenience of,
+
+168
+00:16:02,640 --> 00:16:06,240
+you know, so that people can focus solely on the video games and not around the operating
+
+169
+00:16:06,240 --> 00:16:12,600
+system that's built for the sake of running games. Because trust me, if you have a PC,
+
+170
+00:16:12,600 --> 00:16:18,640
+operating video games are the one thing out of a thousand things that you will do. So
+
+171
+00:16:18,640 --> 00:16:24,960
+it just makes it a lot more easier to focus on what they want. For convenience, we totally
+
+172
+00:16:24,960 --> 00:16:30,800
+should be able to abstract complex things when we need to. So customization is fine.
+
+173
+00:16:30,800 --> 00:16:35,120
+It's one of the reasons why we are fragmented and I'm kind of thankful for it, so that I
+
+174
+00:16:35,120 --> 00:16:41,240
+have a choice that I can customize a distribution of my own kind to be able to make something,
+
+175
+00:16:41,240 --> 00:16:48,840
+to serve a certain purpose. But for the folks who don't need, it's going to be overwhelming.
+
+176
+00:16:48,840 --> 00:16:52,640
+They're going to be really scared of all those options put out there in front of them and
+
+177
+00:16:52,640 --> 00:16:57,560
+they'll be like, oh my God, no, definitely not. And they'll run back to the thing that
+
+178
+00:16:57,560 --> 00:17:04,400
+they were playing games on. So it's definitely not something that we would want to do. Being
+
+179
+00:17:04,400 --> 00:17:08,800
+able to provide a balance between the two of them and, you know, organically finding,
+
+180
+00:17:08,800 --> 00:17:13,880
+oh, fine, this person is scrolling down the menu. So probably it's looking for something
+
+181
+00:17:13,880 --> 00:17:19,200
+that's a lot more extensive than what we have provided for. Some kind of organic way to
+
+182
+00:17:19,200 --> 00:17:24,560
+find it and to be able to demonstrate how they can do it is a way that would strike
+
+183
+00:17:24,560 --> 00:17:30,200
+a good balance between the complicated looking stuff and the people who really want to get
+
+184
+00:17:30,200 --> 00:17:40,440
+their job done as quick as possible. Finally, for distributions that actually prioritize
+
+185
+00:17:40,440 --> 00:17:48,240
+these tools, these workflows, these applications, these should be available, like, natively
+
+186
+00:17:48,240 --> 00:17:53,200
+in their own repositories or there should be a way to be able to install them and not,
+
+187
+00:17:53,200 --> 00:17:57,840
+like, build from source or, like, dot-slashing them out of the blue because who runs shell
+
+188
+00:17:57,840 --> 00:18:03,120
+script files anyway, right? You should definitely read them. Drivers, codecs, kernel modules
+
+189
+00:18:03,120 --> 00:18:08,080
+and things like that, if you don't have a way to update them natively, trust me, it's
+
+190
+00:18:08,080 --> 00:18:14,800
+really a bad choice to be able to using that distributions. Say, people are here to play
+
+191
+00:18:14,800 --> 00:18:20,680
+games not to build software from source. Say, definitely we should consider having all of
+
+192
+00:18:20,680 --> 00:18:28,160
+these things packaged natively. And finally, to build standard workflows to be able to
+
+193
+00:18:28,160 --> 00:18:34,600
+test and quantify that, yeah, what is good performance, what is bad? Now, me, I can be
+
+194
+00:18:34,600 --> 00:18:41,240
+really biased towards good performance even if I see 60 frames per second on a 165-hertz
+
+195
+00:18:41,240 --> 00:18:46,320
+screen. I can tell that is good, but for someone else, it's like, oh, no, it's just like one
+
+196
+00:18:46,320 --> 00:18:51,400
+third of that frame rate. How do you call it a good performance? In that very case,
+
+197
+00:18:51,400 --> 00:18:57,640
+we need to understand and tell that, yeah, this is the criteria that was used to tell
+
+198
+00:18:57,640 --> 00:19:03,160
+that, yeah, this video game actually runs and this video game does not and could use
+
+199
+00:19:03,160 --> 00:19:09,520
+some more work before it's able to be, well, executing the way it should be. And when we
+
+200
+00:19:09,520 --> 00:19:15,640
+have all of these things in place, probably the publishers of AAA titles, popular ones
+
+201
+00:19:15,640 --> 00:19:20,040
+like that will be able to understand that, yeah, there is some kind of standards used
+
+202
+00:19:20,040 --> 00:19:25,920
+in this fragmented world of distributions to be able to understand that, yeah, if we follow
+
+203
+00:19:25,920 --> 00:19:31,640
+these rules to be able to create our games, it will have a compatibility with at least
+
+204
+00:19:31,640 --> 00:19:37,160
+85 percent, 75 percent, I'm saying this on the top of my head, but at least majority
+
+205
+00:19:37,160 --> 00:19:41,880
+of distributions will not have a problem and you won't be actually told to use a certain
+
+206
+00:19:41,880 --> 00:19:47,160
+distribution just because, well, your friend uses it.
+
+207
+00:19:47,160 --> 00:19:55,520
+So let's have a case study of Fedora Workstation in the end. So we have had distributions based
+
+208
+00:19:55,520 --> 00:20:00,840
+on the top of Fedora Linux distribution, Nobara Workstation, they have added meaningful
+
+209
+00:20:00,840 --> 00:20:07,000
+additions on the top, so to be able to make sure that people who really are willing to
+
+210
+00:20:07,000 --> 00:20:13,080
+focus on video gaming, they don't have to install much stuff on the top of it. And you
+
+211
+00:20:13,080 --> 00:20:16,720
+know, it's heavily popular with the folks who develop bottles and looters because they
+
+212
+00:20:16,720 --> 00:20:21,360
+get the latest and greatest stuff in the official repository, so they don't really have to go
+
+213
+00:20:21,360 --> 00:20:28,800
+out of their way to do so. And then the required tooling to be able to run these games, drivers,
+
+214
+00:20:28,800 --> 00:20:34,040
+and the ability to install them from RPM Fusion just in case their proprietary in nature is
+
+215
+00:20:34,040 --> 00:20:40,520
+totally possible. And the fact that the GNOME desktop, well, what can I say, it's just one
+
+216
+00:20:40,520 --> 00:20:47,160
+of the great ones. I'm a bit biased. Say, you know, it totally keeps the workflows aligned
+
+217
+00:20:47,160 --> 00:20:53,840
+and well, unintuitive. And finally, talking about the consistent performance, well, let's
+
+218
+00:20:53,840 --> 00:20:57,480
+just say that the configurations should be done in a modular manner so as to make sure
+
+219
+00:20:57,480 --> 00:21:03,160
+that if I do certain thing, I can copy that stuff and give it to my friend. Here's, you
+
+220
+00:21:03,160 --> 00:21:06,960
+know, you don't have to spend many hours like I did, paste that stuff and this should
+
+221
+00:21:06,960 --> 00:21:11,800
+be running. Or something a bit more polished than that, but basically, no more repeating
+
+222
+00:21:11,800 --> 00:21:18,640
+of efforts. And, you know, customizable enough to be actually minimize the footprint of the
+
+223
+00:21:18,640 --> 00:21:22,840
+operating system, the distribution itself, to be able to dedicate more of that performance
+
+224
+00:21:22,840 --> 00:21:29,600
+over to the actual video games. And that's pretty much about it. I'm totally open to
+
+225
+00:21:29,600 --> 00:21:33,400
+your questions.
+
+226
+00:21:33,400 --> 00:21:49,280
+Thank you for your talk. I got the impression that you're pushing for telemetry to be used
+
+227
+00:21:49,280 --> 00:21:51,360
+more. Would that be right?
+
+228
+00:21:51,360 --> 00:21:57,480
+Well, let's just say I'm pushing for an open telemetry. So you get to see what kind of information
+
+229
+00:21:57,480 --> 00:22:03,240
+is being shared with the folks and what folks are you sharing that with. So you don't think
+
+230
+00:22:03,240 --> 00:22:07,360
+that, oh, it's the shady number of information and with the shady number of folks that it
+
+231
+00:22:07,360 --> 00:22:13,080
+is shared with, right? So telemetry is important. There are software that have telemetry like
+
+232
+00:22:13,080 --> 00:22:18,960
+pre-built and they have it natively done, but then again, it's just a limited set of telemetry
+
+233
+00:22:18,960 --> 00:22:24,560
+people. Once we unify this and have a place where we can say that, yeah, it's coming from
+
+234
+00:22:24,560 --> 00:22:29,080
+them, so there's something that we can improve upon in the distributions level so that we
+
+235
+00:22:29,080 --> 00:22:33,240
+can understand that, yeah, a certain application or an emulator is acting up and there's something
+
+236
+00:22:33,240 --> 00:22:58,520
+that we can act on. Any more questions?
+
+237
+00:22:58,520 --> 00:23:17,720
+Hey, thank you very much. I think on the telemetry side, there is a fundamental metric that the
+
+238
+00:23:17,720 --> 00:23:23,720
+developers look at which is sales. So I think the main thing is like there is a sort of
+
+239
+00:23:23,720 --> 00:23:29,560
+1-2% audience on Linux that will buy games. I think that's pretty clear. I think there
+
+240
+00:23:29,560 --> 00:23:34,480
+are other advantages for developers having Linux users in early. We tend to report bugs
+
+241
+00:23:34,480 --> 00:23:38,520
+and if we do that in a helpful and non-annoying way, then we can be an asset particularly
+
+242
+00:23:38,520 --> 00:23:44,520
+to the trend of people doing early access releases and wanting engaged users. So I think
+
+243
+00:23:44,520 --> 00:23:49,000
+that's the thing that you can think about supporting early access games, supporting
+
+244
+00:23:49,000 --> 00:23:53,760
+stuff on edge I think is helpful. The other side is like if you just want to play games,
+
+245
+00:23:53,760 --> 00:23:58,720
+by far the easiest thing to do is ignore your distribution, install Steam, Proton handles
+
+246
+00:23:58,720 --> 00:24:04,520
+the config wrapping around wine really conveniently and the best game of the last five years was
+
+247
+00:24:04,520 --> 00:24:08,400
+released natively on Linux anyway, so play Slay the Spire. Thank you.
+
+248
+00:24:08,400 --> 00:24:12,600
+Thank you so much. One of the things that you mentioned that probably we could have
+
+249
+00:24:12,600 --> 00:24:18,080
+some kind of telemetry done in a central basis and the fact that early access can be something
+
+250
+00:24:18,080 --> 00:24:22,160
+that we can provide to people using Linux. It's one of the things that we can totally
+
+251
+00:24:22,160 --> 00:24:27,160
+use to actually increase our market share and make people feel like it's worth it if
+
+252
+00:24:27,160 --> 00:24:32,640
+you give it a try and people might end up actually buying it. When it comes to Proton,
+
+253
+00:24:32,640 --> 00:24:37,960
+I mean, jeez, they have done a marvelous job by abstracting what's not important or what's
+
+254
+00:24:37,960 --> 00:24:42,960
+totally really, really scary. Might scare people away out of the room, leave their Steam
+
+255
+00:24:42,960 --> 00:24:47,280
+decks that they have purchased with their hard earned money and to be able to play games
+
+256
+00:24:47,280 --> 00:24:53,680
+while they're on the go. So it's some kind of abstraction that keeps things convenient
+
+257
+00:24:53,680 --> 00:24:57,360
+that we are all looking for and there should be a balance so people should go and be like,
+
+258
+00:24:57,360 --> 00:25:01,760
+jeez, it's so abstracted that I can't do anything anymore, right? So that should definitely
+
+259
+00:25:01,760 --> 00:25:05,600
+not happen. All right, folks, I'm going to give way to the next talk. Please find me
+
+260
+00:25:05,600 --> 00:25:19,280
+over here if you have more questions. Thank you so much again.
+

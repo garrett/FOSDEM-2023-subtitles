@@ -1,0 +1,2648 @@
+1
+00:00:00,000 --> 00:00:20,440
+I'm here thanks yes hello good morning and nice day for foster them hope you
+
+2
+00:00:20,440 --> 00:00:28,640
+had a nice evening yes let's start with the torque matrix RTC matrix beyond
+
+3
+00:00:28,640 --> 00:00:36,240
+instant messaging let's get that so first of all what is matrix maybe we
+
+4
+00:00:36,240 --> 00:00:39,840
+have some redundancy a little bit here but for the sake of the recording and
+
+5
+00:00:39,840 --> 00:00:45,760
+I'll repeat some of what Matthew already showed us so basically the idea is an
+
+6
+00:00:45,760 --> 00:00:50,840
+open and federated secure and decentralized real-time communication
+
+7
+00:00:50,840 --> 00:00:56,040
+network and the use cases are many for it so the obvious one is of course the
+
+8
+00:00:56,040 --> 00:01:00,840
+interoperable chat but we are also aiming for voice of IP applications or
+
+9
+00:01:00,840 --> 00:01:08,520
+even VR applications but you can also think of something like IOT data and
+
+10
+00:01:08,520 --> 00:01:12,840
+this is so most of those use cases you're quite familiar with and what's
+
+11
+00:01:12,840 --> 00:01:17,200
+the well-known event layer so for a chat for instance you have a store and
+
+12
+00:01:17,200 --> 00:01:23,480
+forward semantics however the cool thing about matrix is that it is yeah
+
+13
+00:01:23,480 --> 00:01:29,440
+constructed such a way that it is de-central it is federated and what's
+
+14
+00:01:29,440 --> 00:01:34,600
+for me pretty cool and important is this replicated and end-to-end encrypted so
+
+15
+00:01:34,600 --> 00:01:39,160
+for instance if you're a client on one of those hosts here and you're attaching
+
+16
+00:01:39,160 --> 00:01:42,760
+to one home server and you're joining a room from another home server at that
+
+17
+00:01:42,760 --> 00:01:46,360
+moment the rooms replicated and everything is end-to-end encrypted it
+
+18
+00:01:46,360 --> 00:01:50,360
+is pretty cool it's like like a git git clone something like that similar with
+
+19
+00:01:50,360 --> 00:01:55,800
+an automatically your synchronization mechanism on top of it I'm quite sure
+
+20
+00:01:55,800 --> 00:01:59,120
+that you're very familiar with it you could also summarize it matrix is a
+
+21
+00:01:59,120 --> 00:02:03,800
+de-distributed real-time database and I can recommend this talk here from my
+
+22
+00:02:03,800 --> 00:02:11,120
+colleague Andy it's a very nice overview of what the specifics here on the
+
+23
+00:02:11,120 --> 00:02:15,320
+other side this talk today is about matrix RTC and now what is the
+
+24
+00:02:15,320 --> 00:02:21,160
+definition of matrix RTC what it was it so there's basically it's the world
+
+25
+00:02:21,160 --> 00:02:26,160
+first de-central federated real-time channel or communication platform and
+
+26
+00:02:26,160 --> 00:02:32,240
+it's packed an msc341 and msc3898 and it's depicted here what basically the
+
+27
+00:02:32,240 --> 00:02:37,320
+idea is from a client perspective you have a peer-to-peer semantics and we
+
+28
+00:02:37,320 --> 00:02:43,280
+don't have a storage or persistency in it but you can exchange data with a low
+
+29
+00:02:43,280 --> 00:02:49,680
+latency and a low jitter from one client to the other and another interesting
+
+30
+00:02:49,680 --> 00:02:54,920
+thing here is that the business logic is owned by the clients though in most
+
+31
+00:02:54,920 --> 00:02:59,880
+recent RTC platforms or video conferencing platforms you have in
+
+32
+00:02:59,880 --> 00:03:04,400
+something like an SFU and an application server and here the idea really is the
+
+33
+00:03:04,400 --> 00:03:12,680
+business logic is in the clients let's have a look at some use cases so the
+
+34
+00:03:12,680 --> 00:03:15,800
+most obvious of course is video conferencing right that this is what
+
+35
+00:03:15,800 --> 00:03:21,480
+everybody would you know assume when you talk about RTC but we can also have
+
+36
+00:03:21,480 --> 00:03:25,760
+the embedded version here so let's just take a normal matrix client and put a
+
+37
+00:03:25,760 --> 00:03:30,840
+widget into it and then have all your video conferencing or go to the VR world
+
+38
+00:03:30,840 --> 00:03:34,480
+or the the the matrix interpretation of the meta-words which is called third
+
+39
+00:03:34,480 --> 00:03:42,320
+room everything can be realized using matrix RTC and the cool thing here is
+
+40
+00:03:42,320 --> 00:03:46,080
+that you can also think about a hybrid use case so for instance imagine we
+
+41
+00:03:46,080 --> 00:03:52,000
+have a whiteboard like we have this here so we can use for fast UX the matrix
+
+42
+00:03:52,000 --> 00:03:56,120
+RTC layer such when I make a stroke now that it's more or less immediately at the
+
+43
+00:03:56,120 --> 00:04:01,040
+other whiteboards but for persistency we can just use the room the distributed
+
+44
+00:04:01,040 --> 00:04:09,560
+database so what are the base building blocks which we use to create matrix
+
+45
+00:04:09,560 --> 00:04:14,040
+RTC so first of all of course we need something like a real-time communication
+
+46
+00:04:14,040 --> 00:04:18,840
+framework and the obvious choice at the current point in time is web RTC because
+
+47
+00:04:18,840 --> 00:04:22,720
+it has a quite good adoption it's in all the web browsers and there are a lot of
+
+48
+00:04:22,720 --> 00:04:27,600
+a lot of SDKs around we can use but going forward maybe you can also sing
+
+49
+00:04:27,600 --> 00:04:32,120
+something like web transport or web codex to to replace it so we are not
+
+50
+00:04:32,120 --> 00:04:36,880
+mandating web RTC but for the time being that is of course the framework to use
+
+51
+00:04:36,880 --> 00:04:42,000
+then for the signaling that's quite obvious that we use matrix for it rates
+
+52
+00:04:42,000 --> 00:04:46,960
+and then to make it scale you might optionally also want to use a back end
+
+53
+00:04:46,960 --> 00:04:52,800
+component a focus this could either be an MCU or an SFU
+
+54
+00:04:56,320 --> 00:05:01,600
+so now as I stated the back end component is optional let's have a look
+
+55
+00:05:01,600 --> 00:05:06,840
+on start matrix RTC without and back end component so having a look at the
+
+56
+00:05:06,840 --> 00:05:10,800
+connection models though the obvious and the simplest one to start with is peer
+
+57
+00:05:10,800 --> 00:05:14,000
+to peer right that's just easier create a peer connection and then you have a
+
+58
+00:05:14,000 --> 00:05:19,680
+they have a data layer and then you can play around with matrix RTC it's getting
+
+59
+00:05:19,680 --> 00:05:24,920
+a little bit more complicated if you want to to have an RTC session with
+
+60
+00:05:24,920 --> 00:05:29,760
+more than two people so then we spin up a full mesh and then it really depends on
+
+61
+00:05:29,760 --> 00:05:35,960
+the use case how many people can join if you have a look maybe at the the use case
+
+62
+00:05:35,960 --> 00:05:40,840
+of a video conference then you would need to distribute and minus one media
+
+63
+00:05:40,840 --> 00:05:45,800
+up links and down links which is then limited by your internet connection and
+
+64
+00:05:45,800 --> 00:05:50,400
+if you haven't had least in Germany in average DSL connection it would scale to
+
+65
+00:05:50,400 --> 00:05:55,400
+up to five to eight participants and this is something we're currently using in
+
+66
+00:05:55,400 --> 00:06:00,480
+an element call to element call at the current point in time is based on this
+
+67
+00:06:00,480 --> 00:06:08,000
+full mesh setup or was we have some news today the the vision which also really
+
+68
+00:06:08,000 --> 00:06:14,760
+scales and would allow a large scale RTC sessions is what we call cascaded
+
+69
+00:06:14,760 --> 00:06:18,960
+selective forwarding units and it's depicted here so what you would have
+
+70
+00:06:18,960 --> 00:06:23,840
+you would have an selective forwarding unit as long side with your home server
+
+71
+00:06:23,840 --> 00:06:32,480
+it's optional but you can have it and by this we then would allow a further
+
+72
+00:06:32,480 --> 00:06:38,720
+scaling and can really yeah using the cascading concept to dynamically crawl
+
+73
+00:06:38,720 --> 00:06:46,760
+to any size we have to test it but that's the theory so far the signaling
+
+74
+00:06:46,760 --> 00:06:52,240
+here of course is also carried out over matrix and for the for the specifics for
+
+75
+00:06:52,240 --> 00:06:59,240
+the SFU we have this MSE 3898 which handles then all the the magic of the
+
+76
+00:06:59,240 --> 00:07:05,920
+cascading and so on and so forth from a setup perspective if you want to scale
+
+77
+00:07:05,920 --> 00:07:10,640
+large network and large RTC network the idea is that you place the SFU's as
+
+78
+00:07:10,640 --> 00:07:16,160
+close as you can to your customers or to your clients and to ensure a proper
+
+79
+00:07:16,160 --> 00:07:20,600
+internet so this ensures a proper internet connection with low jitter low
+
+80
+00:07:20,600 --> 00:07:26,160
+packet loss and then you have the SFU's placed in a strong network center and
+
+81
+00:07:26,160 --> 00:07:30,920
+have a good interconnection and by this setup you have yeah that's that's that's
+
+82
+00:07:30,920 --> 00:07:36,480
+the best you can do in terms of media quality
+
+83
+00:07:38,480 --> 00:07:46,560
+so what we did we started with an SFU which is capable to speak the matrix
+
+84
+00:07:46,560 --> 00:07:55,080
+flavor of of RTC it's a prototype which was handed over from Sean from the
+
+85
+00:07:55,080 --> 00:08:00,760
+inventor of the pine stack and it's a Golang based web RTC implementation we
+
+86
+00:08:00,760 --> 00:08:06,320
+added the matrix bits to it we wrote a lot of it it's early stage but we have
+
+87
+00:08:06,320 --> 00:08:10,240
+support for audio channels we have support for video channels and screen
+
+88
+00:08:10,240 --> 00:08:14,760
+sharing and on top of that recently we also added so-called similar cast
+
+89
+00:08:14,760 --> 00:08:21,840
+support similar cast is you can imagine that maybe have to go step back so in
+
+90
+00:08:21,840 --> 00:08:25,680
+the full mesh mode you have a literally a peer-to-peer connection to each of
+
+91
+00:08:25,680 --> 00:08:31,800
+those clients and by adding some signaling you can the receiver can tell
+
+92
+00:08:31,800 --> 00:08:35,960
+the sender oh I'm struggling with a network connection can you please adapt
+
+93
+00:08:35,960 --> 00:08:40,200
+your your network bandwidth from from the encoding site and this is a little
+
+94
+00:08:40,200 --> 00:08:45,640
+bit harder if you're having a central point the SFU so here the trick is
+
+95
+00:08:45,640 --> 00:08:51,240
+that the sender will provide several or media quality levels and then on the
+
+96
+00:08:51,240 --> 00:08:55,680
+SFU the client can decide which one to choose low quality mid quality and high
+
+97
+00:08:55,680 --> 00:09:00,680
+quality and this is called similar cast and we all already have basic support
+
+98
+00:09:00,680 --> 00:09:09,400
+for similar cost in our selective forwarding unit matrix is known for
+
+99
+00:09:09,400 --> 00:09:14,840
+privacy and end-to-end encryption and in the full mesh set up of matrix RTC
+
+100
+00:09:14,840 --> 00:09:18,120
+that's quite easy because you have the transport layer which ensures end-to-end
+
+101
+00:09:18,120 --> 00:09:24,480
+encryption but if you terminate a peer connection on an SFU the transport
+
+102
+00:09:24,480 --> 00:09:30,440
+layer is of course terminated and hence we need media encryption and this is the
+
+103
+00:09:30,440 --> 00:09:35,160
+missing part here so using insertable streams you need going forward to
+
+104
+00:09:35,160 --> 00:09:39,880
+implement end-to-end encryption on the client side that such that the media is
+
+105
+00:09:39,880 --> 00:09:47,440
+encrypted on the client send over and then it's not an issue on the SFU for
+
+106
+00:09:47,440 --> 00:09:53,200
+this specific topic matrix RTC and cascaded foci or a selective forwarding
+
+107
+00:09:53,200 --> 00:09:59,840
+units we have later a dedicated talk for my colleague Shimon it's the in-depth
+
+108
+00:09:59,840 --> 00:10:06,440
+talk cascaded foci it will be in this no not in this room it will be online at 2
+
+109
+00:10:06,440 --> 00:10:09,400
+p.m. this day
+
+110
+00:10:12,040 --> 00:10:17,600
+so now we have an idea what the vision of matrix RTC is and what we can do with
+
+111
+00:10:17,600 --> 00:10:23,920
+it we have seen so far the use cases let's come back to element call I think
+
+112
+00:10:23,920 --> 00:10:32,440
+we demonstrated it last year right yes very early very early and after one year
+
+113
+00:10:32,440 --> 00:10:39,160
+you could imagine something happened so first recap what's element call it so
+
+114
+00:10:39,160 --> 00:10:43,680
+initially it was developed on the green field as a single page application in
+
+115
+00:10:43,680 --> 00:10:48,200
+the cool story here it's just a matrix client right it's not for chat it's a
+
+116
+00:10:48,200 --> 00:10:52,560
+matrix client and the implementation was using the full mesh so without a
+
+117
+00:10:52,560 --> 00:10:58,240
+backend component what's new so after this year first of all in our site or not
+
+118
+00:10:58,240 --> 00:11:02,040
+site project our partner project hydrogen we also have call support right
+
+119
+00:11:02,040 --> 00:11:05,840
+now and it's also working interoperably so you can start with hydrogen the call
+
+120
+00:11:05,840 --> 00:11:10,560
+and join with element call and the other way around we added the SFU bits to
+
+121
+00:11:10,560 --> 00:11:16,680
+element call and we integrated it into element web so in element app we now
+
+122
+00:11:16,680 --> 00:11:21,480
+have two flavors of element call we have a crew call experience we just press
+
+123
+00:11:21,480 --> 00:11:25,680
+the crew call button and we have a dedicated video rooms which is pretty
+
+124
+00:11:25,680 --> 00:11:29,640
+cool so the semantic of this room is that when you press or click on this
+
+125
+00:11:29,640 --> 00:11:34,960
+room you're asked to join the conference immediately
+
+126
+00:11:37,920 --> 00:11:44,720
+the question is how to embed element call into a matrix client in general so in
+
+127
+00:11:44,720 --> 00:11:49,080
+theory you could just implement the msc's but that would be very expensive
+
+128
+00:11:49,080 --> 00:11:53,520
+because then you need to implement in each platform expensive in terms of
+
+129
+00:11:53,520 --> 00:11:59,800
+engineering bandwidth so all requirements are one implementation which fits
+
+130
+00:11:59,800 --> 00:12:07,000
+all and the idea is yeah that we embedded element call or the embedded
+
+131
+00:12:07,000 --> 00:12:11,160
+element call needs to share the same underlying matrix client and room in
+
+132
+00:12:11,160 --> 00:12:17,400
+order to not waste resources or to have device proliferation so the idea is
+
+133
+00:12:17,400 --> 00:12:23,960
+quite obvious let's use a widget for it also short recap on widgets what is a
+
+134
+00:12:23,960 --> 00:12:28,360
+widget a widget is basically an application living in a matrix room
+
+135
+00:12:28,360 --> 00:12:35,120
+it's simply an embedded iframe and it's yeah a small form factor web
+
+136
+00:12:35,120 --> 00:12:44,920
+application html JavaScript the widget is embedded within a room and can
+
+137
+00:12:44,920 --> 00:12:48,520
+communicate with matrix clients and therefore from the matrix client through
+
+138
+00:12:48,520 --> 00:12:56,920
+the widget API and this widget API is a defined post message API basically a
+
+139
+00:12:56,920 --> 00:13:04,760
+widget is able to request permissions and to perform on actions on the user's
+
+140
+00:13:04,760 --> 00:13:10,080
+behalf something like posting into a room receiving specific event types and so
+
+141
+00:13:10,080 --> 00:13:17,520
+on and so forth to have a more easy a way of approaching widgets we have also
+
+142
+00:13:17,520 --> 00:13:24,400
+have a widget SDK which is written in JavaScript and TypeScript it's basically a
+
+143
+00:13:24,400 --> 00:13:30,000
+web app and now here we have an overview a few about element call in the
+
+144
+00:13:30,000 --> 00:13:34,280
+various flavors so in the single page application the mode it's just the
+
+145
+00:13:34,280 --> 00:13:38,920
+matrix client using the client server API and in the widget mode here we are
+
+146
+00:13:38,920 --> 00:13:42,520
+going through the widget API over the underlying matrix client and then to the
+
+147
+00:13:42,520 --> 00:13:48,640
+home server the abstraction layer client server API versus widget is a really
+
+148
+00:13:48,640 --> 00:13:56,760
+thin so from a development perspective that was really easy to implement yeah
+
+149
+00:13:56,760 --> 00:14:01,280
+so the solution is it's just a widget it's web RTC in a web view and this is
+
+150
+00:14:01,280 --> 00:14:05,720
+the nice thing so the the whole web RTC stack to implement on various
+
+151
+00:14:05,720 --> 00:14:09,400
+platforms is quite painful but if you can just a web view where this is
+
+152
+00:14:09,400 --> 00:14:15,120
+included for free that's that's a thing we needed to extend the widget API to
+
+153
+00:14:15,120 --> 00:14:19,880
+add some missing bits specifically it where the 2d-wise messages and to
+
+154
+00:14:19,880 --> 00:14:25,520
+access the turn server also spec in the msc's and this this whole concept we
+
+155
+00:14:25,520 --> 00:14:29,280
+call matroshka embedding where we have a web view hosting widgets in the
+
+156
+00:14:29,280 --> 00:14:33,200
+various clients and that could be a web client but it could also be the native
+
+157
+00:14:33,200 --> 00:14:37,960
+clients like the IOS and the intro lines and hence we have the solution one
+
+158
+00:14:37,960 --> 00:14:41,520
+implementation that fits all
+
+159
+00:14:44,400 --> 00:14:48,120
+let's have a demo right
+
+160
+00:14:54,680 --> 00:15:00,520
+so what you see here basically is just the desktop application of element
+
+161
+00:15:00,520 --> 00:15:05,200
+element nightly on the left hand side you can see the various rooms with
+
+162
+00:15:05,200 --> 00:15:09,600
+various flavors so here this is a general room and he has already a
+
+163
+00:15:09,600 --> 00:15:14,360
+conference started so if you press it you will join it and at the top here we
+
+164
+00:15:14,360 --> 00:15:19,360
+have a so-called video room and you know if you join it directly prompted to to
+
+165
+00:15:19,360 --> 00:15:34,120
+join a conference and what you can also see here is a chat so let's join it hello
+
+166
+00:15:34,120 --> 00:15:44,400
+I raised the volume here so hi Enrico hi Simon yeah welcome to foster them what
+
+167
+00:15:44,400 --> 00:15:52,160
+we can do here right now is that we have various flavors so we have a new
+
+168
+00:15:52,160 --> 00:15:59,800
+layout here which we call large crits design and you can yeah change the tile
+
+169
+00:15:59,800 --> 00:16:04,080
+sizes and I also added here some debug information and you can see that the
+
+170
+00:16:04,080 --> 00:16:09,240
+small video on the top left receives the low quality stream whereas the large
+
+171
+00:16:09,240 --> 00:16:18,760
+screen or a large tile on the bottom receives the mid-quality stream hey Dave
+
+172
+00:16:18,760 --> 00:16:34,120
+hello so ah and hi yeah so and now we want to carry out an experiment I have a
+
+173
+00:16:34,120 --> 00:16:44,440
+QR code here hopefully I find it yeah and I encourage everybody to join the call
+
+174
+00:16:44,440 --> 00:16:55,880
+and to crash our SFU let's low test it sorry it's chrome
+
+175
+00:16:55,880 --> 00:17:10,960
+yeah yeah I will do a pet what is the resolution the projects are good enough
+
+176
+00:17:10,960 --> 00:17:39,560
+so let's see so of course if it's not working then we can blame the wife I
+
+177
+00:17:39,560 --> 00:18:03,680
+hear right
+
+178
+00:18:03,680 --> 00:18:08,680
+four, five, six, seven, eight, nine, ten, eleven streams working for me at the moment.
+
+179
+00:18:08,680 --> 00:18:09,680
+Uh-huh.
+
+180
+00:18:09,680 --> 00:18:11,680
+Better than you.
+
+181
+00:18:11,680 --> 00:18:20,680
+Ah, no, no, no, it's recovering, it's recovering.
+
+182
+00:18:20,680 --> 00:18:26,680
+So we plan a second demo later the day with the talk from Simon.
+
+183
+00:18:26,680 --> 00:18:30,680
+So, yeah, but so how many do we have?
+
+184
+00:18:30,680 --> 00:18:32,680
+Is that as good?
+
+185
+00:18:32,680 --> 00:18:36,680
+You've got aspergerosia, bugs all over the place.
+
+186
+00:18:36,680 --> 00:18:38,680
+It depends.
+
+187
+00:18:38,680 --> 00:18:40,680
+Yes.
+
+188
+00:18:50,680 --> 00:18:55,680
+Okay, let's say I leave it in the background, play around with it,
+
+189
+00:18:55,680 --> 00:19:04,680
+and we go back to the talk.
+
+190
+00:19:04,680 --> 00:19:07,680
+Okay.
+
+191
+00:19:07,680 --> 00:19:13,680
+So, what's next in the matrix RTC ecosystem?
+
+192
+00:19:13,680 --> 00:19:17,680
+Of course, we want to implement the whiteboard, at least the hybrid version of the whiteboard.
+
+193
+00:19:17,680 --> 00:19:28,680
+Then the very important thing really is to start with the insertable streams to also have the entrant encryption in case of using the SFU.
+
+194
+00:19:28,680 --> 00:19:36,680
+With respect to the selective forwarding units, we need to implement the focus selection logic.
+
+195
+00:19:36,680 --> 00:19:46,680
+So if you remember the graph where we had the, or the picture where we had the home servers alongside the SFUs alongside with the home servers,
+
+196
+00:19:46,680 --> 00:19:51,680
+we sketched out a nice algorithm where you can automatically choose the right one.
+
+197
+00:19:51,680 --> 00:19:54,680
+And this is something we need to implement right now.
+
+198
+00:19:54,680 --> 00:19:56,680
+Yeah, and then obviously the cascading.
+
+199
+00:19:56,680 --> 00:20:01,680
+This has not started the implementation, but yeah, we need to carry out.
+
+200
+00:20:01,680 --> 00:20:06,680
+On the similar cost layer, we also have some optimizations in mind.
+
+201
+00:20:06,680 --> 00:20:15,680
+For instance, I think it's only a good idea to upload your video to the SFU if on the other side someone consumes this video stream.
+
+202
+00:20:15,680 --> 00:20:17,680
+So this is an optimization we can add.
+
+203
+00:20:17,680 --> 00:20:26,680
+And I think also the switching point where when you change the layer from high quality to low quality, there's also some room for improvement.
+
+204
+00:20:26,680 --> 00:20:32,680
+On top of that, we need to care a little bit more about network bandwidth rate control.
+
+205
+00:20:32,680 --> 00:20:40,680
+This is an important thing we need here, such that the SFU also feeds back information back to the client,
+
+206
+00:20:40,680 --> 00:20:47,680
+such that the client is then in a good position to adapt the local video or audio encoders.
+
+207
+00:20:47,680 --> 00:20:57,680
+And finally, we want to extend the call support in Hydrogen and add the SFU bits to it.
+
+208
+00:20:57,680 --> 00:21:03,680
+And now maybe some of you are wondering a little bit why Matthew is sitting here with his classes.
+
+209
+00:21:03,680 --> 00:21:05,680
+Yeah, and now let's head over.
+
+210
+00:21:05,680 --> 00:21:10,680
+I have some questions.
+
+211
+00:21:10,680 --> 00:21:18,680
+So what we have so far seen was the obvious use case for MatrixRTC, which is a video conferencing solution.
+
+212
+00:21:18,680 --> 00:21:24,680
+But I told you earlier that we also have something like the Metaverse interpretation of Matrix.
+
+213
+00:21:24,680 --> 00:21:27,680
+We call it third room.
+
+214
+00:21:27,680 --> 00:21:30,680
+Yeah, and in a half minute.
+
+215
+00:21:30,680 --> 00:21:34,680
+Any questions, though, on Florian?
+
+216
+00:21:34,680 --> 00:21:41,680
+Yeah, it's a hard Q&A part.
+
+217
+00:21:41,680 --> 00:21:46,680
+Hopefully this thing is going to work.
+
+218
+00:21:46,680 --> 00:21:50,680
+Apologies for being the idiot with a VR headset on.
+
+219
+00:21:50,680 --> 00:21:54,680
+Hopefully this thing is going to start streaming in a second.
+
+220
+00:21:54,680 --> 00:22:02,680
+So I wanted to talk about third room, which is the spatial collaboration platform that we have built on top of Matrix.
+
+221
+00:22:02,680 --> 00:22:10,680
+And I'm going to slightly mess around with trying to get this to work at the right resolution,
+
+222
+00:22:10,680 --> 00:22:14,680
+because it's going to look crap if it's not at the right res.
+
+223
+00:22:14,680 --> 00:22:20,680
+How do we change the resolution these days in MacOS?
+
+224
+00:22:20,680 --> 00:22:29,680
+Anybody know how to actually change as refresh rate advanced?
+
+225
+00:22:29,680 --> 00:22:31,680
+That's not helpful.
+
+226
+00:22:31,680 --> 00:22:34,680
+You can talk.
+
+227
+00:22:34,680 --> 00:22:38,680
+Oh, really?
+
+228
+00:22:38,680 --> 00:22:48,680
+Let me just check the stream itself, because if it's working alright, then we're all good.
+
+229
+00:22:48,680 --> 00:22:50,680
+That's not me.
+
+230
+00:22:50,680 --> 00:22:54,680
+Jan, is that your fault that it's live streaming here?
+
+231
+00:22:54,680 --> 00:22:56,680
+Oh, it's the wrong one. Thank you.
+
+232
+00:22:56,680 --> 00:23:01,680
+Too many dev rooms. You should probably be using the same one.
+
+233
+00:23:01,680 --> 00:23:04,680
+Ah, 2001 online dev room.
+
+234
+00:23:04,680 --> 00:23:07,680
+No, it's not the online dev room. The normal dev room.
+
+235
+00:23:07,680 --> 00:23:09,680
+What is it?
+
+236
+00:23:09,680 --> 00:23:12,680
+Matrix under real time.
+
+237
+00:23:12,680 --> 00:23:16,680
+I can't spell Matrix. This is going well.
+
+238
+00:23:16,680 --> 00:23:19,680
+That one. Right. Thank you.
+
+239
+00:23:19,680 --> 00:23:26,680
+Are we sure? That looks totally squashed. That's literally what I'm trying to fix right now.
+
+240
+00:23:26,680 --> 00:23:35,680
+How can it be to actually set a resolution on this thing these days?
+
+241
+00:23:35,680 --> 00:23:42,680
+How about I press that button, where we're going to go to...
+
+242
+00:23:42,680 --> 00:23:46,680
+Yeah, so it's gone to four by three, but it wants to do four by three everywhere,
+
+243
+00:23:46,680 --> 00:23:49,680
+so it's not four by three, it's 16 by nine.
+
+244
+00:23:49,680 --> 00:23:53,680
+Let's go to that. Will that work?
+
+245
+00:23:53,680 --> 00:23:56,680
+Is that coming in on the stream already? Just check this.
+
+246
+00:23:56,680 --> 00:24:03,680
+It'll be worth it, don't worry.
+
+247
+00:24:03,680 --> 00:24:08,680
+On the plus side, the Oculus thing is on KXN, which is good.
+
+248
+00:24:08,680 --> 00:24:11,680
+Right, yeah, this is looking good.
+
+249
+00:24:11,680 --> 00:24:17,680
+So, let me actually bring up third room.
+
+250
+00:24:17,680 --> 00:24:21,680
+So, the point of third room is that it's a tiny team.
+
+251
+00:24:21,680 --> 00:24:29,680
+Sorry.
+
+252
+00:24:29,680 --> 00:24:34,680
+Hi, everybody. Welcome to my talk on third room,
+
+253
+00:24:34,680 --> 00:24:38,680
+which is a project, a tiny project done by three people,
+
+254
+00:24:38,680 --> 00:24:44,680
+Robert and AJ, AJ also famous for doing Sydney as a Matrix client,
+
+255
+00:24:44,680 --> 00:24:49,680
+which is trying to show people that Matrix is way more than chat and VoIP.
+
+256
+00:24:49,680 --> 00:24:53,680
+I know that it's cool to look at 3D stuff these days and go,
+
+257
+00:24:53,680 --> 00:24:57,680
+I don't like 3D, but honestly, I think this is incredibly interesting
+
+258
+00:24:57,680 --> 00:25:01,680
+in showing the potential of what we have to build on top of Matrix today.
+
+259
+00:25:01,680 --> 00:25:05,680
+Now, the way it works is that you've got Hydrogen SDK going
+
+260
+00:25:05,680 --> 00:25:09,680
+and basically providing a plain old Matrix client.
+
+261
+00:25:09,680 --> 00:25:14,680
+And if I jump into this room here, which is hash presentation
+
+262
+00:25:14,680 --> 00:25:18,680
+on thirdroom.io, if people want to play along at home,
+
+263
+00:25:18,680 --> 00:25:22,680
+feel free to come and jump in and heckle my presentation.
+
+264
+00:25:22,680 --> 00:25:28,680
+And you can see that this is a virtual world going and sitting in browser.
+
+265
+00:25:28,680 --> 00:25:31,680
+If I pull up the frame rate, which is obviously control shift S,
+
+266
+00:25:31,680 --> 00:25:37,680
+you can see it's actually going at 60 frames a second, Amandino's stuck in the floor.
+
+267
+00:25:37,680 --> 00:25:43,680
+It's running at 60 frames a second in browser at, well, 1080p, as we all just saw,
+
+268
+00:25:43,680 --> 00:25:50,680
+which is pretty impressive for a fairly complicated scene that we have going on here.
+
+269
+00:25:50,680 --> 00:25:54,680
+And the way that thirdroom works is quite unusual.
+
+270
+00:25:54,680 --> 00:25:58,680
+And it's properly multi-freaded in browser.
+
+271
+00:25:58,680 --> 00:26:03,680
+It's using an entirely new game engine that the team basically put together.
+
+272
+00:26:03,680 --> 00:26:06,680
+And I should hasten to add, I've basically been encouraging people
+
+273
+00:26:06,680 --> 00:26:10,680
+rather than actually working on this, but Robert's in San Fran.
+
+274
+00:26:10,680 --> 00:26:15,680
+And so it'll be cruel and unusual to get him to do this and talk.
+
+275
+00:26:15,680 --> 00:26:17,680
+And I've even got some slides here.
+
+276
+00:26:17,680 --> 00:26:21,680
+And it's showing the scripting that is built in that I'll talk about in a minute.
+
+277
+00:26:21,680 --> 00:26:25,680
+Now, the interesting thing is that we're using shared arrayed buffers to go
+
+278
+00:26:25,680 --> 00:26:29,680
+and share data between the main thread and a bunch of worker threads
+
+279
+00:26:29,680 --> 00:26:33,680
+using post-message between these and then the Atomics APIs in the browser
+
+280
+00:26:33,680 --> 00:26:38,680
+so that you can actually have proper multiple threads in order to have the rendering thread
+
+281
+00:26:38,680 --> 00:26:42,680
+running completely independently from the gaming thread that does physics
+
+282
+00:26:42,680 --> 00:26:45,680
+and the main thread that does React and does Hydrogen
+
+283
+00:26:45,680 --> 00:26:50,680
+because we've embedded Hydrogen in the React app here as well as Matrix.
+
+284
+00:26:50,680 --> 00:26:55,680
+So, I'm going to go to the next slide.
+
+285
+00:26:55,680 --> 00:26:57,680
+Here are some of the main threads.
+
+286
+00:26:57,680 --> 00:27:01,680
+We've got React, Matrix and WebRTC happening.
+
+287
+00:27:01,680 --> 00:27:03,680
+And we have spatial audio in here.
+
+288
+00:27:03,680 --> 00:27:05,680
+So if I actually unmute myself.
+
+289
+00:27:05,680 --> 00:27:08,680
+Ooh, I've got first for myself on my own talk.
+
+290
+00:27:08,680 --> 00:27:10,680
+That's annoying. Let me pause that.
+
+291
+00:27:10,680 --> 00:27:12,680
+Amandine, are you still out there somewhere?
+
+292
+00:27:12,680 --> 00:27:15,680
+You want to come over and say something to me?
+
+293
+00:27:15,680 --> 00:27:16,680
+Is anybody else?
+
+294
+00:27:16,680 --> 00:27:18,680
+I'll go over to you, say something.
+
+295
+00:27:18,680 --> 00:27:20,680
+Can you hear me? Yeah, I can.
+
+296
+00:27:20,680 --> 00:27:24,680
+So if we had headphones on at this point and I turn this way and you say something.
+
+297
+00:27:24,680 --> 00:27:25,680
+Hello.
+
+298
+00:27:25,680 --> 00:27:27,680
+It's coming out the left speaker and you have to believe me.
+
+299
+00:27:27,680 --> 00:27:29,680
+And look the other way and it's coming out.
+
+300
+00:27:29,680 --> 00:27:33,680
+Honestly, it helps the immersive experience massively that we're going using spatial audio
+
+301
+00:27:33,680 --> 00:27:36,680
+to go and position where things are here.
+
+302
+00:27:36,680 --> 00:27:38,680
+Whilst we're wandering around here,
+
+303
+00:27:38,680 --> 00:27:41,680
+you can see that we've got, at the moment, generic avatars.
+
+304
+00:27:41,680 --> 00:27:43,680
+But if you walk around a bit,
+
+305
+00:27:43,680 --> 00:27:46,680
+you can see her moon walking backwards for whatever reason.
+
+306
+00:27:46,680 --> 00:27:48,680
+I'm sure you can also go forwards.
+
+307
+00:27:48,680 --> 00:27:49,680
+There we go.
+
+308
+00:27:49,680 --> 00:27:51,680
+And fly for that matter.
+
+309
+00:27:51,680 --> 00:27:58,680
+And so the B button lets you fly in this so you can go and jump around like so.
+
+310
+00:27:58,680 --> 00:28:01,680
+And so, ooh, you're spoiling my talk.
+
+311
+00:28:01,680 --> 00:28:06,680
+So if we go down here, then on the game thread, we've got a bunch of rust.
+
+312
+00:28:06,680 --> 00:28:09,680
+We have the ability to run arbitrary WebAssembly scripts,
+
+313
+00:28:09,680 --> 00:28:11,680
+which is sitting in a sandbox,
+
+314
+00:28:11,680 --> 00:28:15,680
+which allows you to basically add any arbitrary functionality into the world.
+
+315
+00:28:15,680 --> 00:28:19,680
+From a pure matrix perspective, this is probably the most exciting thing here.
+
+316
+00:28:19,680 --> 00:28:22,680
+Now, if you remember IRC and Merck scripting,
+
+317
+00:28:22,680 --> 00:28:26,680
+the ability to run arbitrary scripts on your IRC client,
+
+318
+00:28:26,680 --> 00:28:31,680
+this is effectively allowing you to define bots and arbitrary functionality in matrix,
+
+319
+00:28:31,680 --> 00:28:35,680
+which run inside your client, inside the sandbox,
+
+320
+00:28:35,680 --> 00:28:38,680
+and the actual data is stored in your room.
+
+321
+00:28:38,680 --> 00:28:41,680
+Now, this whole thing is a matrix room.
+
+322
+00:28:41,680 --> 00:28:47,680
+If I go and hit Enter, then you can see a bunch of users there.
+
+323
+00:28:47,680 --> 00:28:49,680
+And I can say, hello, world.
+
+324
+00:28:49,680 --> 00:28:52,680
+And if I go back to my element client,
+
+325
+00:28:52,680 --> 00:28:58,680
+and if I literally join presentation on thirdroom.io for a matrix.org,
+
+326
+00:28:58,680 --> 00:29:01,680
+then you can see I'm being saying, yeah.
+
+327
+00:29:01,680 --> 00:29:04,680
+And I can say, yeah, to you too.
+
+328
+00:29:04,680 --> 00:29:10,680
+And hopefully, hang on.
+
+329
+00:29:10,680 --> 00:29:13,680
+Well, I've got traffic running one way.
+
+330
+00:29:13,680 --> 00:29:14,680
+Interesting.
+
+331
+00:29:14,680 --> 00:29:18,680
+Well, we should be seeing messages coming into the room as well,
+
+332
+00:29:18,680 --> 00:29:20,680
+because it is, oh, there we go.
+
+333
+00:29:20,680 --> 00:29:23,680
+It's just a plain old hydrogen overlay
+
+334
+00:29:23,680 --> 00:29:26,680
+that is being rented in React for the contents of the room.
+
+335
+00:29:26,680 --> 00:29:29,680
+Now, the actual geometry of the room,
+
+336
+00:29:29,680 --> 00:29:32,680
+if we start flying around some more,
+
+337
+00:29:32,680 --> 00:29:37,680
+looks like this is actually a big GLTF or a single GLTF asset.
+
+338
+00:29:37,680 --> 00:29:39,680
+This thing is just sitting in the media repository in the room.
+
+339
+00:29:39,680 --> 00:29:43,680
+It's just a file that is GLTF, the transfer format for OpenGL,
+
+340
+00:29:43,680 --> 00:29:46,680
+that has been uploaded there, and also any scripts in the room,
+
+341
+00:29:46,680 --> 00:29:50,680
+like the one which is executing the,
+
+342
+00:29:50,680 --> 00:29:52,680
+letting me press on the buttons here.
+
+343
+00:29:52,680 --> 00:29:56,680
+Again, there's a bit of, I think, JavaScript using the QuickJS engine
+
+344
+00:29:56,680 --> 00:30:00,680
+that has gone and compiled down the JavaScript to WebAssembly in real time.
+
+345
+00:30:00,680 --> 00:30:03,680
+It's pretty cool that you literally write it in JavaScript,
+
+346
+00:30:03,680 --> 00:30:05,680
+and then the engine sucks it up, turns it into Wasm,
+
+347
+00:30:05,680 --> 00:30:07,680
+and runs it within that sandbox.
+
+348
+00:30:07,680 --> 00:30:09,680
+So you could argue it's a little bit perverse
+
+349
+00:30:09,680 --> 00:30:12,680
+to be taking JavaScript, compiling it to WebAssembly,
+
+350
+00:30:12,680 --> 00:30:14,680
+and then running it from within a JavaScript environment,
+
+351
+00:30:14,680 --> 00:30:17,680
+but it gives you a hell of a lot more safety
+
+352
+00:30:17,680 --> 00:30:20,680
+than you would if we were just, I know,
+
+353
+00:30:20,680 --> 00:30:24,680
+having random blobs of JavaScript running here.
+
+354
+00:30:24,680 --> 00:30:27,680
+On the render thread, we are using WebGL2,
+
+355
+00:30:27,680 --> 00:30:32,680
+and we're using FreeJS to manage the actual driving of WebGL.
+
+356
+00:30:32,680 --> 00:30:38,680
+But the scene itself is, the scene itself is
+
+357
+00:30:38,680 --> 00:30:42,680
+managed using a really cool technology called BitECS,
+
+358
+00:30:42,680 --> 00:30:44,680
+that was actually created by Nate,
+
+359
+00:30:44,680 --> 00:30:46,680
+one of the developers before he started working on,
+
+360
+00:30:46,680 --> 00:30:49,680
+before they started working on third room.
+
+361
+00:30:49,680 --> 00:30:54,680
+And BitECS is an entity component system
+
+362
+00:30:54,680 --> 00:30:56,680
+where you basically track the state of the world,
+
+363
+00:30:56,680 --> 00:31:00,680
+the objects that exist within it, their transformations,
+
+364
+00:31:00,680 --> 00:31:04,680
+and it's done with arrays in JavaScript,
+
+365
+00:31:04,680 --> 00:31:06,680
+and it turns out that if you structure your arrays
+
+366
+00:31:06,680 --> 00:31:08,680
+intelligently enough in JavaScript,
+
+367
+00:31:08,680 --> 00:31:10,680
+you can get as good as WebAssembly performance,
+
+368
+00:31:10,680 --> 00:31:12,680
+and it's one of the other secrets
+
+369
+00:31:12,680 --> 00:31:15,680
+to the crazy performance that we have here.
+
+370
+00:31:15,680 --> 00:31:18,680
+So this isn't a scene graph API under the hood,
+
+371
+00:31:18,680 --> 00:31:21,680
+like A-frame, if anybody ever played with A-frame,
+
+372
+00:31:21,680 --> 00:31:26,680
+instead it's using the BitECS.
+
+373
+00:31:26,680 --> 00:31:29,680
+Then another thing which is interesting here
+
+374
+00:31:29,680 --> 00:31:32,680
+is that everything is triple buffered.
+
+375
+00:31:32,680 --> 00:31:34,680
+So in a kind of traditional game engine,
+
+376
+00:31:34,680 --> 00:31:38,680
+you just have one sort of buffer that you write data into
+
+377
+00:31:38,680 --> 00:31:40,680
+and the renderer reads it out,
+
+378
+00:31:40,680 --> 00:31:42,680
+and you have some kind of locking system
+
+379
+00:31:42,680 --> 00:31:44,680
+to make sure that it doesn't collide.
+
+380
+00:31:44,680 --> 00:31:47,680
+Whereas here, we have lot free data structures,
+
+381
+00:31:47,680 --> 00:31:50,680
+letting things go as rapidly as possible
+
+382
+00:31:50,680 --> 00:31:52,680
+with the various different bits of the engine
+
+383
+00:31:52,680 --> 00:31:56,680
+writing into this shared triple buffer,
+
+384
+00:31:56,680 --> 00:31:59,680
+as is shared array buffer, which is then juggled
+
+385
+00:31:59,680 --> 00:32:01,680
+effectively between the various different threads,
+
+386
+00:32:01,680 --> 00:32:04,680
+and it means that the render thread can run at the native speed
+
+387
+00:32:04,680 --> 00:32:07,680
+of whatever device, which is particularly useful
+
+388
+00:32:07,680 --> 00:32:11,680
+if it's a less powered device than my MacBook Pro here,
+
+389
+00:32:11,680 --> 00:32:14,680
+and then the game engine that is actually rendering
+
+390
+00:32:14,680 --> 00:32:16,680
+what's going on can go at its own speed,
+
+391
+00:32:16,680 --> 00:32:18,680
+so you totally decouple the two
+
+392
+00:32:18,680 --> 00:32:21,680
+and you get as high a frame rate as you can.
+
+393
+00:32:21,680 --> 00:32:23,680
+And I think that, oh yeah, and finally,
+
+394
+00:32:23,680 --> 00:32:29,680
+lots of fun stuff going on with asset optimization pipeline.
+
+395
+00:32:29,680 --> 00:32:32,680
+Particularly the textures have been highly compressed
+
+396
+00:32:32,680 --> 00:32:34,680
+using these fun codecs.
+
+397
+00:32:34,680 --> 00:32:38,680
+I think it's called universal basis format from binomial and KTX,
+
+398
+00:32:38,680 --> 00:32:42,680
+and one of the things we've done to cheat to bootstrap
+
+399
+00:32:42,680 --> 00:32:45,680
+third room is to build a pipeline from Unity
+
+400
+00:32:45,680 --> 00:32:47,680
+where you can take existing Unity assets,
+
+401
+00:32:47,680 --> 00:32:51,680
+like this scene here is one that we bought off a Unity asset store,
+
+402
+00:32:51,680 --> 00:32:55,680
+and then export it as proper open standardized JLTF,
+
+403
+00:32:55,680 --> 00:32:57,680
+somewhat liberating the contents
+
+404
+00:32:57,680 --> 00:33:00,680
+from the slightly proprietary world of Unity
+
+405
+00:33:00,680 --> 00:33:03,680
+in order to get content in more rapidly,
+
+406
+00:33:03,680 --> 00:33:05,680
+and then compress it down,
+
+407
+00:33:05,680 --> 00:33:07,680
+and there are lots of fun things,
+
+408
+00:33:07,680 --> 00:33:10,680
+like it has instancing support built in,
+
+409
+00:33:10,680 --> 00:33:12,680
+so if you start generating lots of objects,
+
+410
+00:33:12,680 --> 00:33:14,680
+like the physics engine here,
+
+411
+00:33:14,680 --> 00:33:17,680
+I know, go and create a whole bunch of objects
+
+412
+00:33:17,680 --> 00:33:20,680
+and attack the various people who are wandering around in here,
+
+413
+00:33:20,680 --> 00:33:22,680
+or they love me for it,
+
+414
+00:33:22,680 --> 00:33:25,680
+then this is basically just the same JLTF asset.
+
+415
+00:33:25,680 --> 00:33:28,680
+What are you doing?
+
+416
+00:33:28,680 --> 00:33:32,680
+Going and being created multiple times.
+
+417
+00:33:32,680 --> 00:33:34,680
+All the textures are sprighted,
+
+418
+00:33:34,680 --> 00:33:36,680
+so there's just one great big thing.
+
+419
+00:33:36,680 --> 00:33:41,680
+There's also some really interesting extensions to JL
+
+420
+00:33:41,680 --> 00:33:44,680
+that we've contributed by the Kronos group,
+
+421
+00:33:44,680 --> 00:33:46,680
+particularly if you look at,
+
+422
+00:33:46,680 --> 00:33:49,680
+if we grab one of these Mirables,
+
+423
+00:33:49,680 --> 00:33:52,680
+which are mainly used for debugging purposes,
+
+424
+00:33:52,680 --> 00:33:53,680
+let's grab that one,
+
+425
+00:33:53,680 --> 00:33:56,680
+and if I run around with it, or I fly around with it,
+
+426
+00:33:56,680 --> 00:33:59,680
+you should see that the reflection changes,
+
+427
+00:33:59,680 --> 00:34:02,680
+and there we go, like if I go between zones there,
+
+428
+00:34:02,680 --> 00:34:04,680
+it needs to be tuned a bit,
+
+429
+00:34:04,680 --> 00:34:06,680
+but basically rather than ray tracing,
+
+430
+00:34:06,680 --> 00:34:09,680
+which would be incredibly time consuming,
+
+431
+00:34:09,680 --> 00:34:11,680
+instead we have lots of different probes
+
+432
+00:34:11,680 --> 00:34:13,680
+hanging around the scene that allow you to,
+
+433
+00:34:13,680 --> 00:34:15,680
+so I'm hitting myself in the face with the ball,
+
+434
+00:34:15,680 --> 00:34:17,680
+a common problem,
+
+435
+00:34:17,680 --> 00:34:20,680
+that as you run around,
+
+436
+00:34:20,680 --> 00:34:22,680
+you can see the reflection changes.
+
+437
+00:34:22,680 --> 00:34:24,680
+It's pretty nasty if you do it rapidly,
+
+438
+00:34:24,680 --> 00:34:26,680
+but if you're doing it more slowly like this,
+
+439
+00:34:26,680 --> 00:34:28,680
+then it's quite a subtle but nice effect,
+
+440
+00:34:28,680 --> 00:34:32,680
+and it's even better when it's on not perfect Mirables,
+
+441
+00:34:32,680 --> 00:34:34,680
+if you look at, say, Dave,
+
+442
+00:34:34,680 --> 00:34:36,680
+if you walk backwards, if you can hear me,
+
+443
+00:34:36,680 --> 00:34:38,680
+or go into the light or out of the light,
+
+444
+00:34:38,680 --> 00:34:41,680
+then you'll actually see a fairly subtle shadowing effect,
+
+445
+00:34:41,680 --> 00:34:44,680
+as it's gone and figured out where the shadows are there.
+
+446
+00:34:44,680 --> 00:34:46,680
+Right, God, it's cool to see all the people running around in here.
+
+447
+00:34:46,680 --> 00:34:49,680
+So, what else can I show you?
+
+448
+00:34:49,680 --> 00:34:53,680
+So we're going to launch TEP Preview 2 this next week,
+
+449
+00:34:53,680 --> 00:34:56,680
+and this is the first time anybody has seen TEP Preview 2,
+
+450
+00:34:56,680 --> 00:34:58,680
+and I have 10 minutes here, left hand,
+
+451
+00:34:58,680 --> 00:35:01,680
+and TEP Preview 1 is sort of what we've been looking at here,
+
+452
+00:35:01,680 --> 00:35:03,680
+except it didn't have scripting.
+
+453
+00:35:03,680 --> 00:35:05,680
+We've already shown some of the scripting here,
+
+454
+00:35:05,680 --> 00:35:07,680
+but one of the big things that have been added,
+
+455
+00:35:07,680 --> 00:35:10,680
+and let's pray that this thing works,
+
+456
+00:35:10,680 --> 00:35:13,680
+is WebVR.
+
+457
+00:35:13,680 --> 00:35:21,680
+So, hopefully, if I go to the Oculus streaming thing,
+
+458
+00:35:21,680 --> 00:35:23,680
+which I had a second ago,
+
+459
+00:35:23,680 --> 00:35:25,680
+I should have possibly cleaned this up first.
+
+460
+00:35:25,680 --> 00:35:29,680
+Of course, it stopped working.
+
+461
+00:35:29,680 --> 00:35:32,680
+Whilst I get this thing back in again,
+
+462
+00:35:32,680 --> 00:35:34,680
+and everything is going wrong,
+
+463
+00:35:34,680 --> 00:35:37,680
+apparently I've got to recalibrate the entire thing.
+
+464
+00:35:37,680 --> 00:35:40,680
+So I apologize for using proprietary technology,
+
+465
+00:35:40,680 --> 00:35:44,680
+but unfortunately there aren't any open source headsets
+
+466
+00:35:44,680 --> 00:35:48,680
+which do the trick yet.
+
+467
+00:35:48,680 --> 00:35:53,680
+Let me go, and let me try to cast this up,
+
+468
+00:35:53,680 --> 00:35:57,680
+and unfortunately it takes ages for the screen casting
+
+469
+00:35:57,680 --> 00:35:59,680
+to kick in for some reason,
+
+470
+00:35:59,680 --> 00:36:05,680
+but I'll go as quick as I can, bump,
+
+471
+00:36:05,680 --> 00:36:11,680
+and cast, and computer go.
+
+472
+00:36:11,680 --> 00:36:14,680
+WebXR is a really cool technology.
+
+473
+00:36:14,680 --> 00:36:19,680
+It's been there for ages now, since about 2017,
+
+474
+00:36:19,680 --> 00:36:25,680
+built into browsers like Firefox and Chrome, obviously,
+
+475
+00:36:25,680 --> 00:36:29,680
+and also, interestingly, the browser that your Oculus Quest
+
+476
+00:36:29,680 --> 00:36:31,680
+like this, or Quest Pro, has built into it,
+
+477
+00:36:31,680 --> 00:36:34,680
+which is based on Chromium.
+
+478
+00:36:34,680 --> 00:36:36,680
+It has awful screen casting support, as you can see,
+
+479
+00:36:36,680 --> 00:36:38,680
+and I started at screen casting,
+
+480
+00:36:38,680 --> 00:36:40,680
+and something is happening in the depths of Facebook,
+
+481
+00:36:40,680 --> 00:36:42,680
+trying to figure out how to actually get this
+
+482
+00:36:42,680 --> 00:36:44,680
+onto the screen here, but hopefully it will come through,
+
+483
+00:36:44,680 --> 00:36:46,680
+assuming I've got internet connectivity.
+
+484
+00:36:46,680 --> 00:36:49,680
+Here it is, thank God, and I can start talking,
+
+485
+00:36:49,680 --> 00:36:51,680
+and I apologize for...
+
+486
+00:36:51,680 --> 00:36:53,680
+I'm going to focus on...
+
+487
+00:36:53,680 --> 00:36:55,680
+Oh, interesting.
+
+488
+00:36:55,680 --> 00:36:59,680
+I'm going to focus on Florent rather than embarrassing everybody else,
+
+489
+00:36:59,680 --> 00:37:03,680
+but let's just use a stationary boundary, confirm.
+
+490
+00:37:03,680 --> 00:37:06,680
+Right, so the browser here sits there.
+
+491
+00:37:06,680 --> 00:37:08,680
+I'm not going to update this right now,
+
+492
+00:37:08,680 --> 00:37:11,680
+but here is some third room,
+
+493
+00:37:11,680 --> 00:37:13,680
+and if I continue into third room as guest,
+
+494
+00:37:13,680 --> 00:37:16,680
+you can see this is just a static,
+
+495
+00:37:16,680 --> 00:37:19,680
+boring old web browser just sitting here.
+
+496
+00:37:19,680 --> 00:37:22,680
+Worth noting that third room uses OIDC entirely,
+
+497
+00:37:22,680 --> 00:37:26,680
+so this thing here is actually a skinned key cloak.
+
+498
+00:37:26,680 --> 00:37:28,680
+I'm going to say I'm not a bot,
+
+499
+00:37:28,680 --> 00:37:30,680
+I'm not going to bother giving myself a name,
+
+500
+00:37:30,680 --> 00:37:33,680
+and then Captcha failed.
+
+501
+00:37:33,680 --> 00:37:36,680
+Brilliant, thanks, Google.
+
+502
+00:37:36,680 --> 00:37:40,680
+I'm going to have to type in third room,
+
+503
+00:37:40,680 --> 00:37:42,680
+except caffeine and stress
+
+504
+00:37:42,680 --> 00:37:44,680
+means my ability to use a stupid keyboard like this
+
+505
+00:37:44,680 --> 00:37:46,680
+is going to be fun.
+
+506
+00:37:46,680 --> 00:37:48,680
+Okay, back to third room here.
+
+507
+00:37:48,680 --> 00:37:50,680
+There's a streaming, okay?
+
+508
+00:37:50,680 --> 00:37:52,680
+Okay, brilliant.
+
+509
+00:37:52,680 --> 00:37:54,680
+Let's go to login, go back to third room,
+
+510
+00:37:54,680 --> 00:37:56,680
+continue as guest.
+
+511
+00:37:56,680 --> 00:37:58,680
+This time, hope that it's not going to make me pick
+
+512
+00:37:58,680 --> 00:38:00,680
+stupid things, right?
+
+513
+00:38:00,680 --> 00:38:02,680
+Good, continue.
+
+514
+00:38:02,680 --> 00:38:04,680
+Accept the T's and C's.
+
+515
+00:38:04,680 --> 00:38:07,680
+Honestly, the using a key cloak for this
+
+516
+00:38:07,680 --> 00:38:10,680
+is really, really fun.
+
+517
+00:38:10,680 --> 00:38:12,680
+And very anticlimatically,
+
+518
+00:38:12,680 --> 00:38:14,680
+we end up with eventually,
+
+519
+00:38:14,680 --> 00:38:16,680
+once you load connectivity,
+
+520
+00:38:16,680 --> 00:38:19,680
+a 2D version of third room
+
+521
+00:38:19,680 --> 00:38:22,680
+just sitting right here.
+
+522
+00:38:22,680 --> 00:38:24,680
+So isn't it amazing?
+
+523
+00:38:24,680 --> 00:38:26,680
+By the way, that just loaded from
+
+524
+00:38:26,680 --> 00:38:29,680
+indexedDB local storage.
+
+525
+00:38:29,680 --> 00:38:31,680
+But the fun thing is hopefully,
+
+526
+00:38:31,680 --> 00:38:33,680
+come on, you can do it.
+
+527
+00:38:33,680 --> 00:38:35,680
+You can see it's actually struggling quite a lot
+
+528
+00:38:35,680 --> 00:38:38,680
+in this, but if I press the old X button,
+
+529
+00:38:38,680 --> 00:38:41,680
+there, that's why I have to close the
+
+530
+00:38:41,680 --> 00:38:45,680
+welcome to third room dialogue, here it is.
+
+531
+00:38:45,680 --> 00:38:47,680
+Come on.
+
+532
+00:38:47,680 --> 00:38:49,680
+Enter XR, thank God for that.
+
+533
+00:38:49,680 --> 00:38:52,680
+Then I can see Florian, hello Florian.
+
+534
+00:38:52,680 --> 00:38:54,680
+But more excitingly, hopefully,
+
+535
+00:38:54,680 --> 00:38:56,680
+if I stay in the right place,
+
+536
+00:38:56,680 --> 00:38:58,680
+there we go, you can see that I'm actually
+
+537
+00:38:58,680 --> 00:39:01,680
+in the third room environment right now.
+
+538
+00:39:01,680 --> 00:39:03,680
+And this is genuinely cool.
+
+539
+00:39:03,680 --> 00:39:05,680
+This is running at 90 frames a second for me,
+
+540
+00:39:05,680 --> 00:39:07,680
+right now.
+
+541
+00:39:07,680 --> 00:39:10,680
+And if I go and press some buttons to crates,
+
+542
+00:39:10,680 --> 00:39:12,680
+and oh God, ow!
+
+543
+00:39:12,680 --> 00:39:15,680
+Some crates, like that massive crate,
+
+544
+00:39:15,680 --> 00:39:17,680
+let me get rid of that.
+
+545
+00:39:17,680 --> 00:39:19,680
+You can see it's actually hooked up
+
+546
+00:39:19,680 --> 00:39:21,680
+to the normal physics engine,
+
+547
+00:39:21,680 --> 00:39:23,680
+so I can go and pull that,
+
+548
+00:39:23,680 --> 00:39:25,680
+and throw it into the audience,
+
+549
+00:39:25,680 --> 00:39:27,680
+which is no way surreal to be going
+
+550
+00:39:27,680 --> 00:39:29,680
+and flipping back and forth.
+
+551
+00:39:29,680 --> 00:39:32,680
+And then back in the normal world again.
+
+552
+00:39:32,680 --> 00:39:35,680
+At the moment, we've just got basic things
+
+553
+00:39:35,680 --> 00:39:37,680
+like the joystick and hung up,
+
+554
+00:39:37,680 --> 00:39:39,680
+hooked up to it.
+
+555
+00:39:39,680 --> 00:39:41,680
+It's got a kinematic controller,
+
+556
+00:39:41,680 --> 00:39:43,680
+and am I running out of, oh no,
+
+557
+00:39:43,680 --> 00:39:45,680
+thank you Florian.
+
+558
+00:39:45,680 --> 00:39:48,680
+What else can I show you?
+
+559
+00:39:48,680 --> 00:39:51,680
+We can jump, we can spawn more objects.
+
+560
+00:39:51,680 --> 00:39:54,680
+I can go up to that glitter globe,
+
+561
+00:39:54,680 --> 00:39:57,680
+and oh, sorry, mirrored ball.
+
+562
+00:39:57,680 --> 00:39:59,680
+It's running faster than I can run after it.
+
+563
+00:39:59,680 --> 00:40:01,680
+That's awkward.
+
+564
+00:40:01,680 --> 00:40:03,680
+And theoretically, if I was a little bit close
+
+565
+00:40:03,680 --> 00:40:05,680
+to the bloody thing, I'd be able to grab it
+
+566
+00:40:05,680 --> 00:40:07,680
+and pick it up, et cetera.
+
+567
+00:40:07,680 --> 00:40:09,680
+So this is pretty cool honestly.
+
+568
+00:40:09,680 --> 00:40:11,680
+It's as good as the native non-WebVR
+
+569
+00:40:11,680 --> 00:40:13,680
+closed stuff that Facebook,
+
+570
+00:40:13,680 --> 00:40:15,680
+or MetaHorizons does.
+
+571
+00:40:15,680 --> 00:40:18,680
+And the entire thing is open.
+
+572
+00:40:18,680 --> 00:40:20,680
+And they built on the surgery engine.
+
+573
+00:40:20,680 --> 00:40:22,680
+How am I doing for time? Three minutes.
+
+574
+00:40:22,680 --> 00:40:24,680
+In which case, I'll very quickly go,
+
+575
+00:40:24,680 --> 00:40:27,680
+and sorry, thanks for that.
+
+576
+00:40:27,680 --> 00:40:30,680
+I will start looking at random emissaries,
+
+577
+00:40:30,680 --> 00:40:32,680
+go back into this,
+
+578
+00:40:32,680 --> 00:40:35,680
+and just look at some other things we've done.
+
+579
+00:40:35,680 --> 00:40:37,680
+In fact, this one is really cool.
+
+580
+00:40:37,680 --> 00:40:39,680
+Let's just flip into this one,
+
+581
+00:40:39,680 --> 00:40:41,680
+because this is a really complicated bit of WASM.
+
+582
+00:40:41,680 --> 00:40:43,680
+It's actually an audio-reactive widget,
+
+583
+00:40:43,680 --> 00:40:45,680
+which is sitting here.
+
+584
+00:40:45,680 --> 00:40:47,680
+As you can see, as I yell at it,
+
+585
+00:40:47,680 --> 00:40:49,680
+it goes and changes size.
+
+586
+00:40:49,680 --> 00:40:51,680
+There's a whole bunch of C code
+
+587
+00:40:51,680 --> 00:40:53,680
+that has been compiled down to WASM
+
+588
+00:40:53,680 --> 00:40:55,680
+to show how you can have interactive things
+
+589
+00:40:55,680 --> 00:40:57,680
+sitting inside the scene.
+
+590
+00:40:57,680 --> 00:41:00,680
+Another example is slightly less excitingly.
+
+591
+00:41:00,680 --> 00:41:03,680
+A chatbot echo service.
+
+592
+00:41:03,680 --> 00:41:06,680
+So if I go into here and say hello,
+
+593
+00:41:06,680 --> 00:41:09,680
+and then do echo hello with a slash command,
+
+594
+00:41:09,680 --> 00:41:11,680
+it says hello back to me.
+
+595
+00:41:11,680 --> 00:41:13,680
+Now, the echo that's happening down there
+
+596
+00:41:13,680 --> 00:41:16,680
+is actually being done from the widget API of Matrix,
+
+597
+00:41:16,680 --> 00:41:19,680
+going into WebAssembly, talking to, I think,
+
+598
+00:41:19,680 --> 00:41:22,680
+a JavaScript service, and then echoes back.
+
+599
+00:41:22,680 --> 00:41:24,680
+You can see we have a slight bug sometimes
+
+600
+00:41:24,680 --> 00:41:26,680
+with scripting where it loads two worlds at the same time,
+
+601
+00:41:26,680 --> 00:41:28,680
+and that's pretty surreal.
+
+602
+00:41:28,680 --> 00:41:32,680
+That's what happens if London got combined with Mars.
+
+603
+00:41:32,680 --> 00:41:35,680
+Final thing here...
+
+604
+00:41:35,680 --> 00:41:37,680
+What was I going to show you?
+
+605
+00:41:37,680 --> 00:41:41,680
+Oh, yeah, is this guy,
+
+606
+00:41:41,680 --> 00:41:44,680
+which is a bit silly, but fun anyway.
+
+607
+00:41:44,680 --> 00:41:46,680
+This time I'll remember to refresh
+
+608
+00:41:46,680 --> 00:41:48,680
+as fun as it is to have the scenes combined,
+
+609
+00:41:48,680 --> 00:41:50,680
+so you might recognize this from a certain film.
+
+610
+00:41:50,680 --> 00:41:53,680
+And if we actually look at the script
+
+611
+00:41:53,680 --> 00:41:55,680
+for this particular room,
+
+612
+00:41:55,680 --> 00:41:58,680
+if I can figure out how to get out of full screen mode,
+
+613
+00:41:58,680 --> 00:42:00,680
+the script here is, again,
+
+614
+00:42:00,680 --> 00:42:02,680
+just sitting in the media repository.
+
+615
+00:42:02,680 --> 00:42:04,680
+It's a little bit of JavaScript
+
+616
+00:42:04,680 --> 00:42:06,680
+to use the WebSceneGraph API,
+
+617
+00:42:06,680 --> 00:42:08,680
+which is a new API that we've created.
+
+618
+00:42:08,680 --> 00:42:10,680
+We hope it will become a W3 standard
+
+619
+00:42:10,680 --> 00:42:12,680
+for manipulating scene graphs.
+
+620
+00:42:12,680 --> 00:42:14,680
+If you click on the TV,
+
+621
+00:42:14,680 --> 00:42:16,680
+you basically get a node by name to TV,
+
+622
+00:42:16,680 --> 00:42:18,680
+and then every frame you'd see
+
+623
+00:42:18,680 --> 00:42:20,680
+if the TV is being pressed,
+
+624
+00:42:20,680 --> 00:42:22,680
+and if it is, then you enable the matrix material.
+
+625
+00:42:22,680 --> 00:42:24,680
+And the end result is if I go here,
+
+626
+00:42:24,680 --> 00:42:26,680
+and I click on the TV,
+
+627
+00:42:26,680 --> 00:42:29,680
+then, predictably enough, you end up in a matrix-style world,
+
+628
+00:42:29,680 --> 00:42:31,680
+and I've got it in third-person view,
+
+629
+00:42:31,680 --> 00:42:33,680
+which is also new with Tet Preview 2
+
+630
+00:42:33,680 --> 00:42:35,680
+and Clipback and forth.
+
+631
+00:42:35,680 --> 00:42:37,680
+This is super early, but you can imagine
+
+632
+00:42:37,680 --> 00:42:39,680
+this is basically a platform for doing
+
+633
+00:42:39,680 --> 00:42:41,680
+any kind of real-time collaborative app.
+
+634
+00:42:41,680 --> 00:42:43,680
+It could be digital twins,
+
+635
+00:42:43,680 --> 00:42:45,680
+it could be smart cities,
+
+636
+00:42:45,680 --> 00:42:47,680
+GIS applications.
+
+637
+00:42:47,680 --> 00:42:49,680
+It's as powerful and as flexible as the Web,
+
+638
+00:42:49,680 --> 00:42:51,680
+but for real-time.
+
+639
+00:42:51,680 --> 00:42:53,680
+Thank you very much.
+
+640
+00:42:53,680 --> 00:42:55,680
+APPLAUSE
+
+641
+00:43:00,680 --> 00:43:02,680
+And we have no time for questions.
+
+642
+00:43:02,680 --> 00:43:04,680
+Time for one question.
+
+643
+00:43:04,680 --> 00:43:06,680
+Is there one question?
+
+644
+00:43:06,680 --> 00:43:08,680
+Oh.
+
+645
+00:43:08,680 --> 00:43:11,680
+I wanted to ask, where can we be
+
+646
+00:43:11,680 --> 00:43:13,680
+in custom avatars support?
+
+647
+00:43:13,680 --> 00:43:15,680
+It will be coming in the next release,
+
+648
+00:43:15,680 --> 00:43:17,680
+after Tet Preview 2.
+
+649
+00:43:17,680 --> 00:43:19,680
+I mean, the hard bit of actually rigging up the engine
+
+650
+00:43:19,680 --> 00:43:21,680
+and doing all the inverse kinematics,
+
+651
+00:43:21,680 --> 00:43:23,680
+and if you run around with the current avatars,
+
+652
+00:43:23,680 --> 00:43:26,680
+you can now trip over things, which is very important.
+
+653
+00:43:26,680 --> 00:43:28,680
+But suffice it to say,
+
+654
+00:43:28,680 --> 00:43:31,680
+we're focusing on the engine rather than the assets.
+
+655
+00:43:31,680 --> 00:43:33,680
+And also, this is at a point
+
+656
+00:43:33,680 --> 00:43:35,680
+where people can start contributing things.
+
+657
+00:43:35,680 --> 00:43:37,680
+So if you've got amazing assets,
+
+658
+00:43:37,680 --> 00:43:39,680
+and you've caught the maximum rig,
+
+659
+00:43:39,680 --> 00:43:41,680
+then they should just drop straight in.
+
+660
+00:43:41,680 --> 00:43:43,680
+All right.
+
+661
+00:43:43,680 --> 00:43:45,680
+Cool.
+
+662
+00:43:45,680 --> 00:44:08,680
+APPLAUSE
+
