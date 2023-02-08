@@ -1,0 +1,213 @@
+So we have Emma and Jess talking about what they learned about the creative freedom summit.
+So give a hand for them.
+Hi everybody and welcome to our talk. We're very excited to be here at Fasten. It's the first time here.
+So very excited and nervous. Had a great time yesterday.
+So today we're just going to go through a summit that we hosted two weeks ago.
+We're going to explain what it is for people who weren't aware of it and then we're also going to see what went well and what could be improved.
+So just a small introduction first then. So my name is Emma Kidney.
+I'm an associate software engineer at Red Hat in their community platform engineering team.
+Kind of the last year. So I've kind of been more doing design work.
+Kind of slowly doing more design work, less dev work.
+I'm part of the Fedora design team and I utilize Floss in every aspect of my work.
+And an active member of the Fedora community.
+So I'll just pass it over to Jess then.
+So I'm Jess and so I joined the Red Hat team in 2022 as a Fedora community designer intern.
+For the community platform engineering group.
+And I've got all open source software, Inkscape, Penpart of course.
+And just loads of other ones and creating numerous logos for the Fedora project as well that you might have seen around.
+Includes.
+So yeah, so a little bit of the creative freedom summit.
+It was a summit that we held, was it two weeks ago?
+Yeah, two weeks ago.
+Yeah, so it was all over like Jitsie and PeerTube.
+And it's just, again, promoting loads of creative software that people might know about.
+So yeah, basically, yeah, what is the creative freedom summit?
+So it's a virtual event focused on promoting open source tools,
+spreading knowledge of how to use them and connecting creators across the FOSS ecosystem.
+So the summit's accomplishments and shortcomings will be examined in light of the first year.
+So the primary goals for this were, of course,
+promote open source creative software and also spreading knowledge of how to use it.
+So it's very important like there's so many free software that people don't know about
+and it's great to give them that recognition.
+And also connecting creators across the FOSS ecosystem.
+So other people who use these open source software can connect with each other
+and share ideas and all that sort of stuff.
+And then our secondary goals were to promote the Fedora design team as well as a welcoming group.
+So, you know, especially if you don't have a platform to show off
+like what you've done on open source software,
+you can always join the Fedora design team.
+We also create a potential onboarding path for new design contributors as well
+and spread info on how to use the creative open source tools in communities.
+So again, same as the last one,
+so showing how the Fedora design team wields tools to make communities stuff happen
+and have sessions like how the Fedora design team do this, that and the other
+and hoping it makes sense for easier for people to get involved.
+So what topics do we cover?
+So again, pen path.
+So if you don't know what it is, if you missed the first talk,
+it's a web-based design and prototyping platform.
+Inkscape as well, which I love.
+And powerful, it's a vector-based graphics editor.
+Blender, Krita and Caden Live, I assume you might have went to the KDE stand that was around.
+And GIMP and also accessibility as well, which is very important in the design aspect of things,
+like color blindness palettes and stuff like that.
+And then the free software was actually, it's like free patterns for different crafts,
+so more kind of a hands-on design thing rather than technical.
+And creative professional using open-source software.
+So we had some people as well who, and of course us as well, like using free open-source
+in a professional aspect and many others.
+So we had an amazing line-up of speakers, so Maureen Duffy and David Revoy to name a few.
+And we had social hours that include the audience and help build a sense of community.
+So some of these include a hack and craft, which is kind of like the free software.
+It's by the same person, Morgan Lemmerweber.
+And so we were basically, like for the hack and craft, we were all like knitting and making,
+sewing things, but also talking about open-source and Pictioner and Gartik Phone.
+So it was really fun.
+And then, of course, wouldn't be possible without our sponsors.
+So Fedora and Red Hat were the main sponsors.
+And then the platforms we used to share was Wee's Element.
+So like people could interact in the chat.
+Jitsie was for the live streaming part.
+Oh, sorry. Jitsie was the video part.
+So we all went into a call, and then Peerchu was the live streaming part of it.
+So, yeah, I'm going to hand you over to Emma for the retrospective.
+Nice. Okay. The retrospective.
+So just some details then as well.
+So when it took place, as Jess said, around two weeks ago, January 17th to the 19th.
+What platform?
+We used Jitsie, streamed with Peerchu, and then Element and Matrix were used for the audience to interact with each other and the speakers.
+What if you didn't make it?
+The recordings are available on the Create Freedom Summit's Peerchu.
+And we'll soon be uploaded to the Fedora YouTube when editing is complete, where we have some great contributors at the minute,
+converting the raw video files over into properly caught and published talks.
+And was there a badge?
+The important question when an event is run by Fedora.
+Yes, there was a badge. It was designed by Jess, again.
+And it was able to be claimed by anyone with Fedora badges account.
+And it was claimed around 48 times, I believe.
+And also, if you're wondering why we had a badge, the summit was all about promoting open source design.
+And then obviously, as the Fedora design team, there can be a lot of overlap then between the two communities.
+Here's just an example of what the setup looked like if you were to attend the summit.
+So at the top there, you have a little widget for the live stream.
+We have another little kind of notepad feature there where you can type out any questions you might have,
+some information kind of frequently asked questions, and then we have the chat there then.
+So people can interact with each other.
+Also, the background channel for the talk.
+Oh, yeah.
+Oh, yeah, because if you wanted to just watch the talk and I've been involved in the chat room,
+you just watch directly with the PeerTube link as well.
+How did the event go?
+It went very well.
+We had 18 speakers take part with an average of 50 viewers per session, which is very good for our first time round.
+We had more than 700 unique viewers spread out across 54 different countries.
+And in the element chat room, we came up to around 250 members.
+So we were kind of aiming for 100 in the element chat room, but so the fact we kind of doubled that grade.
+So what went well?
+Viewers loved the setup we had.
+They were able to watch videos soon after they were live as well, due to the system that we were using.
+And the chat room was very friendly and there was a real strong sense of community there.
+And the audience had a lot of back and forth with the speakers as well.
+There was a lot of interactions at the social event and a lot of interest.
+Also, no code of conduct issues, which is always nice.
+Yeah, so we got to see some amazing work.
+So we had, let's say, some speed painting sessions there with grease pencil and blender.
+It's been painting with Krita, an inkscape tutorial.
+There's a software blender as well.
+There was a good few things about blender.
+Yeah, so what can we improve for next year?
+So what didn't work?
+We're going to try and create a guide for next year with guidance on how to use the platform.
+Because from a newbie perspective, if you're not familiar with matrix element,
+or that kind of thing, it can be a bit foreign, a bit hard to get into.
+We also need to look into auto captions then as well.
+Since we did not have live captions during the summer, we were able to add them in post-production,
+but it would have been nice to have it while the event was happening.
+So we're going to look into some open source tools that can be used alongside Jitsie.
+Hopefully we can stick with that arrangement and then, if not, maybe look into some alternatives.
+Yeah, so what's next then?
+So call for proposals.
+So depending on speaker capacity and interest,
+we'll probably do a call for proposals around two to three months prior to the event.
+There's a lot of interest in the audience to get involved themselves, present their own talks,
+and share their knowledge.
+We want to keep group and interaction growing throughout the year.
+This can bring more people into the community, maintain their interests,
+so maybe have socials, our challenges, kind of little, mini events.
+Spread the word, so participate in talks like this one.
+Kind of get involved in more of the open source design forms, all the different communities.
+Planning is a major part, so we're going to give ourselves some more time to implement improvements,
+try some things out, and then if any areas come up.
+So yeah, I'm going to pass you over to Jess, then, just in case you're interested in participating in Fedora.
+So a little bit of a segue, I suppose, since we're all, it's very heavily supported by the Fedora design team,
+so if you would like to be interested in the next one,
+so if you would like to, there's a Fedora account that you can create,
+you can create it at accounts.fadoraproduct.org, and you can use it to sign into the element as well,
+and it's very, kind of, it's like the main account to use, especially with a somewhat like this.
+So if you want to learn more about Fedora, it's all on the Fedora docs,
+and also if you do join.fadoraproduct.org, it gives you all the links that you can use as well.
+It shows our missions, our foundations, all the user documentation,
+and you can look us up and ping us if you need anything.
+And then also, yeah, you can hang out with us.
+So in the element chat, we have a Fedora design element chat,
+where people share what they've been contributing,
+and if anyone needs feedback from, like, the more senior people,
+or, like, just in general, it's a really good place to be.
+Fedora marketing as well, and there's many more challenges as well,
+even if you're not really interested in design, there's infrastructure, there's many more loads.
+So, and yeah, where to find us?
+So the matrix channel there, creativefreedom.dot.fadora.im,
+and then our website is creativefreedom.dot.com, where you can get all the information,
+and we have, like, when we were playing it as well,
+we had all of our, we had a live, like, schedule going on,
+and you can click on it, and it brings you to the streams,
+and then, again, the Fedora design team matrix channel is there,
+and then that's us.
+So if you have any questions?
+Yeah, so.
+We're planning on making it kind of like an annual, an annual event,
+so it'll hopefully happen around January next year as well.
+So feel free to enter the matrix channel, ping myself or Jess,
+we'd be more than happy to punch in the right direction,
+if you're not sure on how to use matrix or element, anything like that.
+So yeah, I think that's our talk.
+Thank you.
+Does anyone have any questions?
+No?
+Yes.
+Yes.
+So I understand that some people are online this year.
+Do you plan to keep that format for the future?
+Yeah, because it's, I suppose it's making open source design tools
+kind of more accessible.
+So we'd like to kind of keep it a virtual event, I think,
+for the foreseeable future.
+Maybe there might be some mini events, things like that.
+We haven't really discussed it, but we do like the online aspect
+that anyone can join.
+So it is, yeah.
+Yeah, I suppose.
+Yeah, just making it more accessible for people.
+So anyone else have any questions?
+Yeah.
+Or would you like to see more of the next one?
+So I'll just repeat the question.
+So we were just asked, what would we like to see more of in the next summit?
+So I suppose, just getting the numbers off.
+Well, you know, it's good to see, you know, just make it more,
+well, it is approachable, I suppose, but I don't know.
+That's a tough question.
+I'd like to see more of the craft inside a thing
+and the open source design aspect,
+but I thought that was really interesting when Morgan came in
+and was talking about having, you know, open source design, say,
+of like sewing patterns, things like that,
+making clothing more accessible to people.
+It was kind of an aspect of design I didn't really think of,
+even though I'm into like crocheting and knitting and stuff myself.
+So it was mad just to kind of see like a hobby
+and like work kind of come together then.
+So I thought that was quite interesting.
+Yeah, I'd like to see more of that.
+Okay, yeah, we also have a stand-down in building H as well.
+So we'll probably be there after this.
+Yeah, thank you.
