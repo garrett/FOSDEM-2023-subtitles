@@ -1,0 +1,792 @@
+1
+00:00:00,000 --> 00:00:16,880
+Wednesday, when we did the unboxing event, that since we do hope that everyone will be
+
+2
+00:00:16,880 --> 00:00:21,600
+welcomed to a Penpot project, we needed to make sure that the invite system could cope
+
+3
+00:00:21,600 --> 00:00:27,800
+with all the different use cases that you get with that link expiration, who got the
+
+4
+00:00:27,800 --> 00:00:30,960
+invite, do any tree send it, etc., etc.
+
+5
+00:00:30,960 --> 00:00:37,720
+Otherwise, the onboarding experience would be tough and people would not be joining the
+
+6
+00:00:37,720 --> 00:00:39,400
+design project.
+
+7
+00:00:39,400 --> 00:00:44,200
+And this is very important for us because this is not only a tool for designers to just
+
+8
+00:00:44,200 --> 00:00:49,320
+express their creativity, but also for developers to join the design process to be welcomed there.
+
+9
+00:00:49,320 --> 00:00:53,880
+So this is very important for us.
+
+10
+00:00:53,880 --> 00:00:59,440
+But of course, we had many improvements in the interactive prototype feature.
+
+11
+00:00:59,440 --> 00:01:03,640
+This is just one example for the overlay advancement.
+
+12
+00:01:03,640 --> 00:01:13,920
+So here you can see how a design asset is being self-referred and you get a very nice
+
+13
+00:01:13,920 --> 00:01:21,440
+pixel-perfect overlay on a button and then an animation that comes with a mouse click.
+
+14
+00:01:21,440 --> 00:01:22,440
+Right?
+
+15
+00:01:22,440 --> 00:01:23,440
+Do you like this?
+
+16
+00:01:23,440 --> 00:01:24,440
+I think you do.
+
+17
+00:01:24,440 --> 00:01:25,440
+Yeah, I think you do.
+
+18
+00:01:25,440 --> 00:01:26,440
+This is happening.
+
+19
+00:01:26,440 --> 00:01:27,440
+This is...
+
+20
+00:01:27,440 --> 00:01:28,440
+This is happening.
+
+21
+00:01:28,440 --> 00:01:29,440
+This is...
+
+22
+00:01:29,440 --> 00:01:30,440
+This is amazing.
+
+23
+00:01:30,440 --> 00:01:31,440
+So this is just about a token.
+
+24
+00:01:31,440 --> 00:01:41,080
+I do mean, I mean, do go and enjoy Penpot, but it has many, many features on advanced prototyping,
+
+25
+00:01:41,080 --> 00:01:47,160
+but this is one thing that actually came from this official release.
+
+26
+00:01:47,160 --> 00:01:56,280
+As it did nested boards, so here you can see in this animation like an independent board
+
+27
+00:01:56,280 --> 00:02:01,720
+being dragged to another board and having this nesting effect.
+
+28
+00:02:01,720 --> 00:02:07,480
+This actually was a bit tricky because as you know, Penpot uses SVG like natively.
+
+29
+00:02:07,480 --> 00:02:12,760
+So when I say open standards, we do really mean open standards.
+
+30
+00:02:12,760 --> 00:02:19,240
+And it was tough to have this root element having everything, so to have different independent
+
+31
+00:02:19,240 --> 00:02:26,520
+components being designed, we had to do this nested board trick, but that trick actually
+
+32
+00:02:26,520 --> 00:02:33,080
+gave us a lot of potential because when you have nested boards, you can do much more advanced
+
+33
+00:02:33,080 --> 00:02:36,800
+compositing in general, and so we have like the best of world worlds.
+
+34
+00:02:36,800 --> 00:02:47,680
+We have SVG, but also these neat tricks for compositing.
+
+35
+00:02:47,680 --> 00:02:53,920
+Also let me remind you, for those of you that don't know much about Penpot, that we have
+
+36
+00:02:53,920 --> 00:02:57,520
+like some innovations in terms of where to find stuff.
+
+37
+00:02:57,520 --> 00:03:02,040
+When you do engineering, you think about scale, like I need to scale up.
+
+38
+00:03:02,040 --> 00:03:03,040
+I need to automate.
+
+39
+00:03:03,040 --> 00:03:10,120
+I need to have everything like in tiny bits so I can combine them any way I want.
+
+40
+00:03:10,120 --> 00:03:15,160
+With design, with big design architectures, you have that same challenge, otherwise it
+
+41
+00:03:15,160 --> 00:03:20,040
+gets just manual, like design is just manual, and it can only go as far as your brain can
+
+42
+00:03:20,040 --> 00:03:22,400
+cope with stuff.
+
+43
+00:03:22,400 --> 00:03:28,080
+So having like your components, your libraries and assets readily available here, whether
+
+44
+00:03:28,080 --> 00:03:34,360
+there are fonts or colors or design tokens or whatever, it's really cool.
+
+45
+00:03:34,360 --> 00:03:40,200
+Also a whole lot of libraries, and you drag and drop, or you create new ones, and they
+
+46
+00:03:40,200 --> 00:03:44,680
+are there on your left pane.
+
+47
+00:03:44,680 --> 00:03:51,200
+So this actually comes from the Penpot design system, which is the first one example that
+
+48
+00:03:51,200 --> 00:03:53,920
+you can one-click import.
+
+49
+00:03:53,920 --> 00:03:58,680
+If you go to Penpot, you do the onboarding, it's very nice, by the way it's a nice bottle
+
+50
+00:03:58,680 --> 00:04:01,360
+challenge that you can try and do.
+
+51
+00:04:01,360 --> 00:04:04,680
+Anyone here did the bottle challenge?
+
+52
+00:04:04,680 --> 00:04:10,000
+Some of you do, it's a nice little game where you learn by fun, like it's like you learn
+
+53
+00:04:10,000 --> 00:04:13,720
+the Penpot basics using this bottle challenge.
+
+54
+00:04:13,720 --> 00:04:18,880
+But when you actually go into more advanced topics, this is what you really need.
+
+55
+00:04:18,880 --> 00:04:28,680
+So go and check the Penpot design system because it's kind of neatly organized.
+
+56
+00:04:28,680 --> 00:04:36,480
+And then we get something so cool that no one had, which is FlexLayout.
+
+57
+00:04:36,480 --> 00:04:42,920
+So every design and prototyping system out there would have this killer feature where
+
+58
+00:04:42,920 --> 00:04:46,600
+you can smartly apply rules to your design.
+
+59
+00:04:46,600 --> 00:04:51,480
+Say I want my design to flow this way and then you would change the content within that
+
+60
+00:04:51,480 --> 00:04:54,840
+design and those rules would apply automatically.
+
+61
+00:04:54,840 --> 00:05:00,800
+So for designers, I'm seeing people are saying yes, yes, I know why we're talking here.
+
+62
+00:05:00,800 --> 00:05:06,200
+Some designers would feel a massive productivity boost thanks to that.
+
+63
+00:05:06,200 --> 00:05:11,240
+You can call it auto layout, smart layout, fancy layout, whatever.
+
+64
+00:05:11,240 --> 00:05:18,280
+They could not have this once they were exposed to that.
+
+65
+00:05:18,280 --> 00:05:24,320
+It's like not having this once you know about this intelligent layout system is like going
+
+66
+00:05:24,320 --> 00:05:28,960
+really back in time and having to do everything manually.
+
+67
+00:05:28,960 --> 00:05:39,080
+So the problem with this as we thought at Penpot was that unfortunately these layout
+
+68
+00:05:39,080 --> 00:05:49,200
+systems were design-centric, which is not bad per se, but was not developer-friendly.
+
+69
+00:05:49,200 --> 00:05:55,840
+Basically it was not team-friendly, meaning designers would do their smart layout system
+
+70
+00:05:55,840 --> 00:06:00,360
+and then all the vocabulary and the ideas, the abstractions were just for the designers
+
+71
+00:06:00,360 --> 00:06:07,440
+to understand and to enjoy and then developers would go there and say I need to translate
+
+72
+00:06:07,440 --> 00:06:10,600
+this into code.
+
+73
+00:06:10,600 --> 00:06:16,040
+Let's hope there's no issues, by the way, issues.
+
+74
+00:06:16,040 --> 00:06:20,800
+Not only technical issues but also friction issues like back and forth.
+
+75
+00:06:20,800 --> 00:06:22,320
+This am I in control?
+
+76
+00:06:22,320 --> 00:06:23,960
+No, I'm not.
+
+77
+00:06:23,960 --> 00:06:26,880
+Neither the designer nor the developer.
+
+78
+00:06:26,880 --> 00:06:33,640
+They would feel like they would have to constantly double-check and you don't scale up your design
+
+79
+00:06:33,640 --> 00:06:37,400
+or your code if you have to do that.
+
+80
+00:06:37,400 --> 00:06:43,840
+Penpot came with a completely different approach and said what if we have code first design
+
+81
+00:06:43,840 --> 00:06:45,200
+layout?
+
+82
+00:06:45,200 --> 00:06:49,200
+What if already the design is the code?
+
+83
+00:06:49,200 --> 00:06:52,800
+You can do a ton of stuff with Flex CSS.
+
+84
+00:06:52,800 --> 00:06:54,520
+It's actually quite advanced.
+
+85
+00:06:54,520 --> 00:07:03,440
+So what if we say let's do a developer first design layout system and we came up with Flex
+
+86
+00:07:03,440 --> 00:07:09,080
+layout and please do a plot here because it's the first ever tool to have this and it's
+
+87
+00:07:09,080 --> 00:07:17,000
+open source.
+
+88
+00:07:17,000 --> 00:07:25,120
+The great thing about this is that this is not a gift from engineers to designers saying
+
+89
+00:07:25,120 --> 00:07:27,840
+I made this for you, please use it.
+
+90
+00:07:27,840 --> 00:07:32,560
+I hope you're excited about this but actually designers wanted this.
+
+91
+00:07:32,560 --> 00:07:37,000
+So no compromises, everyone wins.
+
+92
+00:07:37,000 --> 00:07:42,760
+We got 50 to 60 volunteers for the better testing of this.
+
+93
+00:07:42,760 --> 00:07:47,040
+I'm not saying you could not test it using our development branch but like the proper
+
+94
+00:07:47,040 --> 00:07:54,280
+environment setup for people to go and do some simple tests like this one and give us
+
+95
+00:07:54,280 --> 00:07:56,560
+feedback and the feedback was phenomenal.
+
+96
+00:07:56,560 --> 00:08:01,960
+I think 80% came from designers and 20% from engineers.
+
+97
+00:08:01,960 --> 00:08:05,840
+So that was nice.
+
+98
+00:08:05,840 --> 00:08:10,520
+Given the fact that in the world so that you know it statistically there's one designer
+
+99
+00:08:10,520 --> 00:08:13,720
+pretend developers roughly.
+
+100
+00:08:13,720 --> 00:08:16,600
+We don't think that's a good ratio.
+
+101
+00:08:16,600 --> 00:08:20,680
+At colleagues we have one to two so pretty different.
+
+102
+00:08:20,680 --> 00:08:24,520
+Somewhere in between perhaps one to four would be great but of course to better test this
+
+103
+00:08:24,520 --> 00:08:27,120
+we couldn't have the one to ten ratio in our poll.
+
+104
+00:08:27,120 --> 00:08:29,040
+We needed to reverse that.
+
+105
+00:08:29,040 --> 00:08:35,160
+But we didn't have to work hard to achieve that because designers were actually asking
+
+106
+00:08:35,160 --> 00:08:37,960
+to better test this in the first place.
+
+107
+00:08:37,960 --> 00:08:47,520
+So if you're familiar with flex CSS you can see properties there and then of course you
+
+108
+00:08:47,520 --> 00:08:53,960
+get I'm here I'm simulating to this is a real time collaboration because we do have real
+
+109
+00:08:53,960 --> 00:08:57,400
+time collaboration of course and this is like two browsers.
+
+110
+00:08:57,400 --> 00:09:03,160
+It doesn't look like that because I made it like fix a perfect in a way but that code
+
+111
+00:09:03,160 --> 00:09:08,360
+pane there the coding spec is actually a second browser just just beneath right nothing fancy
+
+112
+00:09:08,360 --> 00:09:11,440
+but you can see how real time that is changing.
+
+113
+00:09:11,440 --> 00:09:18,320
+So a designer is changing the design using flex layout and as the designer does that
+
+114
+00:09:18,320 --> 00:09:24,320
+the developer can see that code being changed just is a different tab selection there that's
+
+115
+00:09:24,320 --> 00:09:26,320
+that's all it takes.
+
+116
+00:09:26,320 --> 00:09:30,920
+So I'm not saying that a developer should like be like quickly copy and pasting when
+
+117
+00:09:30,920 --> 00:09:36,880
+it changes but it's nice for for the demo now you see that it's real there's no like
+
+118
+00:09:36,880 --> 00:09:57,720
+export concept of anything and really that's it thank you it happened I do hope we have
+
+119
+00:09:57,720 --> 00:10:05,280
+some time for question because I planned for that that is great over the whole point okay
+
+120
+00:10:05,280 --> 00:10:24,480
+I'd rather not pick if you could you could store that but not yeah and is there any kind
+
+121
+00:10:24,480 --> 00:10:32,880
+of process I can follow to do we have something that exists to guide me so the question was
+
+122
+00:10:32,880 --> 00:10:49,120
+about perhaps migrating the design system from you could you could so if you're using
+
+123
+00:10:49,120 --> 00:10:55,160
+a design system on Figma right now and you want also to use pen pod there's a ton of
+
+124
+00:10:55,160 --> 00:11:01,960
+overlap so it might feel weird for you to use the two if not you're not migrating the answer
+
+125
+00:11:01,960 --> 00:11:08,280
+is I'm not sure it makes sense because it is about team dynamics this is about people
+
+126
+00:11:08,280 --> 00:11:14,600
+collaborating so unless you want to export these Figma assets and use it like privately
+
+127
+00:11:14,600 --> 00:11:19,720
+for you with no going back if that is I mean you're smiling so I guess that that's what
+
+128
+00:11:19,720 --> 00:11:29,440
+I want I want to live in my private open source world okay but that that seems to me I get
+
+129
+00:11:29,440 --> 00:11:34,440
+I get that you you can save some money doing that but honestly it's going to not save you
+
+130
+00:11:34,440 --> 00:11:41,440
+much time so you have to keep a balance there because it's going to be back and forth not
+
+131
+00:11:41,440 --> 00:11:48,320
+within pen pod but within two tools that compete in the space of the use case but I mean go
+
+132
+00:11:48,320 --> 00:11:53,840
+ahead and tell me how it looks perhaps I'm mistaken but I think it's going to have a
+
+133
+00:11:53,840 --> 00:11:58,880
+bit of overhead for you if you're willing to take that you have a sticker you I'll give
+
+134
+00:11:58,880 --> 00:12:04,960
+you a sticker like the shiny one you know okay by the way who was my ask a question
+
+135
+00:12:04,960 --> 00:12:10,560
+who was here three years ago can you raise your hand okay yeah okay we have stickers
+
+136
+00:12:10,560 --> 00:12:21,720
+like super premium stickers for you I so my question is you showed us there was a live
+
+137
+00:12:21,720 --> 00:12:41,480
+update of this yes so the question is we saw the real time transformation between the
+
+138
+00:12:41,480 --> 00:12:48,720
+design and the code is it full duplex can I change the code not for now not for now
+
+139
+00:12:48,720 --> 00:12:58,120
+but of course I mean it feels like you would like to do the other way around I'll actually
+
+140
+00:12:58,120 --> 00:13:06,000
+go on with that question theme and say what if you connect that with a gear repository
+
+141
+00:13:06,000 --> 00:13:13,840
+and you change that in the gear repository that comes back and changes the design what
+
+142
+00:13:13,840 --> 00:13:19,000
+if as a designer you change something that also goes to the gear repository and triggers
+
+143
+00:13:19,000 --> 00:13:28,440
+a CICD process ah okay so we thought about that because it's kind of what comes next
+
+144
+00:13:28,440 --> 00:13:50,280
+obviously but yeah so good question we've got to cover it okay thank you
+
+145
+00:13:50,280 --> 00:14:15,880
+so resources for helping teams migrating from other tools to Penpot yeah yeah I mean
+
+146
+00:14:15,880 --> 00:14:28,720
+Figma what is that Figma owns 80% of the market for designers 80% Adobe now owns 87% of the
+
+147
+00:14:28,720 --> 00:14:37,960
+market thanks to that so obviously yeah I get that we have a plug-in an expert plug-in
+
+148
+00:14:37,960 --> 00:14:42,920
+it's we hope that the community can help us just improve it so that you can basically
+
+149
+00:14:42,920 --> 00:14:48,560
+export all that from we actually don't know how much time we've got for that plug-in to
+
+150
+00:14:48,560 --> 00:14:54,880
+be okay for Figma but it's still there so that is one way you can quickly test that
+
+151
+00:14:54,880 --> 00:15:01,600
+it's not any means complete so it will give you like the basics but it might be enough
+
+152
+00:15:01,600 --> 00:15:06,840
+and then I think everything like exporting stuff and just uh re-importing that is really
+
+153
+00:15:06,840 --> 00:15:14,080
+quick for teams to have the design system re-uploaded here somehow I don't think it's
+
+154
+00:15:14,080 --> 00:15:18,840
+going to take much time if you have the motivation it's just you know some I mean depending on
+
+155
+00:15:18,840 --> 00:15:23,080
+the complexity of the prototypes and design this is for prototyping and this is also for
+
+156
+00:15:23,080 --> 00:15:28,200
+design so depending on the quality for each topic it might get but yeah the export plug-in
+
+157
+00:15:28,200 --> 00:15:32,680
+we really hope that we get more help from the contribution from the community so if
+
+158
+00:15:32,680 --> 00:15:42,920
+anyone here is interested in like those like serialization challenges for the SVG and the
+
+159
+00:15:42,920 --> 00:15:48,600
+JSON because it's all it has really that would be great from the abstraction model
+
+160
+00:15:48,600 --> 00:15:53,840
+that we have from Figma to actually proper you know open standards fine so yeah those
+
+161
+00:15:53,840 --> 00:16:08,960
+um good um thank you
+
+162
+00:16:08,960 --> 00:16:16,040
+I'm curious about the business side things you mentioned Figma and how do you plan to
+
+163
+00:16:16,040 --> 00:16:24,200
+continue to Figma and be successful at it and at the same time drive your business forward?
+
+164
+00:16:24,200 --> 00:16:27,000
+So Kaleidos is a company um actually the original title is Kaleidos's open source that's the
+
+165
+00:16:27,000 --> 00:16:34,240
+SL because we're a Spanish company um so the idea for us is to make sure that we follow
+
+166
+00:16:34,240 --> 00:16:41,960
+this um we think it's going to be uh kind of an enterprise edition that will give companies
+
+167
+00:16:41,960 --> 00:16:48,880
+things that the power user does not want or doesn't need we call that privately publicly
+
+168
+00:16:48,880 --> 00:16:56,600
+tax the controller okay so that is uh something that we don't really need right now because
+
+169
+00:16:56,600 --> 00:17:01,680
+to be honest there's still a ton of things that we have to do for the product but basically
+
+170
+00:17:01,680 --> 00:17:10,600
+uh perhaps in two years if we are relevant we hope we are relevant we'll see uh see you
+
+171
+00:17:10,600 --> 00:17:16,880
+in two years force them you know but uh if we are really relevant then uh we will look
+
+172
+00:17:16,880 --> 00:17:24,600
+for those tax the controller uh features that big companies are fine uh they won't contribute
+
+173
+00:17:24,600 --> 00:17:31,160
+with code they won't contribute with content they will contribute with money right so we
+
+174
+00:17:31,160 --> 00:17:35,560
+don't have like the details but it's going to be like and this has been publicly said
+
+175
+00:17:35,560 --> 00:17:41,480
+many times the power user gets open source forever is the companies wanting to have this
+
+176
+00:17:41,480 --> 00:17:46,840
+control mechanism that will have to pay for something that is exclusive to them whether
+
+177
+00:17:46,840 --> 00:17:51,560
+it's self-host or SaaS we don't care actually by the way there is also a desktop app by
+
+178
+00:17:51,560 --> 00:17:57,160
+the community um that encapsulated Penpot with Electron so you can also have the pure
+
+179
+00:17:57,160 --> 00:18:03,000
+desktop native you know experience um so yeah um it's it's there actually in the community
+
+180
+00:18:03,000 --> 00:18:08,440
+space community.Penpot.app we elaborate a bit more on that but yeah the only way this
+
+181
+00:18:08,440 --> 00:18:15,960
+will be sustainable is a company is that we are really relevant um surprisingly the the
+
+182
+00:18:15,960 --> 00:18:23,200
+design space in our view is quite immature like you have one tool you know winner takes
+
+183
+00:18:23,200 --> 00:18:29,600
+all then the next tool then the next there are subsequent winners uh we hope that we
+
+184
+00:18:29,600 --> 00:18:36,800
+add fragmentation to that uh but still uh and so be be be relevant so we have like
+
+185
+00:18:36,800 --> 00:18:41,120
+one minute left if you the answer a question you answer the second part and this is the
+
+186
+00:18:41,120 --> 00:18:45,200
+first part of the hug actually you tend to compete with Figma you tend to maybe drive
+
+187
+00:18:45,200 --> 00:18:51,120
+business away from Figma toward Penpot. Well I think uh will we the the playbook that we
+
+188
+00:18:51,120 --> 00:18:57,520
+have is quite unique and unprecedented like this is open source design and prototyping tool
+
+189
+00:18:57,520 --> 00:19:05,760
+so we hope that we have a bottom-up uh distribution model like people are really saying this is
+
+190
+00:19:05,760 --> 00:19:13,280
+actually much better and uh we are hoping this is this is part of our yeah this is hope that you
+
+191
+00:19:13,280 --> 00:19:18,080
+remember that ratio one designer pretend developers that developers actually loving open source
+
+192
+00:19:18,720 --> 00:19:25,200
+do bring um Penpot to the forefront without the help from open source developers I'm sure this
+
+193
+00:19:25,200 --> 00:19:29,360
+is not going to happen not because design open designers don't like open source just because
+
+194
+00:19:30,080 --> 00:19:37,360
+the the economics of that will take much longer um so yeah that one to ten ratio is the only
+
+195
+00:19:37,360 --> 00:19:41,920
+what is the only time I would I'm happy with that ratio like in this particular case it's like
+
+196
+00:19:42,480 --> 00:19:49,600
+so we are counting on open source developers today. Okay if you want to have a chat afterwards
+
+197
+00:19:49,600 --> 00:19:56,160
+and I'm sure Pablo is very very happy to answer questions so that's we have five minutes for
+
+198
+00:19:56,160 --> 00:20:20,240
+people to leave and people to come in so I'm going to say thank you Pablo. Thank you.
+

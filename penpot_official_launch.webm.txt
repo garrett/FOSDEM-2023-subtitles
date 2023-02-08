@@ -1,0 +1,198 @@
+Wednesday, when we did the unboxing event, that since we do hope that everyone will be
+welcomed to a Penpot project, we needed to make sure that the invite system could cope
+with all the different use cases that you get with that link expiration, who got the
+invite, do any tree send it, etc., etc.
+Otherwise, the onboarding experience would be tough and people would not be joining the
+design project.
+And this is very important for us because this is not only a tool for designers to just
+express their creativity, but also for developers to join the design process to be welcomed there.
+So this is very important for us.
+But of course, we had many improvements in the interactive prototype feature.
+This is just one example for the overlay advancement.
+So here you can see how a design asset is being self-referred and you get a very nice
+pixel-perfect overlay on a button and then an animation that comes with a mouse click.
+Right?
+Do you like this?
+I think you do.
+Yeah, I think you do.
+This is happening.
+This is...
+This is happening.
+This is...
+This is amazing.
+So this is just about a token.
+I do mean, I mean, do go and enjoy Penpot, but it has many, many features on advanced prototyping,
+but this is one thing that actually came from this official release.
+As it did nested boards, so here you can see in this animation like an independent board
+being dragged to another board and having this nesting effect.
+This actually was a bit tricky because as you know, Penpot uses SVG like natively.
+So when I say open standards, we do really mean open standards.
+And it was tough to have this root element having everything, so to have different independent
+components being designed, we had to do this nested board trick, but that trick actually
+gave us a lot of potential because when you have nested boards, you can do much more advanced
+compositing in general, and so we have like the best of world worlds.
+We have SVG, but also these neat tricks for compositing.
+Also let me remind you, for those of you that don't know much about Penpot, that we have
+like some innovations in terms of where to find stuff.
+When you do engineering, you think about scale, like I need to scale up.
+I need to automate.
+I need to have everything like in tiny bits so I can combine them any way I want.
+With design, with big design architectures, you have that same challenge, otherwise it
+gets just manual, like design is just manual, and it can only go as far as your brain can
+cope with stuff.
+So having like your components, your libraries and assets readily available here, whether
+there are fonts or colors or design tokens or whatever, it's really cool.
+Also a whole lot of libraries, and you drag and drop, or you create new ones, and they
+are there on your left pane.
+So this actually comes from the Penpot design system, which is the first one example that
+you can one-click import.
+If you go to Penpot, you do the onboarding, it's very nice, by the way it's a nice bottle
+challenge that you can try and do.
+Anyone here did the bottle challenge?
+Some of you do, it's a nice little game where you learn by fun, like it's like you learn
+the Penpot basics using this bottle challenge.
+But when you actually go into more advanced topics, this is what you really need.
+So go and check the Penpot design system because it's kind of neatly organized.
+And then we get something so cool that no one had, which is FlexLayout.
+So every design and prototyping system out there would have this killer feature where
+you can smartly apply rules to your design.
+Say I want my design to flow this way and then you would change the content within that
+design and those rules would apply automatically.
+So for designers, I'm seeing people are saying yes, yes, I know why we're talking here.
+Some designers would feel a massive productivity boost thanks to that.
+You can call it auto layout, smart layout, fancy layout, whatever.
+They could not have this once they were exposed to that.
+It's like not having this once you know about this intelligent layout system is like going
+really back in time and having to do everything manually.
+So the problem with this as we thought at Penpot was that unfortunately these layout
+systems were design-centric, which is not bad per se, but was not developer-friendly.
+Basically it was not team-friendly, meaning designers would do their smart layout system
+and then all the vocabulary and the ideas, the abstractions were just for the designers
+to understand and to enjoy and then developers would go there and say I need to translate
+this into code.
+Let's hope there's no issues, by the way, issues.
+Not only technical issues but also friction issues like back and forth.
+This am I in control?
+No, I'm not.
+Neither the designer nor the developer.
+They would feel like they would have to constantly double-check and you don't scale up your design
+or your code if you have to do that.
+Penpot came with a completely different approach and said what if we have code first design
+layout?
+What if already the design is the code?
+You can do a ton of stuff with Flex CSS.
+It's actually quite advanced.
+So what if we say let's do a developer first design layout system and we came up with Flex
+layout and please do a plot here because it's the first ever tool to have this and it's
+open source.
+The great thing about this is that this is not a gift from engineers to designers saying
+I made this for you, please use it.
+I hope you're excited about this but actually designers wanted this.
+So no compromises, everyone wins.
+We got 50 to 60 volunteers for the better testing of this.
+I'm not saying you could not test it using our development branch but like the proper
+environment setup for people to go and do some simple tests like this one and give us
+feedback and the feedback was phenomenal.
+I think 80% came from designers and 20% from engineers.
+So that was nice.
+Given the fact that in the world so that you know it statistically there's one designer
+pretend developers roughly.
+We don't think that's a good ratio.
+At colleagues we have one to two so pretty different.
+Somewhere in between perhaps one to four would be great but of course to better test this
+we couldn't have the one to ten ratio in our poll.
+We needed to reverse that.
+But we didn't have to work hard to achieve that because designers were actually asking
+to better test this in the first place.
+So if you're familiar with flex CSS you can see properties there and then of course you
+get I'm here I'm simulating to this is a real time collaboration because we do have real
+time collaboration of course and this is like two browsers.
+It doesn't look like that because I made it like fix a perfect in a way but that code
+pane there the coding spec is actually a second browser just just beneath right nothing fancy
+but you can see how real time that is changing.
+So a designer is changing the design using flex layout and as the designer does that
+the developer can see that code being changed just is a different tab selection there that's
+that's all it takes.
+So I'm not saying that a developer should like be like quickly copy and pasting when
+it changes but it's nice for for the demo now you see that it's real there's no like
+export concept of anything and really that's it thank you it happened I do hope we have
+some time for question because I planned for that that is great over the whole point okay
+I'd rather not pick if you could you could store that but not yeah and is there any kind
+of process I can follow to do we have something that exists to guide me so the question was
+about perhaps migrating the design system from you could you could so if you're using
+a design system on Figma right now and you want also to use pen pod there's a ton of
+overlap so it might feel weird for you to use the two if not you're not migrating the answer
+is I'm not sure it makes sense because it is about team dynamics this is about people
+collaborating so unless you want to export these Figma assets and use it like privately
+for you with no going back if that is I mean you're smiling so I guess that that's what
+I want I want to live in my private open source world okay but that that seems to me I get
+I get that you you can save some money doing that but honestly it's going to not save you
+much time so you have to keep a balance there because it's going to be back and forth not
+within pen pod but within two tools that compete in the space of the use case but I mean go
+ahead and tell me how it looks perhaps I'm mistaken but I think it's going to have a
+bit of overhead for you if you're willing to take that you have a sticker you I'll give
+you a sticker like the shiny one you know okay by the way who was my ask a question
+who was here three years ago can you raise your hand okay yeah okay we have stickers
+like super premium stickers for you I so my question is you showed us there was a live
+update of this yes so the question is we saw the real time transformation between the
+design and the code is it full duplex can I change the code not for now not for now
+but of course I mean it feels like you would like to do the other way around I'll actually
+go on with that question theme and say what if you connect that with a gear repository
+and you change that in the gear repository that comes back and changes the design what
+if as a designer you change something that also goes to the gear repository and triggers
+a CICD process ah okay so we thought about that because it's kind of what comes next
+obviously but yeah so good question we've got to cover it okay thank you
+so resources for helping teams migrating from other tools to Penpot yeah yeah I mean
+Figma what is that Figma owns 80% of the market for designers 80% Adobe now owns 87% of the
+market thanks to that so obviously yeah I get that we have a plug-in an expert plug-in
+it's we hope that the community can help us just improve it so that you can basically
+export all that from we actually don't know how much time we've got for that plug-in to
+be okay for Figma but it's still there so that is one way you can quickly test that
+it's not any means complete so it will give you like the basics but it might be enough
+and then I think everything like exporting stuff and just uh re-importing that is really
+quick for teams to have the design system re-uploaded here somehow I don't think it's
+going to take much time if you have the motivation it's just you know some I mean depending on
+the complexity of the prototypes and design this is for prototyping and this is also for
+design so depending on the quality for each topic it might get but yeah the export plug-in
+we really hope that we get more help from the contribution from the community so if
+anyone here is interested in like those like serialization challenges for the SVG and the
+JSON because it's all it has really that would be great from the abstraction model
+that we have from Figma to actually proper you know open standards fine so yeah those
+um good um thank you
+I'm curious about the business side things you mentioned Figma and how do you plan to
+continue to Figma and be successful at it and at the same time drive your business forward?
+So Kaleidos is a company um actually the original title is Kaleidos's open source that's the
+SL because we're a Spanish company um so the idea for us is to make sure that we follow
+this um we think it's going to be uh kind of an enterprise edition that will give companies
+things that the power user does not want or doesn't need we call that privately publicly
+tax the controller okay so that is uh something that we don't really need right now because
+to be honest there's still a ton of things that we have to do for the product but basically
+uh perhaps in two years if we are relevant we hope we are relevant we'll see uh see you
+in two years force them you know but uh if we are really relevant then uh we will look
+for those tax the controller uh features that big companies are fine uh they won't contribute
+with code they won't contribute with content they will contribute with money right so we
+don't have like the details but it's going to be like and this has been publicly said
+many times the power user gets open source forever is the companies wanting to have this
+control mechanism that will have to pay for something that is exclusive to them whether
+it's self-host or SaaS we don't care actually by the way there is also a desktop app by
+the community um that encapsulated Penpot with Electron so you can also have the pure
+desktop native you know experience um so yeah um it's it's there actually in the community
+space community.Penpot.app we elaborate a bit more on that but yeah the only way this
+will be sustainable is a company is that we are really relevant um surprisingly the the
+design space in our view is quite immature like you have one tool you know winner takes
+all then the next tool then the next there are subsequent winners uh we hope that we
+add fragmentation to that uh but still uh and so be be be relevant so we have like
+one minute left if you the answer a question you answer the second part and this is the
+first part of the hug actually you tend to compete with Figma you tend to maybe drive
+business away from Figma toward Penpot. Well I think uh will we the the playbook that we
+have is quite unique and unprecedented like this is open source design and prototyping tool
+so we hope that we have a bottom-up uh distribution model like people are really saying this is
+actually much better and uh we are hoping this is this is part of our yeah this is hope that you
+remember that ratio one designer pretend developers that developers actually loving open source
+do bring um Penpot to the forefront without the help from open source developers I'm sure this
+is not going to happen not because design open designers don't like open source just because
+the the economics of that will take much longer um so yeah that one to ten ratio is the only
+what is the only time I would I'm happy with that ratio like in this particular case it's like
+so we are counting on open source developers today. Okay if you want to have a chat afterwards
+and I'm sure Pablo is very very happy to answer questions so that's we have five minutes for
+people to leave and people to come in so I'm going to say thank you Pablo. Thank you.

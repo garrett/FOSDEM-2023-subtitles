@@ -1,4 +1,4 @@
-I'm talking about Fidora Sahi, which is Fidora for Apple Silicon.
+I'm talking about Fedora Sahi, which is Fedora for Apple Silicon.
 It's funny.
 I was in the bar the other night talking with Davide and Neil about doing this presentation.
 And I said, yeah, on that Mac Mini, on about one in ten displays, it just doesn't work.
@@ -13,7 +13,7 @@ So that's what I kind of work on.
 I had a competition, but I have to shelve that because it required the hardware.
 We'll see.
 If we have time at the end, I might try and plug in the HDMI one more time.
-So why do we care about Fidora and Apple Silicon?
+So why do we care about Fedora and Apple Silicon?
 So Apple released new Android, Apple Silicon devices, I think it was late 2020.
 And there's actually a shortage of well-upstreamed devices.
 What's cool about this one is the firmware is unlocked out of the box.

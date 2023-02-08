@@ -1,6 +1,6 @@
 1
 00:00:00,000 --> 00:00:15,520
-I'm talking about Fidora Sahi, which is Fidora for Apple Silicon.
+I'm talking about Fedora Sahi, which is Fedora for Apple Silicon.
 
 2
 00:00:15,520 --> 00:00:16,520
@@ -60,7 +60,7 @@ If we have time at the end, I might try and plug in the HDMI one more time.
 
 16
 00:01:34,800 --> 00:01:41,960
-So why do we care about Fidora and Apple Silicon?
+So why do we care about Fedora and Apple Silicon?
 
 17
 00:01:41,960 --> 00:01:50,520
